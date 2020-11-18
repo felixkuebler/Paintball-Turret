@@ -30,16 +30,12 @@ else:
 
 
 print('Enter Motion Mode:\n- 0 for Angle\n- 1 for Speed')
-
 modeSelect = input() == '0'
 
 if modeSelect:
-	arduino.motorSetMotionMode(0) # for angular controlle
 	print('Enter Angle:\n(terminate with \"q\")\n-----------------------------')
 
-
 else:
-	arduino.motorSetMotionMode(1) # for speed controlle	
 	print('Enter Speed:\n(terminate with \"q\")\n-----------------------------')
 
 
@@ -50,4 +46,7 @@ while True:
 	if value == 'q':
 		break
 
-	arduino.motorWrite(int(value))
+	if modeSelect:
+		arduino.motorWriteSpeed(int(value))
+	else:
+		arduino.motorWritePosition(int(value))

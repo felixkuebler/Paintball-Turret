@@ -11,18 +11,18 @@
 
 #define JOB_ATTACH_MOTOR 10
 #define JOB_DETACH_MOTOR 11
-#define JOB_MOTOR_WRITE 12
-#define JOB_MOTOR_READ 13
-#define JOB_MOTOR_AT_TARGET 14
-#define JOB_MOTOR_OPTION 15
+#define JOB_MOTOR_WRITE_POSITION 12
+#define JOB_MOTOR_WRITE_SPEED 13
+#define JOB_MOTOR_READ_POSITION 14
+#define JOB_MOTOR_AT_TARGET 15
+#define JOB_MOTOR_OPTION 16
 
 #define OPTION_MOTOR_RESET 1
 #define OPTION_MOTOR_MIN_SPEED 2
 #define OPTION_MOTOR_MAX_SPEED 3
 #define OPTION_MOTOR_GEAR_RATIO 4
 #define OPTION_MOTOR_INVERT_DIR 5
-#define OPTION_MOTOR_MOTION_MODE 6
-#define OPTION_MOTOR_RANGE 7
+#define OPTION_MOTOR_RANGE 6
 
 
 /*
@@ -53,6 +53,7 @@ struct CPRMotor {
   // speed variables
   uint8_t maxSpeed;
   uint8_t minSpeed;
+  int16_t setSpeed;
 
   // ration between output shaft and encoder
   uint8_t gearRatio;
@@ -115,6 +116,7 @@ void attachCPRMotor(uint8_t pin1, uint8_t pin2){
 
   motor->maxSpeed=200;
   motor->minSpeed=100;
+  motor->setSpeed=0;
 
   //motor->gearRatio=5; // for top
   motor->gearRatio=10; // for bottom
@@ -292,31 +294,35 @@ void loop() {
             motor->invertDir=serialBuffer[2];
         }
       }
-      else if(serialBuffer[1] == OPTION_MOTOR_MOTION_MODE){
-        // Set mode of motion
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_MOTION_MODE, MODE]
-        // buff = [uint8_t, uint8_t, uint8_t] 
-        if(motor){
-            motor->motionMode=serialBuffer[2];
-        }
-      }
     }
-    else if(serialBuffer[0] == JOB_MOTOR_WRITE){
+    else if(serialBuffer[0] == JOB_MOTOR_WRITE_POSITION){
       // Set motor position or speed
-      // buff = [JOB_MOTOR_WRITE, DEGREE_SPEED]
+      // buff = [JOB_MOTOR_WRITE_POSITION, DEGREE]
       // buff = [uint8_t, int32_t] 
       if(motor){
-        int32_t degree_speed = ((int32_t) serialBuffer[1] << (8*0)) + ((int32_t) serialBuffer[2] <<  (8*1)) + ((int32_t) serialBuffer[3] <<  (8*2)) + ((int32_t) serialBuffer[4] <<  (8*3));
+        int32_t degree = ((int32_t) serialBuffer[1] << (8*0)) + ((int32_t) serialBuffer[2] <<  (8*1)) + ((int32_t) serialBuffer[3] <<  (8*2)) + ((int32_t) serialBuffer[4] <<  (8*3));
+        degree*=motor->gearRatio;
+        if (motor->invertDir) degree*= -1;
 
-        if (motor->invertDir) degree_speed*= -1;
-        if (!motor->motionMode) degree_speed*=motor->gearRatio;
-        
-        motor->setPosition = degree_speed;
+        motor->motionMode = 0;
+        motor->setPosition = degree;
       }
     }
-    else if(serialBuffer[0] == JOB_MOTOR_READ){
+    else if(serialBuffer[0] == JOB_MOTOR_WRITE_SPEED){
+      // Set motor position or speed
+      // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
+      // buff = [uint8_t, int16_t] 
+      if(motor){
+        int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) + ((int16_t) serialBuffer[2] <<  (8*1));
+        if (motor->invertDir) speed*= -1;
+
+        motor->motionMode = 1;
+        motor->setSpeed = speed;
+      }
+    }
+    else if(serialBuffer[0] == JOB_MOTOR_READ_POSITION){
       // Read motor position
-      // buff = [JOB_MOTOR_READ]
+      // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
       // return = int32_t
       int32_t positionDeg = motor->encoderPos/(int32_t)motor->gearRatio;
@@ -392,18 +398,18 @@ void loop() {
     }
     else
     {
-      uint8_t output = abs(motor->setPosition);
+      uint8_t output = abs(motor->setSpeed);
       output = map(output, 0, 100, 0, 255);
 
       // Restrict to max
       if( output > motor->maxSpeed ) output = motor->maxSpeed;
       if( output < motor->minSpeed ) output = 0;
 
-      if(0 < motor->setPosition && motor->encoderPos < ((int32_t)motor->maxRange * (int32_t)motor->gearRatio / 2)){
+      if(0 < motor->setSpeed && motor->encoderPos < ((int32_t)motor->maxRange * (int32_t)motor->gearRatio / 2)){
         motor->isAtTarget = false;
         analogWrite(motor->pin2, 0);
         analogWrite(motor->pin1, output);
-      } else if(0 > motor->setPosition && motor->encoderPos > - ((int32_t)motor->maxRange * (int32_t)motor->gearRatio / 2)){
+      } else if(0 > motor->setSpeed && motor->encoderPos > - ((int32_t)motor->maxRange * (int32_t)motor->gearRatio / 2)){
         motor->isAtTarget = false;
         analogWrite(motor->pin1, 0);
         analogWrite(motor->pin2, output);
