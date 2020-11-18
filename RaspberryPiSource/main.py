@@ -85,15 +85,15 @@ def option():
 
 @app.route('/feedback', methods=['GET'])
 def feedback():
-    print('Request Data: %s' % request.args, file=sys.stdout, flush=True)
-    data = json.loads(request.args)
+    print('Request Data: %s' % request.args.get('position'), file=sys.stdout, flush=True)
+    #data = json.loads(request.args)
 
-    if 'position' in data:
+    if request.args.get('position'):
         xPos = turr.getPositionX()
         yPos = turr.getPositionY()
         return '{\"xPos\":\"%s\", \"yPos\":\"%s\"}' % (xPos, yPos)
 
-    if 'target' in data:
+    if request.args.get('target'):
         isAtTargetX = turr.isAtTargetX()
         isAtTargetY = turr.isAtTargetY()
         return '{\"xTar\":\"%s\", \"yTar\":\"%s\"}' % (isAtTargetX, isAtTargetY)
