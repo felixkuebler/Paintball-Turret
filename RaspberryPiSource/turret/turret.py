@@ -21,8 +21,6 @@ class Turret():
 		self.arduinoBottom.motorSetMinSpeed(75)
 		self.arduinoBottom.motorSetMaxSpeed(125)
 
-		self.arduinoBottom.motorSetMotionMode(1) # for speed controlle
-
 
 		# set io 4 to output
 		self.arduinoTop.pinModeOutput(4)
@@ -34,8 +32,6 @@ class Turret():
 		self.arduinoTop.motorSetRange(9000) # for top 90°
 		self.arduinoTop.motorSetMinSpeed(100)
 		self.arduinoTop.motorSetMaxSpeed(200)
-
-		self.arduinoTop.motorSetMotionMode(1) # for speed controlle
 
 
 	def setPositionX(self, pos):
