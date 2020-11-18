@@ -129,9 +129,9 @@ class ArduinoSerialDevice():
 		self.unlockDevice()
 
 
-	def motorRead(self):
+	def motorReadPosition(self):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_READ)
+		self.arduinoDev.write(JOB_MOTOR_READ_POSITION)
 		self.arduinoDev.write(CMD_TERMINATOR)
 
 		byteStream = self.arduinoDev.read(4)

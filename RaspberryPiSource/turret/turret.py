@@ -47,13 +47,13 @@ class Turret():
 
 
 	def getPositionX(self):
-		pos = self.arduinoBottom.motorRead()/100
+		pos = self.arduinoBottom.motorReadPosition()/100
 		print('Read Position X: %s ' % pos, file=sys.stdout, flush=True)
 		return pos
 
 
 	def getPositionY(self):
-		pos = self.arduinoTop.motorRead()/100
+		pos = self.arduinoTop.motorReadPosition()/100
 		print('Read Position Y: %s' % pos, file=sys.stdout, flush=True)
 		return pos
 
