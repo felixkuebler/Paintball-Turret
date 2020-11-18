@@ -368,7 +368,7 @@
 
     function refreshPosition(){
         if (document.fullscreenElement) {
-            httpGetAsync("{{ url_for('feedback') }}", "positions=1", null, positionCallback)
+            httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
         }
     };
     function positionCallback(response){        
