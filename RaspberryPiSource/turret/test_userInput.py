@@ -47,6 +47,6 @@ while True:
 		break
 
 	if modeSelect:
-		arduino.motorWriteSpeed(int(value))
-	else:
 		arduino.motorWritePosition(int(value))
+	else:
+		arduino.motorWriteSpeed(int(value))
