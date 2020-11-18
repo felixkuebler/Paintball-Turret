@@ -1,46 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        .button {
-            background-color:  #e7e7e7;
-            border: 2px solid #e7e7e7;
-            color: black;
-            padding: 16px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 0;
-            transition-duration: 0.4s;
-            cursor: pointer;
-            width: 640px;
-        }
-
-        .button:hover {background-color:white;}
-    </style>
     <meta charset="utf-8">
     <title>Video Streaming</title>
 </head>
 <body>
-    <div>
-        <button id="button" class="button">Arm Device</button>
-    </div>
-    <div id="output">
-        <img id="img" src="{{ url_for('video_feed') }}">
-        <canvas id="canvas"></canvas>
-    </div>
-    <div id="output">
-        <button id="resetButtonX" class="button">Reset X Position</button>
-        <button id="resetButtonY" class="button">Reset Y Position</button>
+    <div style="display: flex; text-align: center;">
+        <div style="flex-grow: 1">   
+            <h2>Image and Position Feedback</h2>
+            <div id="display" style="position: relative;">
+                <img id="img" src="{{ url_for('video_feed') }}">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+        <div style="flex-grow: 1">
+            <h2>Controle</h2>
+            <div id="options">
+                <h3 style="text-align: left;">Activate</h3>
+                <hr>
+                <button id="armButton" class="button">Arm</button>
+                <div>Arm the device. WARNING! The Safety will be disengaged.</div>
+
+                <h3 style="text-align: left;">Calibrate</h3>
+                <hr>
+                <button id="resetButtonX" class="button">Reset X</button> 
+                <button id="resetButtonY" class="button">Reset Y</button> 
+                <div>Reset X or Y axis position to 0.</div>
+
+                <h3 style="text-align: left;">Move (Speed)</h3>
+                <hr>
+                <div id="xSpeedPreview">X=0%</div>
+                <input type="range" id="xSpeedInput" min="-100" max="100">
+                <div id="ySpeedPreview">Y=0%</div>
+                <input type="range" id="ySpeedInput" min="-100" max="100">
+                <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
+                
+                <h3 style="text-align: left;">Move (Position)</h3>
+                <hr>
+                <div id="xPositionPreview">X=0°</div>
+                <input type="range" id="xPositionInput" min="-90" max="90">
+                <div id="yPositionPreview">Y=0°</div>
+                <input type="range" id="yPositionInput" min="-45" max="45">
+                <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
+            </div>
+        </div>
     </div>
 
 <script >
 
-    const button = document.getElementById("button");
+    const armButton = document.getElementById("armButton");
     const resetButtonX = document.getElementById("resetButtonX");
     const resetButtonY = document.getElementById("resetButtonY");
-    const output = document.getElementById("output");
+
+    const xSpeedPreview = document.getElementById("xSpeedPreview");
+    const xSpeedInput = document.getElementById("xSpeedInput");
+    const ySpeedPreview = document.getElementById("ySpeedPreview");
+    const ySpeedInput = document.getElementById("ySpeedInput");
+
+    const xPositionPreview = document.getElementById("xPositionPreview");
+    const xPositionInput = document.getElementById("xPositionInput");
+    const yPositionPreview = document.getElementById("yPositionPreview");
+    const yPositionInput = document.getElementById("yPositionInput");
+
+    const display = document.getElementById("display");
 
     // for style
     const color = "#FF0000";
@@ -68,18 +90,24 @@
     var xLastSpeed = 0;
     var yLastSpeed = 0;
 
-    var mouseIsMoving = false;
-    var buttonLeftIsPressed = false;
-    var buttonRightIsPressed = false;
-    var buttonUpIsPressed = false;
-    var buttonDownIsPressed = false;
-    var buttonSpaceIsPressed = false;
-
 
     // for trigger
     var triggered = false;
     var alreadyTriggered = false;
     var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
+
+    function drawInfo(context, info){
+
+        var width = context.canvas.width;
+        var height = context.canvas.height;
+        
+        var infoPedding = 25;
+
+        context.font = font;
+        context.textAlign = "center";
+        context.fillText(info, width/2, height-infoPedding);
+        context.stroke();
+    }
 
 
     function drawCrosshair(context){
@@ -119,6 +147,8 @@
         context.stroke();
     }
 
+
+
     function drawPosition(context){
 
         var width = context.canvas.width;
@@ -137,10 +167,14 @@
 
             var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
 
+           // var alphaValue = 1;
             var alphaValue = Math.abs(positionShift-(width/2));
+
             if (alphaValue<1) alphaValue = 1;
             alphaValue = (40/alphaValue);
             if (alphaValue>1) alphaValue = 1;
+
+            if (alphaValue<0.2) alphaValue = 0;
 
             context.globalAlpha = alphaValue;
 
@@ -172,6 +206,8 @@
             if (alphaValue<1) alphaValue = 1;
             alphaValue = (40/alphaValue);
             if (alphaValue>1) alphaValue = 1;
+
+            if (alphaValue<0.2) alphaValue = 0;
 
             context.globalAlpha = alphaValue;
 
@@ -248,8 +284,8 @@
 
             img.style.top = (window.screen.height-img.height)/2 + "px";
 
-            drawCrosshair(ctx);
             drawPosition(ctx);
+            drawCrosshair(ctx);
 
             if (triggered) {
                 drawTriggerToggle(ctx);
@@ -263,25 +299,39 @@
                 document.exitPointerLock();
             }
 
-            canvas.style.display="none";
+            display.style.position = "relative";
 
-            img.style.position = "static";
+            canvas.style.display="block";
+            canvas.style.position = "absolute";
+            canvas.style.left = 0;
+            canvas.style.top = 0;
+            canvas.width = "640";
+            canvas.height = "480";
+
+            img.style.display="block";
+
+            img.style.position = "absolute";
+                        img.style.left = 0;
+            img.style.top = 0;
             img.width = "640";
             img.height = "480";
+
+            drawPosition(ctx);
+            drawInfo(ctx, "LOCKED/SAFE");
         }
 
     };
     window.setInterval("refreshCanvas()", 50); 
 
 
-    function buttonClickCallback(){
-        if(output.webkitRequestFullScreen) {
-            output.webkitRequestFullScreen();
+    function armButtonClickCallback(){
+        if(display.webkitRequestFullScreen) {
+            display.webkitRequestFullScreen();
         } else {
-            output.mozRequestFullScreen();
+            display.mozRequestFullScreen();
         }
     }
-    button.addEventListener("click",buttonClickCallback);
+    armButton.addEventListener("click",armButtonClickCallback);
 
 
     function resetButtonXClickCallback(){
@@ -296,23 +346,59 @@
     resetButtonY.addEventListener("click",resetButtonYClickCallback);
 
 
-    function outputKeyboardPressCallback(event){
+    function xSpeedInputChangeCallback(event){
+        var speed = event.target.value
+        xSpeedPreview.innerHTML = "X=" + speed + "%";
+        var postString = "{\"xSpeed\":" + speed + "}";
+        httpPostAsync("{{ url_for('controlle') }}", postString);
+    }
+    xSpeedInput.addEventListener("change",xSpeedInputChangeCallback);
+
+
+    function ySpeedInputChangeCallback(event){
+        var speed = event.target.value
+        ySpeedPreview.innerHTML = "Y=" + speed + "%";
+        var postString = "{\"ySpeed\":" + speed + "}";
+        httpPostAsync("{{ url_for('controlle') }}", postString);
+    }
+    ySpeedInput.addEventListener("change",ySpeedInputChangeCallback);
+
+
+    function xPositionInputChangeCallback(event){
+        var pos = event.target.value
+        xPositionPreview.innerHTML = "X=" + pos + "°";
+        var postString = "{\"xPos\":" + pos + "}";
+        httpPostAsync("{{ url_for('controlle') }}", postString);
+    }
+    xPositionInput.addEventListener("change",xPositionInputChangeCallback);
+
+
+    function yPositionInputChangeCallback(event){
+        var pos = event.target.value
+        yPositionPreview.innerHTML = "Y=" + pos + "°";
+        var postString = "{\"yPos\":" + pos + "}";
+        httpPostAsync("{{ url_for('controlle') }}", postString);
+    }
+    yPositionInput.addEventListener("change",yPositionInputChangeCallback);
+
+
+    function keyboardPressCallback(event){
         if (event.keyCode in keyMap) {
             keyMap[event.keyCode] = true;
         }
     }
-    window.addEventListener('keydown',outputKeyboardPressCallback);
+    window.addEventListener('keydown',keyboardPressCallback);
 
 
-    function outputKeyboardReleaseCallback(event){
+    function keyboardReleaseCallback(event){
         if (event.keyCode in keyMap) {
             keyMap[event.keyCode] = false;
         }
     }
-    window.addEventListener('keyup',outputKeyboardReleaseCallback);
+    window.addEventListener('keyup',keyboardReleaseCallback);
 
 
-    function outputKeyTimeoutCallback(){
+    function keyTimeoutCallback(){
         xSpeed = 0;
         ySpeed = 0;
 
@@ -335,12 +421,12 @@
 
         if (xSpeed != xLastSpeed){
             xLastSpeed = xSpeed;
-            postString = "{\"xSpeed\":" + xSpeed + "}";
+            var postString = "{\"xSpeed\":" + xSpeed + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         if (ySpeed != yLastSpeed){
             yLastSpeed = ySpeed;
-            postString = "{\"ySpeed\":" + -ySpeed + "}";
+            var postString = "{\"ySpeed\":" + -ySpeed + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         
@@ -363,7 +449,7 @@
             }
         }
     };
-    window.setInterval(outputKeyTimeoutCallback, 50); 
+    window.setInterval(keyTimeoutCallback, 50); 
 
 
     function refreshPosition(){
