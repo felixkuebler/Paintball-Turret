@@ -368,7 +368,7 @@
 
     function refreshPosition(){
         if (document.fullscreenElement) {
-            httpGetAsync("{{ url_for('feedback') }}", "positions=1", positionCallback)
+            httpGetAsync("{{ url_for('feedback') }}", "positions=1", null, positionCallback)
         }
     };
     function positionCallback(response){        
@@ -439,14 +439,14 @@
     //window.setInterval(outputMouseTimeoutCallback, 100); 
 */
 
-    function httpGetAsync(url, data, callback){
+    function httpGetAsync(url, data, request, callback){
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() { 
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
                 callback(xmlHttp.responseText);
         }
-        xmlHttp.open("GET", url + "?", true); // true for asynchronous 
-        xmlHttp.send(data);
+        xmlHttp.open("GET", url + "?" + request, true); // true for asynchronous 
+        xmlHttp.send(null);
     }
 
 
