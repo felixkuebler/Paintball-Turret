@@ -285,13 +285,13 @@
 
 
     function resetButtonXClickCallback(){
-        httpPostAsync("{{ url_for('option') }}", "resetPosX=1");
+        httpPostAsync("{{ url_for('option') }}", "?resetPosX=1");
     }
     resetButtonX.addEventListener("click",resetButtonXClickCallback);
 
 
     function resetButtonYClickCallback(){
-        httpPostAsync("{{ url_for('option') }}", "resetPosY=1");
+        httpPostAsync("{{ url_for('option') }}", "?resetPosY=1");
     }
     resetButtonY.addEventListener("click",resetButtonYClickCallback);
 
@@ -359,7 +359,7 @@
 
             if(triggered){
                 alreadyTriggered = true;
-                httpPostAsync("{{ url_for('controlle') }}", "trigger=1");
+                httpPostAsync("{{ url_for('controlle') }}", "?trigger=1");
             }
         }
     };
@@ -368,7 +368,7 @@
 
     function refreshPosition(){
         if (document.fullscreenElement) {
-            httpGetAsync("{{ url_for('feedback') }}", "positions=1", positionCallback)
+            httpGetAsync("{{ url_for('feedback') }}", "?positions=1", positionCallback)
         }
     };
     function positionCallback(response){        
