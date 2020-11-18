@@ -1,6 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <style>
+
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 300px;
+            height: 5px;
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            border: none;
+            margin-top: -5px;
+        }
+
+    </style>
     <meta charset="utf-8">
     <title>Video Streaming</title>
 </head>
@@ -20,12 +37,15 @@
                 <hr>
                 <button id="armButton" class="button">Arm</button>
                 <div>Arm the device. WARNING! The Safety will be disengaged.</div>
+                <div>When armed, use the arrow keys to move and space bar to shoot.</div>
 
                 <h3 style="text-align: left;">Calibrate</h3>
                 <hr>
                 <button id="resetButtonX" class="button">Reset X</button> 
                 <button id="resetButtonY" class="button">Reset Y</button> 
                 <div>Reset X or Y axis position to 0.</div>
+                <div>This is used for rehomeing the device.</div>
+
 
                 <h3 style="text-align: left;">Move (Speed)</h3>
                 <hr>
@@ -41,7 +61,8 @@
                 <input type="range" id="xPositionInput" min="-90" max="90">
                 <div id="yPositionPreview">Y=0°</div>
                 <input type="range" id="yPositionInput" min="-45" max="45">
-                <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
+                <div>Manually set Position of X or Y axis.</div>
+                <div>For X axis -90° to 90°. For Y axis -45° to 45°.</div>
             </div>
         </div>
     </div>
@@ -453,14 +474,19 @@
 
 
     function refreshPosition(){
-        if (document.fullscreenElement) {
-            httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
-        }
+        httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
     };
     function positionCallback(response){        
         var responseObj = JSON.parse(response);
         xPos = parseFloat(responseObj.xPos);
         yPos = -1*parseFloat(responseObj.yPos);
+
+        xPositionInput.value = xPos
+        xPositionPreview.innerHTML = "X=" + xPos + "°";
+
+        yPositionInput.value = yPos
+        yPositionPreview.innerHTML = "Y=" + yPos + "°";
+
     };
     window.setInterval("refreshPosition()", 200); 
 
