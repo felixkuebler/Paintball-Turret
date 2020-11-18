@@ -83,7 +83,7 @@ def option():
     return Response("reset_response", status=200, mimetype='text/html')
 
 
-@app.route('/feedback', methods=['GET', 'POST'])
+@app.route('/feedback', methods=['GET'])
 def feedback():
     print('Request Data: %s' % request.args.getlist, file=sys.stdout, flush=True)
     print('Request Data: %s' % request.args.get('position'), file=sys.stdout, flush=True)
