@@ -285,13 +285,13 @@
 
 
     function resetButtonXClickCallback(){
-        httpPostAsync("{{ url_for('reset') }}", "{\"xPos\":1}");
+        httpPostAsync("{{ url_for('option') }}", "{\"resetPosX\":1}");
     }
     resetButtonX.addEventListener("click",resetButtonXClickCallback);
 
 
     function resetButtonYClickCallback(){
-        httpPostAsync("{{ url_for('reset') }}", "{\"yPos\":1}");
+        httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":1}");
     }
     resetButtonY.addEventListener("click",resetButtonYClickCallback);
 
@@ -336,12 +336,12 @@
         if (xSpeed != xLastSpeed){
             xLastSpeed = xSpeed;
             postString = "{\"xSpeed\":" + xSpeed + "}";
-            httpPostAsync("{{ url_for('move') }}", postString);
+            httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         if (ySpeed != yLastSpeed){
             yLastSpeed = ySpeed;
             postString = "{\"ySpeed\":" + -ySpeed + "}";
-            httpPostAsync("{{ url_for('move') }}", postString);
+            httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         
         if (document.fullscreenElement) {
@@ -359,7 +359,7 @@
 
             if(triggered){
                 alreadyTriggered = true;
-                httpPostAsync("{{ url_for('trigger') }}", "{\"trigger\":1}");
+                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":1}");
             }
         }
     };
@@ -368,7 +368,7 @@
 
     function refreshPosition(){
         if (document.fullscreenElement) {
-            httpGetAsync("{{ url_for('position') }}", "{\"position\":1}", positionCallback)
+            httpGetAsync("{{ url_for('feedback') }}", "{\"position\":1}", positionCallback)
         }
     };
     function positionCallback(response){        
@@ -384,7 +384,7 @@
         if (document.fullscreenElement){
             console.log("trigger");
             triggered = true;
-            httpPostAsync("{{ url_for('trigger') }}", "{\"trigger\":1}");
+            httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":1}");
         }
     }
     //output.addEventListener("click",outputClickCallback);
@@ -425,13 +425,13 @@
         	xLastSpeed = xSpeed;
             console.log("Speed X:"+ xSpeed)
             postString = "{\"xSpeed\":" + xSpeed + "}";
-            httpPostAsync("{{ url_for('move') }}", postString);
+            httpPostAsync("{{ url_for('controlle') }}", postString);
     	}
     	if (ySpeed != yLastSpeed){
         	yLastSpeed = ySpeed;
             console.log("Speed Y:"+ -ySpeed)
             postString = "{\"ySpeed\":" + -ySpeed + "}";
-            httpPostAsync("{{ url_for('move') }}", postString);
+            httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         
     	mouseIsMoving = false;

@@ -35,17 +35,8 @@ def video_feed():
     return Response(getFrame(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/trigger', methods=['POST'])
-def trigger():
-    # Trigger handling routine
-    turr.trigger()
-
-    return Response("trigger_response", status=200, mimetype='text/html')
-
-
-
-@app.route('/move', methods=['POST'])
-def move():
+@app.route('/controlle', methods=['POST'])
+def controlle():
     # Mouse movement handling routine
     data = json.loads(request.data)
 
@@ -61,32 +52,54 @@ def move():
     if 'ySpeed' in data:
         turr.setSpeedY(data['ySpeed'])
 
-    return Response("move_response", status=200, mimetype='text/html')
+    if 'trigger' in data:
+        turr.trigger()
+
+    return Response("controlle_response", status=200, mimetype='text/html')
 
 
-
-@app.route('/reset', methods=['POST'])
-def reset():
-    # Mouse movement handling routine
+@app.route('/option', methods=['POST'])
+def option():
     data = json.loads(request.data)
 
-    if 'xPos' in data:
+    if 'resetPosX' in data:
         turr.resetPostionX()
 
-    if 'yPos' in data:
+    if 'resetPosY' in data:
         turr.resetPostionY()
+
+    if 'minSpeedX' in data:
+        turr.setMinSpeedX(data['minSpeedX'])
+
+    if 'minSpeedY' in data:
+        turr.setMinSpeedY(data['minSpeedY'])
+
+    if 'maxSpeedX' in data:
+        turr.setMaxSpeedX(data['maxSpeedX'])
+
+    if 'maxSpeedY' in data:
+        turr.setMaxSpeedY(data['maxSpeedY'])
 
     return Response("reset_response", status=200, mimetype='text/html')
 
 
-@app.route('/position', methods=['GET'])
-def position():
-    #data = json.loads(request.data)
+@app.route('/feedback', methods=['GET'])
+def feedback():
+    data = json.loads(request.data)
 
-    xPos = turr.getPositionX()
-    yPos = turr.getPositionY()
+    if 'position' in data:
+        xPos = turr.getPositionX()
+        yPos = turr.getPositionY()
+        return '{\"xPos\":\"%s\", \"yPos\":\"%s\"}' % (xPos, yPos)
 
-    return '{\"xPos\":\"%s\", \"yPos\":\"%s\"}' % (xPos, yPos)
+    if 'target' in data:
+        isAtTargetX = turr.isAtTargetX()
+        isAtTargetY = turr.isAtTargetY()
+        return '{\"xTar\":\"%s\", \"yTar\":\"%s\"}' % (isAtTargetX, isAtTargetY)
+
+
+    return '{}'
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)
