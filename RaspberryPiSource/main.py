@@ -85,7 +85,7 @@ def option():
 
 @app.route('/feedback', methods=['GET'])
 def feedback():
-    print('Request Data: %s' % request.args.get('position'), file=sys.stdout, flush=True)
+    print('Request Data: %s' % request.args, file=sys.stdout, flush=True)
     #data = json.loads(request.args)
 
     if request.args.get('position'):
