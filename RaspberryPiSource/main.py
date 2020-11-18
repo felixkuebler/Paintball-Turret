@@ -68,27 +68,11 @@ def option():
     if 'resetPosY' in data:
         turr.resetPostionY()
 
-    if 'minSpeedX' in data:
-        turr.setMinSpeedX(data['minSpeedX'])
-
-    if 'minSpeedY' in data:
-        turr.setMinSpeedY(data['minSpeedY'])
-
-    if 'maxSpeedX' in data:
-        turr.setMaxSpeedX(data['maxSpeedX'])
-
-    if 'maxSpeedY' in data:
-        turr.setMaxSpeedY(data['maxSpeedY'])
-
     return Response("reset_response", status=200, mimetype='text/html')
 
 
 @app.route('/feedback', methods=['GET'])
 def feedback():
-    print('Request Data: %s' % request.args.getlist, file=sys.stdout, flush=True)
-    print('Request Data: %s' % request.args.get('position'), file=sys.stdout, flush=True)
-
-    #data = json.loads(request.args)
 
     if request.args.get('position'):
         xPos = turr.getPositionX()
