@@ -368,7 +368,7 @@
 
     function refreshPosition(){
         if (document.fullscreenElement) {
-            httpGetAsync("{{ url_for('feedback') }}", "positions=1", null, positionCallback)
+            httpGetAsync("{{ url_for('feedback') }}", "positions=1", positionCallback)
         }
     };
     function positionCallback(response){        
@@ -439,20 +439,20 @@
     //window.setInterval(outputMouseTimeoutCallback, 100); 
 */
 
-    function httpGetAsync(url, data, request, callback){
+    function httpGetAsync(url, data, callback){
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() { 
             if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
                 callback(xmlHttp.responseText);
         }
-        xmlHttp.open("GET", url + "?" + request, true); // true for asynchronous 
+        xmlHttp.open("GET", url + "?", true); // true for asynchronous 
         xmlHttp.send(data);
     }
 
 
     function httpPostAsync(url, data){
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", url + "?" + request, true);
+        xhr.open("POST", url, true);
         xhr.setRequestHeader('Content-Type', 'text/plain');
         xhr.send(data);
     }
