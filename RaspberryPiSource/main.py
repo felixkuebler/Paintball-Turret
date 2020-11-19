@@ -29,7 +29,7 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/style')
+@app.route('/style/<path:path>')
 def style(path):
     return send_from_directory('/style', path)
 
