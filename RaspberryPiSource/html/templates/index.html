@@ -1,702 +1,692 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <style>
+    <head>
+        <style>
 
-        html *
-        {
-            font: normal Arial !important;
-        }
+            html *
+            {
+                font: normal Arial !important;
+            }
 
-        body {
-            background: #d6d6d6;
-            text-align: center;
-        }
+            body {
+                background: #d6d6d6;
+                text-align: center;
+            }
 
-        input:focus{
-            outline: none;
-        }
-        input[type=range] {
-            -webkit-appearance: none;
-            --range: calc(var(--max) - var(--min));
-            --ratio: calc((var(--val) - var(--min))/var(--range));
-            --sx: calc(.5*1.5em + var(--ratio)*(100% - 1.5em));
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 1.5em;
-            background: transparent;
-            border: none;
-        }
+            input:focus{
+                outline: none;
+            }
+            input[type=range] {
+                -webkit-appearance: none;
+                --range: calc(var(--max) - var(--min));
+                --ratio: calc((var(--val) - var(--min))/var(--range));
+                --sx: calc(.5*1.5em + var(--ratio)*(100% - 1.5em));
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 1.5em;
+                background: transparent;
+                border: none;
+            }
 
-        input[type=range], input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-        }
-        input[type=range]::-webkit-slider-runnable-track {
-            box-sizing: border-box;
-            border: 1px inset;
-            width: 12.5em;
-            height: 0.4em;
-            background: #ccc;
-            box-shadow: 0px 0px 2px #000000;
-        }
+            input[type=range], input[type=range]::-webkit-slider-thumb {
+                -webkit-appearance: none;
+            }
+            input[type=range]::-webkit-slider-runnable-track {
+                box-sizing: border-box;
+                border: 1px inset;
+                width: 12.5em;
+                height: 0.4em;
+                background: #ccc;
+                box-shadow: 0px 0px 2px #000000;
+            }
 
-        input[type=range]::-webkit-slider-thumb {
-            margin-top: -1.4em;
-            box-sizing: border-box;
-            border: 1px outset;
-            width: 1.5em;
-            height: 3em;
-            border-radius: 0%;
-            background: url('../static/style/sliderKnob.png');
-            background-size:1.5em;
-            background-repeat: no-repeat;
-            background-position: 50%;
-            transform:rotate(var(--r,90deg));
-        }
+            input[type=range]::-webkit-slider-thumb {
+                margin-top: -1.4em;
+                box-sizing: border-box;
+                border: 1px outset;
+                width: 1.5em;
+                height: 3em;
+                border-radius: 0%;
+                background: url('{{ url_for('style') }}');
+                background-size:1.5em;
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform:rotate(var(--r,90deg));
+            }
 
-        input[type=range]::-moz-range-track {
-            box-sizing: border-box;
-            border: 1px inset;
-            height: 0.4em;
-            background: #ccc;
-            box-shadow: 0px 0px 2px #000000;
-        }
+            input[type=range]::-moz-range-track {
+                box-sizing: border-box;
+                border: 1px inset;
+                height: 0.4em;
+                background: #ccc;
+                box-shadow: 0px 0px 2px #000000;
+            }
 
-        input[type=range]::-moz-range-progress {
-            height: 0.4em;
-            background: #7b1c1a;
-        }
+            input[type=range]::-moz-range-progress {
+                height: 0.4em;
+                background: #7b1c1a;
+            }
 
-        input[type=range]::-moz-range-thumb {
-            margin-top: -1.4;
-            box-sizing: border-box;
-            border: 1px outset;
-            width: 1.5em;
-            height: 3em;
-            border-radius: 0%;
-            background: url('../static/style/sliderKnob.png');
-            background-size:1.5em;
-            background-repeat: no-repeat;
-            background-position: 50%;
-            transform:rotate(var(--r,90deg));
-        }
-
-
-        #tickmarks {
-            display: flex;
-            justify-content: space-between;
-            padding: 0 10px;
-        }
-
-        #tickmarks p {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            text-align: center;
-            width: 1px;
-            background: #7e7e7e;
-            height: 10px;
-            line-height: 40px;
-            margin: 0 0 20px 0;
-        }
+            input[type=range]::-moz-range-thumb {
+                margin-top: -1.4;
+                box-sizing: border-box;
+                border: 1px outset;
+                width: 1.5em;
+                height: 3em;
+                border-radius: 0%;
+                background: url('{{ url_for('style') }}');
+                background-size:1.5em;
+                background-repeat: no-repeat;
+                background-position: 50%;
+                transform:rotate(var(--r,90deg));
+            }
 
 
+            #tickmarks {
+                display: flex;
+                justify-content: space-between;
+                padding: 0 10px;
+            }
 
-        .button {
-            display: inline-block;
-            color: #902121;
-            text-decoration: none;
-            padding: 10px 20px;
-            margin-bottom: 10px;
-
-            background-image: -moz-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
-            background-image: -webkit-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
-
-            -webkit-border-radius: 5px;
-            -moz-border-radius: 5px;
-            border-radius: 5px;
-
-            -webkit-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-            -moz-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-            box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-            -webkit-transition: all .01s;
-            -moz-transition: all .01s;
-            transition: all .01s;
-            -webkit-transform: rotateX(20deg);
-        }
-
-        .button:active {
-            -webkit-box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-            -moz-box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-            box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-            
-            -webkit-transform: translate(0, 2px) rotateX(20deg);  
-            -moz-transform: translate(0, 2px);  
-            transform: translate(0, 2px);  
-        }
+            #tickmarks p {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                text-align: center;
+                width: 1px;
+                background: #7e7e7e;
+                height: 10px;
+                line-height: 40px;
+                margin: 0 0 20px 0;
+            }
 
 
-.container {
-    border: 1px inset;
-    padding: 10px;
-}
 
+            .button {
+                display: inline-block;
+                color: #902121;
+                text-decoration: none;
+                padding: 10px 20px;
+                margin-bottom: 10px;
 
-    </style>
-    <meta charset="utf-8" content="noindex,follow">
-    <title>Video Streaming</title>
-</head>
-<body>
-    <div style="text-align: center;">
-        <div style="float: left; width:50%">   
-            <h2>Image and Position Feedback</h2>
-            <div id="display" style="position: relative;">
-                <img id="img" src="{{ url_for('video_feed') }}" style="width:100%">
-                <canvas id="canvas" style="width:100%"></canvas>
-            </div>
-        </div>
-        <div style="float: left; width:50%;">
-            <h2>Controle</h2>
-            <div id="options" style="padding: 10px; border: 1px inset;">
-                <h3 style="text-align: left;">Activate</h3>
-                <hr>
-                <div id="armButton" class="button">Arm</div>
-                <div>Arm the device. WARNING! The Safety will be disengaged.</div>
-                <div>When armed, use the arrow keys to move and space bar to shoot.</div>
+                background-image: -moz-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
+                background-image: -webkit-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
 
-                <h3 style="text-align: left;">Calibrate</h3>
-                <hr>
-                <div id="resetButtonX" class="button">Reset X</div> 
-                <div id="resetButtonY" class="button">Reset Y</div> 
-                <div>Reset X or Y axis position to 0.</div>
-                <div>This is used for rehomeing the device.</div>
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
 
+                -webkit-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+                -moz-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+                box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+                -webkit-transition: all .01s;
+                -moz-transition: all .01s;
+                transition: all .01s;
+                -webkit-transform: rotateX(20deg);
+            }
 
-                <h3 style="text-align: left;">Move (Speed)</h3>
-                <hr>
-                X 
-                <input type="range" id="xSpeedInput" min="-100" max="100">
-                <div id="tickmarks">
-                    <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                    <p>0</p>
-                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
-                </div>
-                <br>
-                Y
-                <input type="range" id="ySpeedInput" min="-100" max="100">
-                <div id="tickmarks">
-                    <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                    <p>0</p>
-                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
-                </div>
-                <br>
-                <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
+            .button:active {
+                -webkit-box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+                -moz-box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+                box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
                 
-                <h3 style="text-align: left;">Move (Position)</h3>
-                <hr>
-                X
-                <input type="range" id="xPositionInput" min="-90" max="90">
-                <div id="tickmarks">
-                    <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                    <p>0</p>
-                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
+                -webkit-transform: translate(0, 2px) rotateX(20deg);  
+                -moz-transform: translate(0, 2px);  
+                transform: translate(0, 2px);  
+            }
+
+        </style>
+        <meta charset="utf-8" content="noindex,follow">
+        <title>Video Streaming</title>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <div style="float: left; width:50%">   
+                <h2>Image and Position Feedback</h2>
+                <div id="display" style="position: relative;">
+                    <img id="img" src="{{ url_for('video_feed') }}" style="width:100%">
+                    <canvas id="canvas" style="width:100%"></canvas>
                 </div>
-                <br>
-                Y
-                <input type="range" id="yPositionInput" min="-50" max="50">
-                <div id="tickmarks">
-                    <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                    <p>0</p>
-                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
+            </div>
+            <div style="float: left; width:50%;">
+                <h2>Controle</h2>
+                <div id="options" style="padding: 10px; border: 1px inset;">
+                    <h3 style="text-align: left;">Activate</h3>
+                    <hr>
+                    <div id="armButton" class="button">Arm</div>
+                    <div>Arm the device. WARNING! The Safety will be disengaged.</div>
+                    <div>When armed, use the arrow keys to move and space bar to shoot.</div>
+
+                    <h3 style="text-align: left;">Calibrate</h3>
+                    <hr>
+                    <div id="resetButtonX" class="button">Reset X</div> 
+                    <div id="resetButtonY" class="button">Reset Y</div> 
+                    <div>Reset X or Y axis position to 0.</div>
+                    <div>This is used for rehomeing the device.</div>
+
+
+                    <h3 style="text-align: left;">Move (Speed)</h3>
+                    <hr>
+                    X 
+                    <input type="range" id="xSpeedInput" min="-100" max="100">
+                    <div id="tickmarks">
+                        <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                        <p>0</p>
+                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                    </div>
+                    <br>
+                    Y
+                    <input type="range" id="ySpeedInput" min="-100" max="100">
+                    <div id="tickmarks">
+                        <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                        <p>0</p>
+                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                    </div>
+                    <br>
+                    <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
+                    
+                    <h3 style="text-align: left;">Move (Position)</h3>
+                    <hr>
+                    X
+                    <input type="range" id="xPositionInput" min="-90" max="90">
+                    <div id="tickmarks">
+                        <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                        <p>0</p>
+                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
+                    </div>
+                    <br>
+                    Y
+                    <input type="range" id="yPositionInput" min="-50" max="50">
+                    <div id="tickmarks">
+                        <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                        <p>0</p>
+                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
+                    </div>
+                    <br>
+                    <div>Manually set Position of X or Y axis.</div>
+                    <div>For X axis -90° to 90°. For Y axis -45° to 45°.</div>
                 </div>
-                <br>
-                <div>Manually set Position of X or Y axis.</div>
-                <div>For X axis -90° to 90°. For Y axis -45° to 45°.</div>
             </div>
         </div>
-    </div>
 
-<script >
+    <script >
 
-    const armButton = document.getElementById("armButton");
-    const resetButtonX = document.getElementById("resetButtonX");
-    const resetButtonY = document.getElementById("resetButtonY");
+        const armButton = document.getElementById("armButton");
+        const resetButtonX = document.getElementById("resetButtonX");
+        const resetButtonY = document.getElementById("resetButtonY");
 
-    const xSpeedInput = document.getElementById("xSpeedInput");
-    const ySpeedInput = document.getElementById("ySpeedInput");
+        const xSpeedInput = document.getElementById("xSpeedInput");
+        const ySpeedInput = document.getElementById("ySpeedInput");
 
-    const xPositionInput = document.getElementById("xPositionInput");
-    const yPositionInput = document.getElementById("yPositionInput");
+        const xPositionInput = document.getElementById("xPositionInput");
+        const yPositionInput = document.getElementById("yPositionInput");
 
-    const display = document.getElementById("display");
+        const display = document.getElementById("display");
 
-    // for style
-    const color = "#FF0000";
-    const fontName = "Arial";
-    const fontSize = 25;
-    const font = fontSize + "px " + fontName;
-    const lineWidth = 2;
+        // for style
+        const color = "#FF0000";
+        const fontName = "Arial";
+        const fontSize = 25;
+        const font = fontSize + "px " + fontName;
+        const lineWidth = 2;
 
-    const maxDegX = 180;
-    const maxmaxDegY = 90;
+        const maxDegX = 180;
+        const maxmaxDegY = 90;
 
-    const mouseSpeedFactorX = 20;
-    const mouseSpeedFactorY = 20;
+        const mouseSpeedFactorX = 20;
+        const mouseSpeedFactorY = 20;
 
-    const mouseSpeedOffsetX = 20;
-    const mouseSpeedOffsetY = 20;
+        const mouseSpeedOffsetX = 20;
+        const mouseSpeedOffsetY = 20;
 
-    var xPos = 0;
-    var yPos = 0;
+        var xPos = 0;
+        var yPos = 0;
 
-    // speed in percent
-    var xSpeed = 0;
-    var ySpeed = 0;
+        // speed in percent
+        var xSpeed = 0;
+        var ySpeed = 0;
 
-    var xLastSpeed = 0;
-    var yLastSpeed = 0;
+        var xLastSpeed = 0;
+        var yLastSpeed = 0;
 
 
-    // for trigger
-    var triggered = false;
-    var alreadyTriggered = false;
-    var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
+        // for trigger
+        var triggered = false;
+        var alreadyTriggered = false;
+        var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
 
-    function drawInfo(context, info){
+        function drawInfo(context, info){
 
-        var width = context.canvas.width;
-        var height = context.canvas.height;
-        
-        var infoPedding = 25;
-
-        context.font = font;
-        context.textAlign = "center";
-        context.fillText(info, width/2, height-infoPedding);
-        context.stroke();
-    }
-
-
-    function drawCrosshair(context){
-
-        var width = context.canvas.width;
-        var height = context.canvas.height;
-
-        var horizontalLineLength = width/7;
-        var verticalLineLength = height/7;
-
-        var horizontalCrosshairLinelength = horizontalLineLength/5*3;
-        var verticalCrosshairLineLength = verticalLineLength/5*3;
-
-        context.fillStyle = color;
-        context.globalAlpha = 1;
-
-        //outer frame horizontal lines
-        context.fillRect(width/5, height/5-lineWidth/2, horizontalLineLength, lineWidth);
-        context.fillRect(width-width/5-horizontalLineLength, height/5-lineWidth/2, horizontalLineLength, lineWidth);
-        context.fillRect(width/5, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
-        context.fillRect(width-width/5-horizontalLineLength, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
-
-        //outer frame vertical lines
-        context.fillRect(width/5-lineWidth/2, height/5, lineWidth, verticalLineLength);
-        context.fillRect(width/5-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
-        context.fillRect(width/5*4-lineWidth/2, height/5, lineWidth, verticalLineLength);
-        context.fillRect(width/5*4-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
-
-        //inner frame horizontal lines
-        context.fillRect(width/5*2, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
-        context.fillRect(width-width/5*2-horizontalCrosshairLinelength, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
-
-        //inner frame vertical lines
-        context.fillRect(width/2-lineWidth/2, height/5*2, lineWidth, verticalCrosshairLineLength);
-        context.fillRect(width/2-lineWidth/2, height-height/5*2-verticalCrosshairLineLength, lineWidth, verticalCrosshairLineLength);
-
-        context.stroke();
-    }
-
-
-
-    function drawPosition(context){
-
-        var width = context.canvas.width;
-        var height = context.canvas.height;
-
-        var dashPedding= 5;
-        var dashLength = 25;
-        var numberPedding = 25;
-
-        var widthDeg = width/maxDegX;
-
-        context.fillStyle = color;
-        context.globalAlpha = 1;
-
-        for(i=0; i<=maxDegX; i+=5){
-
-            var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
-
-           // var alphaValue = 1;
-            var alphaValue = Math.abs(positionShift-(width/2));
-
-            if (alphaValue<1) alphaValue = 1;
-            alphaValue = (40/alphaValue);
-            if (alphaValue>1) alphaValue = 1;
-
-            if (alphaValue<0.2) alphaValue = 0;
-
-            context.globalAlpha = alphaValue;
-
-            if ((i-maxDegX/2)%10 == 0){
-                context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength);
-
-                context.font = font;
-                context.textAlign = "center";
-                context.fillText(i-maxDegX/2, positionShift, dashPedding+dashLength+numberPedding); 
-            } else {
-                context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength/3*2);
-            }
-        }
-
-        context.globalAlpha = 1;
-
-        var path=new Path2D();
-        path.moveTo((width/2)+widthDeg,dashPedding+dashLength+numberPedding+numberPedding);
-        path.lineTo((width/2),dashPedding+dashLength+numberPedding+numberPedding/3);
-        path.lineTo((width/2)-widthDeg,dashPedding+dashLength+numberPedding+numberPedding);
-        context.fill(path);
-
-
-        for(i=0; i<=maxmaxDegY; i+=5){
-
-            var positionShift = height/2+((i-(yPos+maxmaxDegY/2))*widthDeg);
-
-            var alphaValue = Math.abs(positionShift-(height/2));
-            if (alphaValue<1) alphaValue = 1;
-            alphaValue = (40/alphaValue);
-            if (alphaValue>1) alphaValue = 1;
-
-            if (alphaValue<0.2) alphaValue = 0;
-
-            context.globalAlpha = alphaValue;
-
-            if ((i-maxmaxDegY/2)%10 == 0){
-                context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
-
-                context.font = font;
-                context.textAlign = "center";
-                context.fillText(maxmaxDegY/2-i, width-dashPedding-dashLength-numberPedding, positionShift+fontSize/3); 
-            } else {
-                context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
-            }
-        }
-
-        context.globalAlpha = 1;
-
-        var path=new Path2D();
-        path.moveTo(width-dashPedding-dashLength-numberPedding*3, (height/2)+widthDeg);
-        path.lineTo(width-dashPedding-dashLength-numberPedding*2-numberPedding/3, (height/2));
-        path.lineTo(width-dashPedding-dashLength-numberPedding*3, (height/2)-widthDeg);
-        context.fill(path);
-
-        context.stroke();
-    }
-
-    function drawTriggerToggle(context){
-        var width = context.canvas.width;
-        var height = context.canvas.height;
-
-        context.strokeStyle = color;
-
-        context.moveTo(width/2-15, height/2-10);
-        context.lineTo(width/2-35, height/2-20);
-
-        context.moveTo(width/2+15, height/2-10);
-        context.lineTo(width/2+35, height/2-20);
-
-        context.moveTo(width/2-15, height/2+10);
-        context.lineTo(width/2-35, height/2+20);
-
-        context.moveTo(width/2+15, height/2+10);
-        context.lineTo(width/2+35, height/2+20);
-
-        context.stroke();
-    }
-
-    function refreshCanvas(){
-        var canvas = document.getElementById("canvas");
-        var ctx = canvas.getContext('2d');
-
-        var img = document.getElementById("img");
-
-        ctx.globalAlpha = 1;
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-        if (document.fullscreenElement){
-
-            if(document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
-                canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-                canvas.requestPointerLock();
-            }
-
-            canvas.style.display="block";
-            canvas.style.position = "absolute";
-            canvas.style.left = 0;
-            canvas.style.top = 0;
-            canvas.width = window.screen.width;
-            canvas.height = window.screen.height;
-
-            var scale = window.screen.width / img.width;
-            img.style.position = "absolute";
-            img.width = window.screen.width;
-            img.height = img.height * scale;
-            img.style.top = (window.screen.height-img.height)/2 + "px";
-
-            drawPosition(ctx);
-            drawCrosshair(ctx);
-
-            if (triggered) {
-                drawTriggerToggle(ctx);
-                //triggered = false;
-            }
+            var width = context.canvas.width;
+            var height = context.canvas.height;
             
-        } else {
+            var infoPedding = 25;
 
-            if(document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
-                document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
-                document.exitPointerLock();
+            context.font = font;
+            context.textAlign = "center";
+            context.fillText(info, width/2, height-infoPedding);
+            context.stroke();
+        }
+
+
+        function drawCrosshair(context){
+
+            var width = context.canvas.width;
+            var height = context.canvas.height;
+
+            var horizontalLineLength = width/7;
+            var verticalLineLength = height/7;
+
+            var horizontalCrosshairLinelength = horizontalLineLength/5*3;
+            var verticalCrosshairLineLength = verticalLineLength/5*3;
+
+            context.fillStyle = color;
+            context.globalAlpha = 1;
+
+            //outer frame horizontal lines
+            context.fillRect(width/5, height/5-lineWidth/2, horizontalLineLength, lineWidth);
+            context.fillRect(width-width/5-horizontalLineLength, height/5-lineWidth/2, horizontalLineLength, lineWidth);
+            context.fillRect(width/5, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
+            context.fillRect(width-width/5-horizontalLineLength, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
+
+            //outer frame vertical lines
+            context.fillRect(width/5-lineWidth/2, height/5, lineWidth, verticalLineLength);
+            context.fillRect(width/5-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
+            context.fillRect(width/5*4-lineWidth/2, height/5, lineWidth, verticalLineLength);
+            context.fillRect(width/5*4-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
+
+            //inner frame horizontal lines
+            context.fillRect(width/5*2, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
+            context.fillRect(width-width/5*2-horizontalCrosshairLinelength, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
+
+            //inner frame vertical lines
+            context.fillRect(width/2-lineWidth/2, height/5*2, lineWidth, verticalCrosshairLineLength);
+            context.fillRect(width/2-lineWidth/2, height-height/5*2-verticalCrosshairLineLength, lineWidth, verticalCrosshairLineLength);
+
+            context.stroke();
+        }
+
+
+        function drawPosition(context){
+
+            var width = context.canvas.width;
+            var height = context.canvas.height;
+
+            var dashPedding= 5;
+            var dashLength = 25;
+            var numberPedding = 25;
+
+            var widthDeg = width/maxDegX;
+
+            context.fillStyle = color;
+            context.globalAlpha = 1;
+
+            for(i=0; i<=maxDegX; i+=5){
+
+                var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
+                var alphaValue = Math.abs(positionShift-(width/2));
+
+                if (alphaValue<1) alphaValue = 1;
+                alphaValue = (40/alphaValue);
+                if (alphaValue>1) alphaValue = 1;
+
+                if (alphaValue<0.2) alphaValue = 0;
+
+                context.globalAlpha = alphaValue;
+
+                if ((i-maxDegX/2)%10 == 0){
+                    context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength);
+
+                    context.font = font;
+                    context.textAlign = "center";
+                    context.fillText(i-maxDegX/2, positionShift, dashPedding+dashLength+numberPedding); 
+                } else {
+                    context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength/3*2);
+                }
             }
 
-            display.style.position = "relative";
+            context.globalAlpha = 1;
 
-            canvas.style.display="block";
-            canvas.style.position = "absolute";
-            canvas.style.left = 0;
-            canvas.style.top = 0;
-            canvas.width = "640";
-            canvas.height = "480";
+            var path=new Path2D();
+            path.moveTo((width/2)+widthDeg,dashPedding+dashLength+numberPedding+numberPedding);
+            path.lineTo((width/2),dashPedding+dashLength+numberPedding+numberPedding/3);
+            path.lineTo((width/2)-widthDeg,dashPedding+dashLength+numberPedding+numberPedding);
+            context.fill(path);
 
-            img.style.display="block";
-            img.style.position = "absolute";
-            img.style.left = 0;
-            img.style.top = 0;
-            img.width = "640";
-            img.height = "480";
 
-            drawPosition(ctx);
-            drawInfo(ctx, "LOCKED/SAFE");
+            for(i=0; i<=maxmaxDegY; i+=5){
+
+                var positionShift = height/2+((i-(yPos+maxmaxDegY/2))*widthDeg);
+
+                var alphaValue = Math.abs(positionShift-(height/2));
+                if (alphaValue<1) alphaValue = 1;
+                alphaValue = (40/alphaValue);
+                if (alphaValue>1) alphaValue = 1;
+
+                if (alphaValue<0.2) alphaValue = 0;
+
+                context.globalAlpha = alphaValue;
+
+                if ((i-maxmaxDegY/2)%10 == 0){
+                    context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
+
+                    context.font = font;
+                    context.textAlign = "center";
+                    context.fillText(maxmaxDegY/2-i, width-dashPedding-dashLength-numberPedding, positionShift+fontSize/3); 
+                } else {
+                    context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
+                }
+            }
+
+            context.globalAlpha = 1;
+
+            var path=new Path2D();
+            path.moveTo(width-dashPedding-dashLength-numberPedding*3, (height/2)+widthDeg);
+            path.lineTo(width-dashPedding-dashLength-numberPedding*2-numberPedding/3, (height/2));
+            path.lineTo(width-dashPedding-dashLength-numberPedding*3, (height/2)-widthDeg);
+            context.fill(path);
+
+            context.stroke();
         }
 
-    };
-    window.setInterval("refreshCanvas()", 50); 
+        function drawTriggerToggle(context){
+            var width = context.canvas.width;
+            var height = context.canvas.height;
 
+            context.strokeStyle = color;
 
-    function armButtonClickCallback(){
-        if(display.webkitRequestFullScreen) {
-            display.webkitRequestFullScreen();
-        } else {
-            display.mozRequestFullScreen();
-        }
-    }
-    armButton.addEventListener("click",armButtonClickCallback);
+            context.moveTo(width/2-15, height/2-10);
+            context.lineTo(width/2-35, height/2-20);
 
+            context.moveTo(width/2+15, height/2-10);
+            context.lineTo(width/2+35, height/2-20);
 
-    function resetButtonXClickCallback(){
-        httpPostAsync("{{ url_for('option') }}", "{\"resetPosX\":\"1\"}");
-    }
-    resetButtonX.addEventListener("click",resetButtonXClickCallback);
+            context.moveTo(width/2-15, height/2+10);
+            context.lineTo(width/2-35, height/2+20);
 
+            context.moveTo(width/2+15, height/2+10);
+            context.lineTo(width/2+35, height/2+20);
 
-    function resetButtonYClickCallback(){
-        httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":\"1\"}");
-    }
-    resetButtonY.addEventListener("click",resetButtonYClickCallback);
-
-
-    function xSpeedInputChangeCallback(event){
-        var postString = "{\"xSpeed\":" + event.target.value + "}";
-        httpPostAsync("{{ url_for('controlle') }}", postString);
-    }
-    xSpeedInput.addEventListener("change",xSpeedInputChangeCallback);
-
-
-    function ySpeedInputChangeCallback(event){
-        var postString = "{\"ySpeed\":" + event.target.value + "}";
-        httpPostAsync("{{ url_for('controlle') }}", postString);
-    }
-    ySpeedInput.addEventListener("change",ySpeedInputChangeCallback);
-
-
-    function xPositionInputChangeCallback(event){
-        var postString = "{\"xPos\":" + event.target.value + "}";
-        httpPostAsync("{{ url_for('controlle') }}", postString);
-    }
-    xPositionInput.addEventListener("change",xPositionInputChangeCallback);
-
-
-    function yPositionInputChangeCallback(event){
-        var postString = "{\"yPos\":" + event.target.value + "}";
-        httpPostAsync("{{ url_for('controlle') }}", postString);
-    }
-    yPositionInput.addEventListener("change",yPositionInputChangeCallback);
-
-
-    function keyboardPressCallback(event){
-        if (event.keyCode in keyMap) {
-            keyMap[event.keyCode] = true;
-        }
-    }
-    window.addEventListener('keydown',keyboardPressCallback);
-
-
-    function keyboardReleaseCallback(event){
-        if (event.keyCode in keyMap) {
-            keyMap[event.keyCode] = false;
-        }
-    }
-    window.addEventListener('keyup',keyboardReleaseCallback);
-
-
-    function keyTimeoutCallback(){
-        xSpeed = 0;
-        ySpeed = 0;
-
-        // left, not right arrow
-        if (keyMap[37] && !keyMap[39]){
-            xSpeed = -40;
-        }
-        // right, not right arrow
-        if (keyMap[39] && !keyMap[37]){
-            xSpeed = 40;
-        }
-        // up, not down arrow
-        if (keyMap[38] && !keyMap[40]){
-            ySpeed = -45  ;
-        }
-        // down, not up arrow
-        if (keyMap[40] && !keyMap[38]){            
-            ySpeed = 45;
+            context.stroke();
         }
 
-        if (xSpeed != xLastSpeed){
-            xLastSpeed = xSpeed;
-            var postString = "{\"xSpeed\":" + xSpeed + "}";
+        function refreshCanvas(){
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext('2d');
+
+            var img = document.getElementById("img");
+
+            ctx.globalAlpha = 1;
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+            if (document.fullscreenElement){
+
+                if(document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
+                    canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
+                    canvas.requestPointerLock();
+                }
+
+                canvas.style.display="block";
+                canvas.style.position = "absolute";
+                canvas.style.left = 0;
+                canvas.style.top = 0;
+                canvas.width = window.screen.width;
+                canvas.height = window.screen.height;
+
+                var scale = window.screen.width / img.width;
+                img.style.position = "absolute";
+                img.width = window.screen.width;
+                img.height = img.width / 4 * 3;
+                img.style.top = (window.screen.height-img.height)/2 + "px";
+
+                drawPosition(ctx);
+                drawCrosshair(ctx);
+
+                if (triggered) {
+                    drawTriggerToggle(ctx);
+                    //triggered = false;
+                }
+                
+            } else {
+
+                if(document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
+                    document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+                    document.exitPointerLock();
+                }
+
+                display.style.position = "relative";
+
+                canvas.style.display="block";
+                canvas.style.position = "absolute";
+                canvas.style.left = 0;
+                canvas.style.top = 0;
+                canvas.width = "640";
+                canvas.height = "480";
+
+                img.style.display="block";
+                img.style.position = "absolute";
+                img.style.left = 0;
+                img.style.top = 0;
+                img.width = "640";
+                img.height = img.width / 4 * 3;
+
+                drawPosition(ctx);
+                drawInfo(ctx, "LOCKED/SAFE");
+            }
+
+        };
+        window.setInterval("refreshCanvas()", 50); 
+
+
+        function armButtonClickCallback(){
+            if(display.webkitRequestFullScreen) {
+                display.webkitRequestFullScreen();
+            } else {
+                display.mozRequestFullScreen();
+            }
+        }
+        armButton.addEventListener("click",armButtonClickCallback);
+
+
+        function resetButtonXClickCallback(){
+            httpPostAsync("{{ url_for('option') }}", "{\"resetPosX\":\"1\"}");
+        }
+        resetButtonX.addEventListener("click",resetButtonXClickCallback);
+
+
+        function resetButtonYClickCallback(){
+            httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":\"1\"}");
+        }
+        resetButtonY.addEventListener("click",resetButtonYClickCallback);
+
+
+        function xSpeedInputChangeCallback(event){
+            var postString = "{\"xSpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        if (ySpeed != yLastSpeed){
-            yLastSpeed = ySpeed;
-            var postString = "{\"ySpeed\":" + -ySpeed + "}";
+        xSpeedInput.addEventListener("change",xSpeedInputChangeCallback);
+
+
+        function ySpeedInputChangeCallback(event){
+            var postString = "{\"ySpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        
-        if (document.fullscreenElement) {
+        ySpeedInput.addEventListener("change",ySpeedInputChangeCallback);
 
-            if(keyMap[32] & !alreadyTriggered){
-                triggered = true;
-            }
-            else if(!keyMap[32]){
-                triggered = false;
-                alreadyTriggered = false;
-            }
-            else{
-                triggered = false;
-            }
 
-            if(triggered){
-                alreadyTriggered = true;
-                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
+        function xPositionInputChangeCallback(event){
+            var postString = "{\"xPos\":" + event.target.value + "}";
+            httpPostAsync("{{ url_for('controlle') }}", postString);
+        }
+        xPositionInput.addEventListener("change",xPositionInputChangeCallback);
+
+
+        function yPositionInputChangeCallback(event){
+            var postString = "{\"yPos\":" + event.target.value + "}";
+            httpPostAsync("{{ url_for('controlle') }}", postString);
+        }
+        yPositionInput.addEventListener("change",yPositionInputChangeCallback);
+
+
+        function keyboardPressCallback(event){
+            if (event.keyCode in keyMap) {
+                keyMap[event.keyCode] = true;
             }
         }
-    };
-    window.setInterval(keyTimeoutCallback, 50); 
+        window.addEventListener('keydown',keyboardPressCallback);
 
 
-    function refreshPosition(){
-        httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
-    };
-    function positionCallback(response){        
-        var responseObj = JSON.parse(response);
-        xPos = parseFloat(responseObj.xPos);
-        yPos = -1*parseFloat(responseObj.yPos);
-    };
-    //window.setInterval("refreshPosition()", 200); 
-
-
-/*
-    function outputClickCallback(){  
-        if (document.fullscreenElement){
-            console.log("trigger");
-            triggered = true;
-            httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":1}");
+        function keyboardReleaseCallback(event){
+            if (event.keyCode in keyMap) {
+                keyMap[event.keyCode] = false;
+            }
         }
-    }
-    //output.addEventListener("click",outputClickCallback);
+        window.addEventListener('keyup',keyboardReleaseCallback);
 
 
-    function outputMouseMoveCallback(event){
-        if (document.fullscreenElement) {
-
-    		mouseIsMoving = true;
-
-            xSpeedInput = (event.movementX*mouseSpeedFactorX) + mouseSpeedOffsetX;
-            if (xSpeed > 100) xSpeed = 100;
-            else if (xSpeed < -100) xSpeed = -100;
-
-            ySpeedInput = (event.movementY*mouseSpeedFactorY) + mouseSpeedOffsetY;
-            if (ySpeed > 100) ySpeed = 100;
-            else if (ySpeed < -100) ySpeed = -100;
-
-            xAlpha = 0.1;
-            xSpeed = xAlpha*xSpeedInput + (1-xAlpha)*xLastSpeed;
-
-            yAlpha = 0.1;
-            ySpeed = yAlpha*ySpeedInput + (1-yAlpha)*yLastSpeed;
-        }
-    }
-    //output.addEventListener('mousemove',outputMouseMoveCallback);
-
-
-    function outputMouseTimeoutCallback(){
-
-    	if (!mouseIsMoving){
-
+        function keyTimeoutCallback(){
             xSpeed = 0;
             ySpeed = 0;
+
+            // left, not right arrow
+            if (keyMap[37] && !keyMap[39]){
+                xSpeed = -40;
+            }
+            // right, not right arrow
+            if (keyMap[39] && !keyMap[37]){
+                xSpeed = 40;
+            }
+            // up, not down arrow
+            if (keyMap[38] && !keyMap[40]){
+                ySpeed = -45  ;
+            }
+            // down, not up arrow
+            if (keyMap[40] && !keyMap[38]){            
+                ySpeed = 45;
+            }
+
+            if (xSpeed != xLastSpeed){
+                xLastSpeed = xSpeed;
+                var postString = "{\"xSpeed\":" + xSpeed + "}";
+                httpPostAsync("{{ url_for('controlle') }}", postString);
+            }
+            if (ySpeed != yLastSpeed){
+                yLastSpeed = ySpeed;
+                var postString = "{\"ySpeed\":" + -ySpeed + "}";
+                httpPostAsync("{{ url_for('controlle') }}", postString);
+            }
+            
+            if (document.fullscreenElement) {
+
+                if(keyMap[32] & !alreadyTriggered){
+                    triggered = true;
+                }
+                else if(!keyMap[32]){
+                    triggered = false;
+                    alreadyTriggered = false;
+                }
+                else{
+                    triggered = false;
+                }
+
+                if(triggered){
+                    alreadyTriggered = true;
+                    httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
+                }
+            }
+        };
+        window.setInterval(keyTimeoutCallback, 50); 
+
+
+        function refreshPosition(){
+            httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
+        };
+        function positionCallback(response){        
+            var responseObj = JSON.parse(response);
+            xPos = parseFloat(responseObj.xPos);
+            yPos = -1*parseFloat(responseObj.yPos);
+        };
+        //window.setInterval("refreshPosition()", 200); 
+
+
+    /*
+        function outputClickCallback(){  
+            if (document.fullscreenElement){
+                console.log("trigger");
+                triggered = true;
+                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":1}");
+            }
+        }
+        //output.addEventListener("click",outputClickCallback);
+
+
+        function outputMouseMoveCallback(event){
+            if (document.fullscreenElement) {
+
+        		mouseIsMoving = true;
+
+                xSpeedInput = (event.movementX*mouseSpeedFactorX) + mouseSpeedOffsetX;
+                if (xSpeed > 100) xSpeed = 100;
+                else if (xSpeed < -100) xSpeed = -100;
+
+                ySpeedInput = (event.movementY*mouseSpeedFactorY) + mouseSpeedOffsetY;
+                if (ySpeed > 100) ySpeed = 100;
+                else if (ySpeed < -100) ySpeed = -100;
+
+                xAlpha = 0.1;
+                xSpeed = xAlpha*xSpeedInput + (1-xAlpha)*xLastSpeed;
+
+                yAlpha = 0.1;
+                ySpeed = yAlpha*ySpeedInput + (1-yAlpha)*yLastSpeed;
+            }
+        }
+        //output.addEventListener('mousemove',outputMouseMoveCallback);
+
+
+        function outputMouseTimeoutCallback(){
+
+        	if (!mouseIsMoving){
+
+                xSpeed = 0;
+                ySpeed = 0;
+            }
+
+            if (xSpeed != xLastSpeed){
+            	xLastSpeed = xSpeed;
+                console.log("Speed X:"+ xSpeed)
+                postString = "{\"xSpeed\":" + xSpeed + "}";
+                httpPostAsync("{{ url_for('controlle') }}", postString);
+        	}
+        	if (ySpeed != yLastSpeed){
+            	yLastSpeed = ySpeed;
+                console.log("Speed Y:"+ -ySpeed)
+                postString = "{\"ySpeed\":" + -ySpeed + "}";
+                httpPostAsync("{{ url_for('controlle') }}", postString);
+            }
+            
+        	mouseIsMoving = false;
+        };
+        //window.setInterval(outputMouseTimeoutCallback, 100); 
+    */
+
+        function httpGetAsync(url, request, data, callback){
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() { 
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                    callback(xmlHttp.responseText);
+            }
+            xmlHttp.open("GET", url + "?" + request, true); // true for asynchronous 
+            xmlHttp.send(data);
         }
 
-        if (xSpeed != xLastSpeed){
-        	xLastSpeed = xSpeed;
-            console.log("Speed X:"+ xSpeed)
-            postString = "{\"xSpeed\":" + xSpeed + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-    	}
-    	if (ySpeed != yLastSpeed){
-        	yLastSpeed = ySpeed;
-            console.log("Speed Y:"+ -ySpeed)
-            postString = "{\"ySpeed\":" + -ySpeed + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
+
+        function httpPostAsync(url, data){
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader('Content-Type', 'text/plain');
+            xhr.send(data);
         }
-        
-    	mouseIsMoving = false;
-    };
-    //window.setInterval(outputMouseTimeoutCallback, 100); 
-*/
-
-    function httpGetAsync(url, request, data, callback){
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.onreadystatechange = function() { 
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-                callback(xmlHttp.responseText);
-        }
-        xmlHttp.open("GET", url + "?" + request, true); // true for asynchronous 
-        xmlHttp.send(data);
-    }
-
-
-    function httpPostAsync(url, data){
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", url, true);
-        xhr.setRequestHeader('Content-Type', 'text/plain');
-        xhr.send(data);
-    }
-</script>
-</body>
+    </script>
+    </body>
 </html>

@@ -11,7 +11,7 @@ from cameraDevice import Camera
 from turret import Turret
 
 
-app = Flask(__name__, template_folder = 'html/templates')
+app = Flask(__name__, template_folder = 'html/templates', static_url_path='html/static')
 turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
 
 
@@ -27,6 +27,11 @@ def getFrame(camera):
 def index():
     # Video streaming home page.
     return render_template('index.html')
+
+
+@app.route('/style')
+def style(path):
+    return send_from_directory('style', path)
 
 
 @app.route('/video_feed')
