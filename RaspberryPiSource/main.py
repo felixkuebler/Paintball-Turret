@@ -31,7 +31,7 @@ def index():
 
 @app.route('/style/<path:path>')
 def style(path):
-    return send_from_directory('/style', path)
+    return send_from_directory('style', path)
 
 
 @app.route('/video_feed')
