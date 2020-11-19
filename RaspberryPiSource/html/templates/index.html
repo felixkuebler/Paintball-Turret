@@ -3,64 +3,214 @@
 <head>
     <style>
 
+        html *
+        {
+            font: normal Arial !important;
+        }
 
+        body {
+            background: #d6d6d6;
+            text-align: center;
+        }
+
+        input:focus{
+            outline: none;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            --range: calc(var(--max) - var(--min));
+            --ratio: calc((var(--val) - var(--min))/var(--range));
+            --sx: calc(.5*1.5em + var(--ratio)*(100% - 1.5em));
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 1.5em;
+            background: transparent;
+            border: none;
+        }
+
+        input[type=range], input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+        }
         input[type=range]::-webkit-slider-runnable-track {
-            width: 300px;
-            height: 5px;
-            background: #ddd;
-            border-radius: 3px;
+            box-sizing: border-box;
+            border: 1px inset;
+            width: 12.5em;
+            height: 0.4em;
+            background: #ccc;
+            box-shadow: 0px 0px 2px #000000;
         }
 
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            border: none;
-            margin-top: -5px;
+            margin-top: -1.4em;
+            box-sizing: border-box;
+            border: 1px outset;
+            width: 1.5em;
+            height: 3em;
+            border-radius: 0%;
+            background: url('../static/style/sliderKnob.png');
+            background-size:1.5em;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform:rotate(var(--r,90deg));
         }
 
+        input[type=range]::-moz-range-track {
+            box-sizing: border-box;
+            border: 1px inset;
+            height: 0.4em;
+            background: #ccc;
+            box-shadow: 0px 0px 2px #000000;
+        }
+
+        input[type=range]::-moz-range-progress {
+            height: 0.4em;
+            background: #7b1c1a;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            margin-top: -1.4;
+            box-sizing: border-box;
+            border: 1px outset;
+            width: 1.5em;
+            height: 3em;
+            border-radius: 0%;
+            background: url('../static/style/sliderKnob.png');
+            background-size:1.5em;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform:rotate(var(--r,90deg));
+        }
+
+
+        #tickmarks {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        #tickmarks p {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            width: 1px;
+            background: #7e7e7e;
+            height: 10px;
+            line-height: 40px;
+            margin: 0 0 20px 0;
+        }
+
+
+
+        .button {
+            display: inline-block;
+            color: #902121;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+
+            background-image: -moz-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
+            background-image: -webkit-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
+
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+
+            -webkit-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+            -moz-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+            box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+            -webkit-transition: all .01s;
+            -moz-transition: all .01s;
+            transition: all .01s;
+            -webkit-transform: rotateX(20deg);
+        }
+
+        .button:active {
+            -webkit-box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+            -moz-box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+            box-shadow: 0px 0px 0px #7e7e7e, 0px 0px 2px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+            
+            -webkit-transform: translate(0, 2px) rotateX(20deg);  
+            -moz-transform: translate(0, 2px);  
+            transform: translate(0, 2px);  
+        }
+
+
+.container {
+    border: 1px inset;
+    padding: 10px;
+}
+
+
     </style>
-    <meta charset="utf-8">
+    <meta charset="utf-8" content="noindex,follow">
     <title>Video Streaming</title>
 </head>
 <body>
-    <div style="display: flex; text-align: center;">
-        <div style="flex-grow: 1">   
+    <div style="text-align: center;">
+        <div style="float: left; width:50%">   
             <h2>Image and Position Feedback</h2>
             <div id="display" style="position: relative;">
-                <img id="img" src="{{ url_for('video_feed') }}">
-                <canvas id="canvas"></canvas>
+                <img id="img" src="{{ url_for('video_feed') }}" style="width:100%">
+                <canvas id="canvas" style="width:100%"></canvas>
             </div>
         </div>
-        <div style="flex-grow: 1">
+        <div style="float: left; width:50%;">
             <h2>Controle</h2>
-            <div id="options">
+            <div id="options" style="padding: 10px; border: 1px inset;">
                 <h3 style="text-align: left;">Activate</h3>
                 <hr>
-                <button id="armButton" class="button">Arm</button>
+                <div id="armButton" class="button">Arm</div>
                 <div>Arm the device. WARNING! The Safety will be disengaged.</div>
                 <div>When armed, use the arrow keys to move and space bar to shoot.</div>
 
                 <h3 style="text-align: left;">Calibrate</h3>
                 <hr>
-                <button id="resetButtonX" class="button">Reset X</button> 
-                <button id="resetButtonY" class="button">Reset Y</button> 
+                <div id="resetButtonX" class="button">Reset X</div> 
+                <div id="resetButtonY" class="button">Reset Y</div> 
                 <div>Reset X or Y axis position to 0.</div>
                 <div>This is used for rehomeing the device.</div>
 
 
                 <h3 style="text-align: left;">Move (Speed)</h3>
                 <hr>
-                <div id="xSpeedPreview">X=0%</div>
+                X 
                 <input type="range" id="xSpeedInput" min="-100" max="100">
-                <div id="ySpeedPreview">Y=0%</div>
+                <div id="tickmarks">
+                    <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                    <p>0</p>
+                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                </div>
+                <br>
+                Y
                 <input type="range" id="ySpeedInput" min="-100" max="100">
+                <div id="tickmarks">
+                    <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                    <p>0</p>
+                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                </div>
+                <br>
                 <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
                 
                 <h3 style="text-align: left;">Move (Position)</h3>
                 <hr>
-                <div id="xPositionPreview">X=0°</div>
+                X
                 <input type="range" id="xPositionInput" min="-90" max="90">
-                <div id="yPositionPreview">Y=0°</div>
-                <input type="range" id="yPositionInput" min="-45" max="45">
+                <div id="tickmarks">
+                    <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                    <p>0</p>
+                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
+                </div>
+                <br>
+                Y
+                <input type="range" id="yPositionInput" min="-50" max="50">
+                <div id="tickmarks">
+                    <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                    <p>0</p>
+                    <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
+                </div>
+                <br>
                 <div>Manually set Position of X or Y axis.</div>
                 <div>For X axis -90° to 90°. For Y axis -45° to 45°.</div>
             </div>
@@ -73,14 +223,10 @@
     const resetButtonX = document.getElementById("resetButtonX");
     const resetButtonY = document.getElementById("resetButtonY");
 
-    const xSpeedPreview = document.getElementById("xSpeedPreview");
     const xSpeedInput = document.getElementById("xSpeedInput");
-    const ySpeedPreview = document.getElementById("ySpeedPreview");
     const ySpeedInput = document.getElementById("ySpeedInput");
 
-    const xPositionPreview = document.getElementById("xPositionPreview");
     const xPositionInput = document.getElementById("xPositionInput");
-    const yPositionPreview = document.getElementById("yPositionPreview");
     const yPositionInput = document.getElementById("yPositionInput");
 
     const display = document.getElementById("display");
@@ -302,7 +448,6 @@
             img.style.position = "absolute";
             img.width = window.screen.width;
             img.height = img.height * scale;
-
             img.style.top = (window.screen.height-img.height)/2 + "px";
 
             drawPosition(ctx);
@@ -330,9 +475,8 @@
             canvas.height = "480";
 
             img.style.display="block";
-
             img.style.position = "absolute";
-                        img.style.left = 0;
+            img.style.left = 0;
             img.style.top = 0;
             img.width = "640";
             img.height = "480";
@@ -368,36 +512,28 @@
 
 
     function xSpeedInputChangeCallback(event){
-        var speed = event.target.value
-        xSpeedPreview.innerHTML = "X=" + speed + "%";
-        var postString = "{\"xSpeed\":" + speed + "}";
+        var postString = "{\"xSpeed\":" + event.target.value + "}";
         httpPostAsync("{{ url_for('controlle') }}", postString);
     }
     xSpeedInput.addEventListener("change",xSpeedInputChangeCallback);
 
 
     function ySpeedInputChangeCallback(event){
-        var speed = event.target.value
-        ySpeedPreview.innerHTML = "Y=" + speed + "%";
-        var postString = "{\"ySpeed\":" + speed + "}";
+        var postString = "{\"ySpeed\":" + event.target.value + "}";
         httpPostAsync("{{ url_for('controlle') }}", postString);
     }
     ySpeedInput.addEventListener("change",ySpeedInputChangeCallback);
 
 
     function xPositionInputChangeCallback(event){
-        var pos = event.target.value
-        xPositionPreview.innerHTML = "X=" + pos + "°";
-        var postString = "{\"xPos\":" + pos + "}";
+        var postString = "{\"xPos\":" + event.target.value + "}";
         httpPostAsync("{{ url_for('controlle') }}", postString);
     }
     xPositionInput.addEventListener("change",xPositionInputChangeCallback);
 
 
     function yPositionInputChangeCallback(event){
-        var pos = event.target.value
-        yPositionPreview.innerHTML = "Y=" + pos + "°";
-        var postString = "{\"yPos\":" + pos + "}";
+        var postString = "{\"yPos\":" + event.target.value + "}";
         httpPostAsync("{{ url_for('controlle') }}", postString);
     }
     yPositionInput.addEventListener("change",yPositionInputChangeCallback);
@@ -480,15 +616,8 @@
         var responseObj = JSON.parse(response);
         xPos = parseFloat(responseObj.xPos);
         yPos = -1*parseFloat(responseObj.yPos);
-
-        xPositionInput.value = xPos
-        xPositionPreview.innerHTML = "X=" + xPos + "°";
-
-        yPositionInput.value = -yPos
-        yPositionPreview.innerHTML = "Y=" + -yPos + "°";
-
     };
-    window.setInterval("refreshPosition()", 200); 
+    //window.setInterval("refreshPosition()", 200); 
 
 
 /*
