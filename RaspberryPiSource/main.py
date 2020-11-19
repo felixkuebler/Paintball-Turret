@@ -4,14 +4,14 @@ import os
 import sys
 import json 
 from importlib import import_module
-from flask import Flask, request, render_template, Response
+from flask import Flask, request, render_template, Response, send_from_directory
 
 sys.path.append('./turret')
 from cameraDevice import Camera
 from turret import Turret
 
 
-app = Flask(__name__, template_folder='html/templates', static_url_path='/html/static')
+app = Flask(__name__, template_folder='html/templates', static_folder='html/static')
 turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
 
 
