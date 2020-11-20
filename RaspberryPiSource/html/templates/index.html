@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="/css/style.css">
-        <script src="/js/utils.js"></script>
-        <script src="/js/draw.js"></script>
+        <link rel="stylesheet" href="../static/css/style.css">
+        <script src="../static/js/utils.js"></script>
+        <script src="../static/js/draw.js"></script>
         <meta charset="utf-8" content="noindex,follow">
         <title>Video Streaming</title>
     </head>
     <body>
-        <div style="text-align: center;">
-            <div style="float: left; width:50%">   
+
+        <div id="fullScreenDisplay" style="display: none">
+            <img id="fullScreenImage" src="../static/img/testImage.gif">
+            <canvas id="fullScreenCanvas"></canvas>
+        </div>
+
+        <div class="container-parent">
+
+            <div class="container-child" style="width:40%" >   
                 <h2>Image and Position Feedback</h2>
-                <div id="display" style="position: relative;">
-                    <img id="img" src="{{ url_for('video_feed') }}" style="width:100%">
-                    <canvas id="canvas" style="width:100%"></canvas>
+                <div>
+                    <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
                 </div>
             </div>
-            <div style="float: left; width:50%;">
+
+            <div class="container-child" style="width:20%" >   
+                <h2>Position Feedback</h2>
+                <div>
+                    <canvas id="positionCanvasX" style="width=100%"></canvas>
+                    <canvas id="positionCanvasY"></canvas>
+                </div>
+            </div>
+
+            <div class="container-child" style="width:40%;">
                 <h2>Controle</h2>
-                <div id="options" style="padding: 10px; border: 1px inset;">
-                    <h3 style="text-align: left;">Activate</h3>
+                <div>
+                    <h3>Activate</h3>
                     <hr>
                     <div id="armButton" class="button">Arm</div>
-                    <div>Arm the device. WARNING! The Safety will be disengaged.</div>
-                    <div>When armed, use the arrow keys to move and space bar to shoot.</div>
+                    <p class="description">Arm the device. WARNING! The Safety will be disengaged.<br>When armed, use the arrow keys to move and space bar to shoot.</p>
 
-                    <h3 style="text-align: left;">Calibrate</h3>
+                    <h3>Calibrate</h3>
                     <hr>
                     <div id="resetButtonX" class="button">Reset X</div> 
                     <div id="resetButtonY" class="button">Reset Y</div> 
-                    <div>Reset X or Y axis position to 0.</div>
-                    <div>This is used for rehomeing the device.</div>
+                    <p class="description">Reset X or Y axis position to 0.<br>This is used for rehomeing the device.</p>
 
 
-                    <h3 style="text-align: left;">Move (Speed)</h3>
+                    <h3>Move (Speed)</h3>
                     <hr>
                     X 
                     <input type="range" id="xSpeedInput" min="-100" max="100">
@@ -51,9 +64,9 @@
                         <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
                     </div>
                     <br>
-                    <div>Manually set speed of X or Y axis. (-100% to 100%)</div>
+                    <p class="description">Manually set speed of X or Y axis. (-100% to 100%)</p>
                     
-                    <h3 style="text-align: left;">Move (Position)</h3>
+                    <h3>Move (Position)</h3>
                     <hr>
                     X
                     <input type="range" id="xPositionInput" min="-90" max="90">
@@ -71,15 +84,18 @@
                         <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
                     </div>
                     <br>
-                    <div>Manually set Position of X or Y axis.</div>
-                    <div>For X axis -90° to 90°. For Y axis -45° to 45°.</div>
+                    <p class="description">Manually set Position of X or Y axis.</br>For X axis -90° to 90°. For Y axis -45° to 45°.</p>
                 </div>
+
             </div>
         </div>
 
     <script >
 
+//                     <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
+
         const armButton = document.getElementById("armButton");
+
         const resetButtonX = document.getElementById("resetButtonX");
         const resetButtonY = document.getElementById("resetButtonY");
 
@@ -89,8 +105,12 @@
         const xPositionInput = document.getElementById("xPositionInput");
         const yPositionInput = document.getElementById("yPositionInput");
 
-        const display = document.getElementById("display");
+        const fullScreenDisplay = document.getElementById("fullScreenDisplay");
+        const fullScreenImage = document.getElementById("fullScreenImage");
+        const fullScreenCanvas = document.getElementById("fullScreenCanvas");
 
+        const positionCanvasX = document.getElementById("positionCanvasX");
+        const positionCanvasY = document.getElementById("positionCanvasY");
 
         const mouseSpeedFactorX = 20;
         const mouseSpeedFactorY = 20;
@@ -104,7 +124,6 @@
         // speed in percent
         var xSpeed = 0;
         var ySpeed = 0;
-
         var xLastSpeed = 0;
         var yLastSpeed = 0;
 
@@ -115,80 +134,61 @@
         var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
 
 
+        function drawImage()
+        {
+            const ctx = positionCanvasX.getContext('2d');
 
-        function refreshCanvas(){
-            var canvas = document.getElementById("canvas");
-            var ctx = canvas.getContext('2d');
+            const image = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
 
-            var img = document.getElementById("img");
+            // Load an image of intrinsic size 300x227 in CSS pixels
+            image.src = '../static/img/turretStaticX.png';
 
-            ctx.globalAlpha = 1;
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+            const image2 = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
+
+            // Load an image of intrinsic size 300x227 in CSS pixels
+            image2.src = '../static/img/turretDynamicX.png';
+
+            // Use the intrinsic size of image in CSS pixels for the canvas element
+            //positionCanvasX.width = "300";
+            //positionCanvasX.height = image.naturalHeight;
+
+            // Will draw the image as 300x227, ignoring the custom size of 60x45
+            // given in the constructor
+            ctx.drawImage(image, 0, 0);
+            //ctx.drawImage(image2, 0, 0);
+        }
+        function refreshFullScreen(){
             if (document.fullscreenElement){
 
-                if(document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
-                    canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-                    canvas.requestPointerLock();
-                }
+                enableFullScreen(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
 
-                canvas.style.display="block";
-                canvas.style.position = "absolute";
-                canvas.style.left = 0;
-                canvas.style.top = 0;
-                canvas.width = window.screen.width;
-                canvas.height = window.screen.height;
+                var ctx = fullScreenCanvas.getContext('2d');
+                ctx.globalAlpha = 1;
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                var scale = window.screen.width / img.width;
-                img.style.position = "absolute";
-                img.width = window.screen.width;
-                img.height = img.width / 4 * 3;
-                img.style.top = (window.screen.height-img.height)/2 + "px";
-
-                drawPosition(ctx);
+                drawPosition(ctx, xPos, yPos);
                 drawCrosshair(ctx);
 
                 if (triggered) {
                     drawTriggerToggle(ctx);
-                    //triggered = false;
                 }
-                
-            } else {
-
-                if(document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
-                    document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
-                    document.exitPointerLock();
-                }
-
-                display.style.position = "relative";
-
-                canvas.style.display="block";
-                canvas.style.position = "absolute";
-                canvas.style.left = 0;
-                canvas.style.top = 0;
-                canvas.width = "640";
-                canvas.height = "480";
-
-                img.style.display="block";
-                img.style.position = "absolute";
-                img.style.left = 0;
-                img.style.top = 0;
-                img.width = "640";
-                img.height = img.width / 4 * 3;
-
-                drawPosition(ctx);
-                drawInfo(ctx, "LOCKED/SAFE");
             }
+            else
+            {
+                disableFullScreen(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
 
+                drawImage();
+            }
         };
-        window.setInterval("refreshCanvas()", 50); 
+        window.setInterval("refreshFullScreen()", 50); 
 
 
         function armButtonClickCallback(){
-            if(display.webkitRequestFullScreen) {
-                display.webkitRequestFullScreen();
+            if(fullScreenDisplay.webkitRequestFullScreen) {
+                fullScreenDisplay.webkitRequestFullScreen();
             } else {
-                display.mozRequestFullScreen();
+                fullScreenDisplay.mozRequestFullScreen();
             }
         }
         armButton.addEventListener("click",armButtonClickCallback);
@@ -312,7 +312,7 @@
             xPos = parseFloat(responseObj.xPos);
             yPos = -1*parseFloat(responseObj.yPos);
         };
-        window.setInterval("refreshPosition()", 200); 
+        //window.setInterval("refreshPosition()", 200); 
 
 
     /*
