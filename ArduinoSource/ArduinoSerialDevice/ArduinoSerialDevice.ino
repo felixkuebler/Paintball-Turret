@@ -401,10 +401,6 @@ void loop() {
       uint8_t output = abs(motor->setSpeed);
       output = map(output, 0, 100, 0, 255);
 
-      // Restrict to max
-      if( output > motor->maxSpeed ) output = motor->maxSpeed;
-      if( output < motor->minSpeed ) output = 0;
-
       if(0 < motor->setSpeed && motor->encoderPos < ((int32_t)motor->maxRange * (int32_t)motor->gearRatio / 2)){
         motor->isAtTarget = false;
         analogWrite(motor->pin2, 0);
