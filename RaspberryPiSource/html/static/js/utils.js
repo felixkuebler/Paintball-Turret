@@ -1,3 +1,38 @@
+function enableFullScreen(container, image, canvas) {
+
+    if(document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
+        canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
+        canvas.requestPointerLock();
+    }
+
+    container.style.display="block";
+
+    canvas.style.display="block";
+    canvas.style.position = "absolute";
+    canvas.style.left = 0;
+    canvas.style.top = 0;
+    canvas.width = window.screen.width;
+    canvas.height = window.screen.height;
+
+    var scale = window.screen.width / image.width;
+    image.style.display="block";
+    image.style.position = "absolute";
+    image.width = window.screen.width;
+    image.height = image.width / 4 * 3;
+    image.style.top = (window.screen.height-image.height)/2 + "px";
+}
+
+
+function disableFullScreen(container, image, canvas) {
+    if(document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
+        document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
+        document.exitPointerLock();
+    }
+
+    container.style.display="none";
+}
+
+
 function httpGetAsync(url, request, data, callback){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
