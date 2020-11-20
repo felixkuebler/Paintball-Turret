@@ -1,13 +1,27 @@
 html * {
     font: normal Arial !important;
+    color: #d6d6d6;
 }
 
 
 body {
-    background: #d6d6d6;
+    font-size: medium;
+    background: #141414;
     text-align: center;
 }
 
+h3 {
+    margin: 0;
+    text-align: left;
+}
+
+.container-parent {
+    text-align: center;
+}
+
+.container-child {
+    float: left;
+}
 
 input:focus {
     outline: none;
@@ -44,13 +58,16 @@ input[type=range]::-webkit-slider-runnable-track {
 
 
 input[type=range]::-webkit-slider-thumb {
-    margin-top: -1.4em;
+    margin-top: 1em;
     box-sizing: border-box;
     border: 1px outset;
     width: 1.5em;
     height: 3em;
-    border-radius: 0%;
-    background: url('/img/sliderKnob.png');
+    /*border-radius: 0%;*/
+    /*background: url('../img/sliderKnob.png');*/
+    border-radius: 3px;
+    background-image: -webkit-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
+
     background-size:1.5em;
     background-repeat: no-repeat;
     background-position: 50%;
@@ -60,38 +77,47 @@ input[type=range]::-webkit-slider-thumb {
 
 input[type=range]::-moz-range-track {
     box-sizing: border-box;
-    border: 1px inset;
+    border: 1px #2e2e2e inset;
     height: 0.4em;
-    background: #ccc;
+    background: #000000;
     box-shadow: 0px 0px 2px #000000;
 }
 
 
 input[type=range]::-moz-range-progress {
     height: 0.4em;
-    background: #7b1c1a;
+    background: none;
 }
 
 
 input[type=range]::-moz-range-thumb {
-    margin-top: -1.4;
+    margin-top: -10em;
     box-sizing: border-box;
-    border: 1px outset;
-    width: 1.5em;
-    height: 3em;
-    border-radius: 0%;
-    background: url('/img/sliderKnob.png');
-    background-size:1.5em;
+    width: 3em;
+    height: 1.5em;
+
+    /*border: 1px outset;*/
+    /*border-radius: 0%;*/
+    /*background: url('../img/sliderKnob.png');*/
+
+    border: 5px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+
+    background-image: -moz-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
+    -moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+
+    background-size:3em;
     background-repeat: no-repeat;
     background-position: 50%;
-    transform:rotate(var(--r,90deg));
 }
 
 
 #tickmarks {
     display: flex;
     justify-content: space-between;
-    padding: 0 10px;
+    padding: 0 1.3em;
 }
 
 
@@ -99,32 +125,31 @@ input[type=range]::-moz-range-thumb {
     position: relative;
     display: flex;
     justify-content: center;
+    font-size: small;
     text-align: center;
     width: 1px;
     background: #7e7e7e;
     height: 10px;
     line-height: 40px;
-    margin: 0 0 20px 0;
+    margin: 0 0 10px 0;
 }
 
 
 .button {
     display: inline-block;
-    color: #902121;
     text-decoration: none;
     padding: 10px 20px;
-    margin-bottom: 10px;
 
-    background-image: -moz-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
-    background-image: -webkit-linear-gradient(bottom, #f0f0f0 0%, #b9b9b9 100%);
+    background-image: -moz-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
+    background-image: -webkit-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
 
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
 
-    -webkit-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-    -moz-box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-    box-shadow: 0px 2px 0px #7e7e7e, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    -webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    -moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    box-shadow: 0px 2px 4px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     -webkit-transition: all .01s;
     -moz-transition: all .01s;
     transition: all .01s;
@@ -140,4 +165,9 @@ input[type=range]::-moz-range-thumb {
     -webkit-transform: translate(0, 2px) rotateX(20deg);  
     -moz-transform: translate(0, 2px);  
     transform: translate(0, 2px);  
+}
+
+.description {
+    font-style: italic;
+    font-size: small;
 }

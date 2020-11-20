@@ -60,7 +60,7 @@ function drawCrosshair(context){
 }
 
 
-function drawPosition(context){
+function drawPosition(context, xPos, yPos){
 
     var width = context.canvas.width;
     var height = context.canvas.height;
@@ -77,7 +77,7 @@ function drawPosition(context){
     for(i=0; i<=maxDegX; i+=5){
 
         var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
-        var alphaValue = Math.abs(positionShift-(width/2));
+        var alphaValue = Math.abs(positionShift-(width/2))/2;
 
         if (alphaValue<1) alphaValue = 1;
         alphaValue = (40/alphaValue);
