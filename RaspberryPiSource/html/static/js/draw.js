@@ -163,3 +163,12 @@ function drawTriggerToggle(context){
 
     context.stroke();
 }
+
+function drawRotatedImage(context, image, x, y, w, h, degrees){
+    context.save();
+    context.translate(x+w/2, y+h/2);
+    context.rotate(degrees*Math.PI/180.0);
+    context.translate(-x-w/2, -y-h/2);
+    context.drawImage(image, x, y, w, h);
+    context.restore();
+}
