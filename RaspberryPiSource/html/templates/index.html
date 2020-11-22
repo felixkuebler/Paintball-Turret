@@ -16,22 +16,22 @@
 
         <div class="container-parent">
 
-            <div class="container-child" style="width:40%" >   
+            <div class="container-child" style="width:40%; height:100%" >   
                 <h2>Image and Position Feedback</h2>
                 <div>
                     <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
                 </div>
             </div>
 
-            <div class="container-child" style="width:20%" >   
+            <div class="container-child" style="width:20%; height:100%" >   
                 <h2>Position Feedback</h2>
                 <div>
-                    <canvas id="positionCanvasX" style="width=100%"></canvas>
+                    <canvas id="positionCanvasX" style="width:100%; height: 100%;"></canvas>
                     <canvas id="positionCanvasY"></canvas>
                 </div>
             </div>
 
-            <div class="container-child" style="width:40%;">
+            <div class="container-child" style="width:40%; height:100%">
                 <h2>Controle</h2>
                 <div>
                     <h3>Activate</h3>
@@ -115,9 +115,6 @@
         const mouseSpeedFactorX = 20;
         const mouseSpeedFactorY = 20;
 
-        const mouseSpeedOffsetX = 20;
-        const mouseSpeedOffsetY = 20;
-
         var xPos = 0;
         var yPos = 0;
 
@@ -127,37 +124,32 @@
         var xLastSpeed = 0;
         var yLastSpeed = 0;
 
-
-        // for trigger
+        var mouseIsMovingX = false;
+        var mouseIsMovingY = false;
         var triggered = false;
-        var alreadyTriggered = false;
         var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
 
 
         function drawImage()
         {
-            const ctx = positionCanvasX.getContext('2d');
+            var ctx = positionCanvasX.getContext('2d');
 
-            const image = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
+            var imageBottom = new Image(); // Using optional size for image
+            imageBottom.src = '../static/img/turretStaticX.png';
 
-            // Load an image of intrinsic size 300x227 in CSS pixels
-            image.src = '../static/img/turretStaticX.png';
+            // get scaled canvas from image size
+            var canvasScale = imageBottom.naturalHeight/imageBottom.naturalWidth;
+            positionCanvasX.height = positionCanvasX.width*canvasScale;
 
+            var imageTop = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
+            imageTop.src = '../static/img/turretDynamicX.png';
 
-            const image2 = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
-
-            // Load an image of intrinsic size 300x227 in CSS pixels
-            image2.src = '../static/img/turretDynamicX.png';
-
-            // Use the intrinsic size of image in CSS pixels for the canvas element
-            //positionCanvasX.width = "300";
-            //positionCanvasX.height = image.naturalHeight;
-
-            // Will draw the image as 300x227, ignoring the custom size of 60x45
-            // given in the constructor
-            ctx.drawImage(image, 0, 0);
-            //ctx.drawImage(image2, 0, 0);
+ 
+            ctx.drawImage(imageBottom, 0, 0, positionCanvasX.width, positionCanvasX.height);
+            drawRotatedImage(ctx, imageTop, 0, 0, positionCanvasX.width, positionCanvasX.height, xPos);
         }
+
+
         function refreshFullScreen(){
             if (document.fullscreenElement){
 
@@ -172,6 +164,7 @@
 
                 if (triggered) {
                     drawTriggerToggle(ctx);
+                    triggered = false;
                 }
             }
             else
@@ -238,6 +231,12 @@
             if (event.keyCode in keyMap) {
                 keyMap[event.keyCode] = true;
             }
+
+            // trigger only on button down one
+            if (document.fullscreenElement && keyMap[32]) {
+                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
+                triggered = true;
+            }
         }
         window.addEventListener('keydown',keyboardPressCallback);
 
@@ -250,9 +249,14 @@
         window.addEventListener('keyup',keyboardReleaseCallback);
 
 
-        function keyTimeoutCallback(){
-            xSpeed = 0;
-            ySpeed = 0;
+        function controlleTimeoutCallback(){
+
+            if (!mouseIsMovingX){
+                xSpeed = 0;
+            }
+            if (!mouseIsMovingY){
+                ySpeed = 0;
+            }
 
             // left, not right arrow
             if (keyMap[37] && !keyMap[39]){
@@ -274,34 +278,56 @@
             if (xSpeed != xLastSpeed){
                 xLastSpeed = xSpeed;
                 var postString = "{\"xSpeed\":" + xSpeed + "}";
+                //console.log("xSpeed=" + xSpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
             if (ySpeed != yLastSpeed){
                 yLastSpeed = ySpeed;
                 var postString = "{\"ySpeed\":" + -ySpeed + "}";
+                //console.log("ySpeed=" + ySpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
-            
+        };
+        window.setInterval(controlleTimeoutCallback, 50); 
+
+
+        function fullScreenDisplayClickCallback(){  
+            if (document.fullscreenElement){
+                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
+                triggered = true;
+            }
+        }
+        fullScreenDisplay.addEventListener("click",fullScreenDisplayClickCallback);
+
+
+        function fullScreenDisplayMouseMoveCallback(event){
             if (document.fullscreenElement) {
 
-                if(keyMap[32] & !alreadyTriggered){
-                    triggered = true;
-                }
-                else if(!keyMap[32]){
-                    triggered = false;
-                    alreadyTriggered = false;
-                }
-                else{
-                    triggered = false;
-                }
+                xSpeed = (event.movementX*mouseSpeedFactorX);
 
-                if(triggered){
-                    alreadyTriggered = true;
-                    httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
-                }
+                if (xSpeed != 0) mouseIsMovingX = true;
+                else mouseIsMovingX = false;
+
+                if (xSpeed > 100) xSpeed = 100;
+                else if (xSpeed < -100) xSpeed = -100;
+
+                ySpeed = (event.movementY*mouseSpeedFactorY);
+
+                if (ySpeed != 0) mouseIsMovingY = true;
+                else mouseIsMovingY = false;
+
+                if (ySpeed > 100) ySpeed = 100;
+                else if (ySpeed < -100) ySpeed = -100;
             }
+        }
+        fullScreenDisplay.addEventListener('mousemove',fullScreenDisplayMouseMoveCallback);
+
+
+        function fullScreenDisplayMouseMoveResetCallback(){
+            mouseIsMovingX = false;
+            mouseIsMovingY = false;
         };
-        window.setInterval(keyTimeoutCallback, 50); 
+        window.setInterval(fullScreenDisplayMouseMoveResetCallback, 100); 
 
 
         function refreshPosition(){
@@ -313,68 +339,6 @@
             yPos = -1*parseFloat(responseObj.yPos);
         };
         //window.setInterval("refreshPosition()", 200); 
-
-
-    /*
-        function outputClickCallback(){  
-            if (document.fullscreenElement){
-                console.log("trigger");
-                triggered = true;
-                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":1}");
-            }
-        }
-        //output.addEventListener("click",outputClickCallback);
-
-
-        function outputMouseMoveCallback(event){
-            if (document.fullscreenElement) {
-
-        		mouseIsMoving = true;
-
-                xSpeedInput = (event.movementX*mouseSpeedFactorX) + mouseSpeedOffsetX;
-                if (xSpeed > 100) xSpeed = 100;
-                else if (xSpeed < -100) xSpeed = -100;
-
-                ySpeedInput = (event.movementY*mouseSpeedFactorY) + mouseSpeedOffsetY;
-                if (ySpeed > 100) ySpeed = 100;
-                else if (ySpeed < -100) ySpeed = -100;
-
-                xAlpha = 0.1;
-                xSpeed = xAlpha*xSpeedInput + (1-xAlpha)*xLastSpeed;
-
-                yAlpha = 0.1;
-                ySpeed = yAlpha*ySpeedInput + (1-yAlpha)*yLastSpeed;
-            }
-        }
-        //output.addEventListener('mousemove',outputMouseMoveCallback);
-
-
-        function outputMouseTimeoutCallback(){
-
-        	if (!mouseIsMoving){
-
-                xSpeed = 0;
-                ySpeed = 0;
-            }
-
-            if (xSpeed != xLastSpeed){
-            	xLastSpeed = xSpeed;
-                console.log("Speed X:"+ xSpeed)
-                postString = "{\"xSpeed\":" + xSpeed + "}";
-                httpPostAsync("{{ url_for('controlle') }}", postString);
-        	}
-        	if (ySpeed != yLastSpeed){
-            	yLastSpeed = ySpeed;
-                console.log("Speed Y:"+ -ySpeed)
-                postString = "{\"ySpeed\":" + -ySpeed + "}";
-                httpPostAsync("{{ url_for('controlle') }}", postString);
-            }
-            
-        	mouseIsMoving = false;
-        };
-        //window.setInterval(outputMouseTimeoutCallback, 100); 
-    */
-
 
     </script>
     </body>
