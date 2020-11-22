@@ -16,23 +16,23 @@
 
         <div class="container-parent">
 
-            <div class="container-child" style="width:40%; height:100%" >   
-                <h2>Image and Position Feedback</h2>
+            <div class="container-child" style="width:45%; height:100%" >   
+                <h2>Image Feedback</h2>
                 <div>
                      <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
                 </div>
             </div>
 
-            <div class="container-child" style="width:20%; height:100%" >   
+            <div class="container-child" style="width:15%; height:100%" >   
                 <h2>Position Feedback</h2>
-                <div>
+                <div style="padding: 10px">
                     <canvas id="positionCanvasX" style="width:100%; height: 100%;"></canvas>
                     <canvas id="positionCanvasY"></canvas>
                 </div>
             </div>
 
             <div class="container-child" style="width:40%; height:100%">
-                <h2>Controle</h2>
+                <h2>Control</h2>
                 <div>
                     <h3>Activate</h3>
                     <hr>
