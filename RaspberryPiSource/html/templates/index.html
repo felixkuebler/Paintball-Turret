@@ -129,22 +129,26 @@
         var triggered = false;
         var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
 
+        var imageBottom = new Image(); // Using optional size for image
+        imageBottom.src = '/img/turretStaticX.png';
+
+        var imageTop = new Image(); // Using optional size for image
+        imageTop.src = '/img/turretDynamicX.png';
 
         function drawImage()
         {
             var ctx = positionCanvasX.getContext('2d');
 
-            var imageBottom = new Image(); // Using optional size for image
+            //var imageBottom = new Image(); // Using optional size for image
             //imageBottom.src = '../static/img/turretStaticX.png';
-            imageBottom.src = '/img/turretStaticX.png';
 
             // get scaled canvas from image size
             var canvasScale = imageBottom.naturalHeight/imageBottom.naturalWidth;
             positionCanvasX.height = positionCanvasX.width*canvasScale;
 
-            var imageTop = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
+            //var imageTop = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
             //imageTop.src = '../static/img/turretDynamicX.png';
-            imageTop.src = '/img/turretDynamicX.png';
+            //imageTop.src = '/img/turretDynamicX.png';
 
  
             ctx.drawImage(imageBottom, 0, 0, positionCanvasX.width, positionCanvasX.height);
@@ -293,6 +297,7 @@
         window.setInterval(controlleTimeoutCallback, 50); 
 
 
+/*
         function fullScreenDisplayClickCallback(){  
             if (document.fullscreenElement){
                 httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
@@ -330,7 +335,7 @@
             mouseIsMovingY = false;
         };
         window.setInterval(fullScreenDisplayMouseMoveResetCallback, 100); 
-
+*/
 
         function refreshPosition(){
             httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
