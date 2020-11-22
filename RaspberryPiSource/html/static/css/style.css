@@ -58,20 +58,21 @@ input[type=range]::-webkit-slider-runnable-track {
 
 
 input[type=range]::-webkit-slider-thumb {
-    margin-top: 1em;
+    margin-top: -0.6em;
     box-sizing: border-box;
-    border: 1px outset;
-    width: 1.5em;
-    height: 3em;
-    /*border-radius: 0%;*/
-    /*background: url('../img/sliderKnob.png');*/
-    border-radius: 3px;
-    background-image: -webkit-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
+    width: 3em;
+    height: 1.5em;
 
-    background-size:1.5em;
+    border: 5px;
+    border-radius: 5px;
+
+    background-image: -webkit-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
+    -webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+
+    background-size:3em;
     background-repeat: no-repeat;
     background-position: 50%;
-    transform:rotate(var(--r,90deg));
 }
 
 
@@ -95,10 +96,6 @@ input[type=range]::-moz-range-thumb {
     box-sizing: border-box;
     width: 3em;
     height: 1.5em;
-
-    /*border: 1px outset;*/
-    /*border-radius: 0%;*/
-    /*background: url('../img/sliderKnob.png');*/
 
     border: 5px;
     border-radius: 5px;
@@ -168,6 +165,5 @@ input[type=range]::-moz-range-thumb {
 }
 
 .description {
-    font-style: italic;
     font-size: small;
 }
