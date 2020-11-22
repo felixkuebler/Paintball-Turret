@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="../static/css/style.css">
-        <script src="../static/js/utils.js"></script>
-        <script src="../static/js/draw.js"></script>
+        <link rel="stylesheet" href="/css/style.css">
+        <script src="/js/utils.js"></script>
+        <script src="/js/draw.js"></script>
         <meta charset="utf-8" content="noindex,follow">
         <title>Video Streaming</title>
     </head>
     <body>
 
         <div id="fullScreenDisplay" style="display: none">
-            <img id="fullScreenImage" src="../static/img/testImage.gif">
+            <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
             <canvas id="fullScreenCanvas"></canvas>
         </div>
 
@@ -19,7 +19,7 @@
             <div class="container-child" style="width:40%; height:100%" >   
                 <h2>Image and Position Feedback</h2>
                 <div>
-                    <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
+                     <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
                 </div>
             </div>
 
@@ -91,9 +91,9 @@
         </div>
 
     <script >
-
-//                     <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
-
+        // <img id="fullScreenImage" src="../static/img/testImage.gif">
+        // <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
+                   
         const armButton = document.getElementById("armButton");
 
         const resetButtonX = document.getElementById("resetButtonX");
@@ -135,14 +135,16 @@
             var ctx = positionCanvasX.getContext('2d');
 
             var imageBottom = new Image(); // Using optional size for image
-            imageBottom.src = '../static/img/turretStaticX.png';
+            //imageBottom.src = '../static/img/turretStaticX.png';
+            imageBottom.src = '/img/turretStaticX.png';
 
             // get scaled canvas from image size
             var canvasScale = imageBottom.naturalHeight/imageBottom.naturalWidth;
             positionCanvasX.height = positionCanvasX.width*canvasScale;
 
             var imageTop = new Image(positionCanvasX.width, positionCanvasX.height); // Using optional size for image
-            imageTop.src = '../static/img/turretDynamicX.png';
+            //imageTop.src = '../static/img/turretDynamicX.png';
+            imageTop.src = '/img/turretDynamicX.png';
 
  
             ctx.drawImage(imageBottom, 0, 0, positionCanvasX.width, positionCanvasX.height);
@@ -338,7 +340,7 @@
             xPos = parseFloat(responseObj.xPos);
             yPos = -1*parseFloat(responseObj.yPos);
         };
-        //window.setInterval("refreshPosition()", 200); 
+        window.setInterval("refreshPosition()", 200); 
 
     </script>
     </body>
