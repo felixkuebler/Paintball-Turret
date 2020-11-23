@@ -169,7 +169,7 @@
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                drawPositionFeedbackFullScreen(ctx, xPosFeedback, yPosFeedback);
+                drawPositionFeedbackFullScreen(ctx, xPosFeedback, -yPosFeedback);
                 drawCrosshair(ctx);
 
                 if (triggered) {
@@ -212,28 +212,28 @@
             var postString = "{\"xSpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        xSpeedInput.addEventListener("change",xSpeedInputChangeCallback);
+        xSpeedInput.addEventListener("mouseup",xSpeedInputChangeCallback);
 
 
         function ySpeedInputChangeCallback(event){
             var postString = "{\"ySpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        ySpeedInput.addEventListener("change",ySpeedInputChangeCallback);
+        ySpeedInput.addEventListener("mouseup",ySpeedInputChangeCallback);
 
 
         function xPositionInputChangeCallback(event){
             var postString = "{\"xPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        xPositionInput.addEventListener("change",xPositionInputChangeCallback);
+        xPositionInput.addEventListener("mouseup",xPositionInputChangeCallback);
 
 
         function yPositionInputChangeCallback(event){
             var postString = "{\"yPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        yPositionInput.addEventListener("change",yPositionInputChangeCallback);
+        yPositionInput.addEventListener("mouseup",yPositionInputChangeCallback);
 
 
         function keyboardPressCallback(event){
@@ -346,7 +346,7 @@
         function positionCallback(response){        
             var responseObj = JSON.parse(response);
             xPosFeedback = parseFloat(responseObj.xPos);
-            yPosFeedback = -1*parseFloat(responseObj.yPos);
+            yPosFeedback = parseFloat(responseObj.yPos);
         };
        window.setInterval("refreshPosition()", 200); 
 
