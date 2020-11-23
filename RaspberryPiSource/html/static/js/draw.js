@@ -1,15 +1,3 @@
-const color = "#FF0000";
-const fontName = "Arial";
-const fontSize = 25;
-const font = fontSize + "px" + fontName;
-
-const lineWidth = 2;
-
-const maxDegX = 180;
-const maxDegY = 90;
-
-
-
 function drawInfo(context, info){
 
     var width = context.canvas.width;
