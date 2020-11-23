@@ -16,22 +16,18 @@
 
         <div class="container-parent">
 
-            <div class="container-child" style="width:40%; height:100%" >   
-                <h2>Image Feedback</h2>
-                <div>
+            <div class="container-parent container-child" style="width:60%; height:100%; position: fixed;">
+                <h2>Image & Position Feedback</h2>
+                <div class="container-child" style="width:70%; height:100%;" >   
                     <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
                 </div>
-            </div>
-
-            <div class="container-child" style="width:20%; height:100%" >   
-                <h2>Position Feedback</h2>
-                <div style="padding: 10px;">
-                    <canvas id="positionCanvasX" style="width:100%; height: 100%;"></canvas>
-                    <canvas id="positionCanvasY" style="width:100%; height: 100%;"></canvas>
+                <div class="container-child" style="width:28%; height:100%; margin-left:2%;">   
+                    <canvas id="positionCanvasX" style="width:100%; "></canvas>
+                    <canvas id="positionCanvasY" style="width:100%; "></canvas>
                 </div>
             </div>
 
-            <div class="container-child" style="width:40%; height:100%">
+            <div class="container-child" style="width:40%; height:100%; margin-left:62%;">
                 <h2>Control</h2>
                 <div>
                     <h3>Activate</h3>
@@ -251,11 +247,11 @@
                 var w = window.screen.width;
                 var h = window.screen.height;
 
-                if ( x > w/4*3 && y<h/2) mouchMap[1] = true;
-                if ( x > w/4*3 && y>h/2) mouchMap[2] = true;
-                if ( x < w/4 && y<h/2) mouchMap[3] = true;
-                if ( x < w/4 && y>h/2) mouchMap[4] = true;
-                if ( x > w/4 && x<w/4*3) mouchMap[5] = true;
+                if ( x > w/5*4 && y<h/2) mouchMap[1] = true;
+                if ( x > w/5*4 && y>h/2) mouchMap[2] = true;
+                if ( x < w/5 && y<h/2) mouchMap[3] = true;
+                if ( x < w/5 && y>h/2) mouchMap[4] = true;
+                if ( x > w/5 && x<w/5*4) mouchMap[5] = true;
 
                 if (mouchMap[5]){
                     httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
