@@ -164,27 +164,30 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
 
 function drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPos, yPos)
 {
-    var contextX = positionCanvasX.getContext('2d');
 
-    // get scaled canvas from image size
-    var canvasScale = imageBottomX.naturalHeight/imageBottomX.naturalWidth;
-    positionCanvasX.height = positionCanvasX.width*canvasScale;
+    if (imageBottomX && imageTX) {
+        var contextX = positionCanvasX.getContext('2d');
 
-    contextX.drawImage(imageBottomX, 0, 0, positionCanvasX.width, positionCanvasX.height);
-    drawRotatedImage(contextX, imageTopX, 36, 0, positionCanvasX.width, positionCanvasX.height, xPos);
+        // get scaled canvas from image size
+        var canvasScale = imageBottomX.naturalHeight/imageBottomX.naturalWidth;
+        positionCanvasX.height = positionCanvasX.width*canvasScale;
 
+        contextX.drawImage(imageBottomX, 0, 0, positionCanvasX.width, positionCanvasX.height);
+        drawRotatedImage(contextX, imageTopX, 36, 0, positionCanvasX.width, positionCanvasX.height, xPos);
+    }
 
-    var contextY = positionCanvasY.getContext('2d');
+    if (imageBottomY && imageTopY && imageTopYCamera) {
+        var contextY = positionCanvasY.getContext('2d');
 
-    // get scaled canvas from image size
-    var canvasScale = imageTopY.naturalHeight/imageTopY.naturalWidth;
-    var imageHeight = positionCanvasY.width*canvasScale;
-    positionCanvasY.height = positionCanvasY.width*canvasScale/2*3;
+        // get scaled canvas from image size
+        var canvasScale = imageTopY.naturalHeight/imageTopY.naturalWidth;
+        var imageHeight = positionCanvasY.width*canvasScale;
+        positionCanvasY.height = positionCanvasY.width*canvasScale/2*3;
 
-    drawRotatedImage(contextY, imageBottomY, 25, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos)
-    contextY.drawImage(imageTopY, 0, imageHeight/2, positionCanvasY.width, imageHeight); 
-    drawRotatedImage(contextY, imageTopYCamera, 35, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos)
-    
+        drawRotatedImage(contextY, imageBottomY, 25, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos)
+        contextY.drawImage(imageTopY, 0, imageHeight/2, positionCanvasY.width, imageHeight); 
+        drawRotatedImage(contextY, imageTopYCamera, 35, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos)
+    }
 }
 
 
