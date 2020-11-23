@@ -2,36 +2,36 @@
 <html>
     <head>
         <link rel="stylesheet" href="../static/css/style.css">
-        <script src="../static/js/utils.js"></script>
-        <script src="../static/js/draw.js"></script>
+        <script src="/js/utils.js"></script>
+        <script src="/js/draw.js"></script>
         <meta charset="utf-8" content="noindex,follow">
         <title>Video Streaming</title>
     </head>
     <body>
 
         <div id="fullScreenDisplay" style="display: none">
-            <img id="fullScreenImage" src="../static/img/testImage.gif">
+            <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
             <canvas id="fullScreenCanvas"></canvas>
         </div>
 
         <div class="container-parent">
 
-            <div class="container-child" style="width:50%; height:100%" >   
+            <div class="container-child" style="width:40%; height:100%" >   
                 <h2>Image Feedback</h2>
                 <div>
-                     <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
+                    <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
                 </div>
             </div>
 
             <div class="container-child" style="width:20%; height:100%" >   
                 <h2>Position Feedback</h2>
-                <div style="padding: 10px">
+                <div style="padding: 10px;">
                     <canvas id="positionCanvasX" style="width:100%; height: 100%;"></canvas>
-                    <canvas id="positionCanvasY"></canvas>
+                    <canvas id="positionCanvasY" style="width:100%; height: 100%;"></canvas>
                 </div>
             </div>
 
-            <div class="container-child" style="width:30%; height:100%">
+            <div class="container-child" style="width:40%; height:100%">
                 <h2>Control</h2>
                 <div>
                     <h3>Activate</h3>
@@ -91,11 +91,13 @@
         </div>
 
     <script >
+
         // <img id="fullScreenImage" src="../static/img/testImage.gif">
         // <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
         // <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
         // <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
-                   
+           
+        // html objects        
         const armButton = document.getElementById("armButton");
 
         const resetButtonX = document.getElementById("resetButtonX");
@@ -117,66 +119,29 @@
         const mouseSpeedFactorX = 20;
         const mouseSpeedFactorY = 20;
 
-        var xPos = 0;
-        var yPos = 0;
+        var xPosFeedback = 0;
+        var yPosFeedback = 0;
 
-        // speed in percent
+        // iinput variables
         var xSpeed = 0;
         var ySpeed = 0;
         var xLastSpeed = 0;
         var yLastSpeed = 0;
 
+        var triggered = false;
+
+        // readback variables
+        var xPosFeedback = 0;
+        var yPosFeedback = 0;
+
+        // keabouard and mouse input
         var mouseIsMovingX = false;
         var mouseIsMovingY = false;
-        var triggered = false;
         var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
 
-        var imageBottomX = new Image(); // Using optional size for image
-        imageBottomX.src = '../static/img/turretStaticX.png';
-
-        var imageTopX = new Image(); // Using optional size for image
-        imageTopX.src = '../static/img/turretDynamicX.png';
 
 
-
-        var imageBottomY = new Image(); // Using optional size for image
-        imageBottomY.src = '../static/img/turretStaticY.png';
-
-        var imageTopY = new Image(); // Using optional size for image
-        imageTopY.src = '../static/img/turretDynamicY.png';
-
-
-
-        function drawImage()
-        {
-
-            var contextY = positionCanvasY.getContext('2d');
-
-            // get scaled canvas from image size
-            var canvasScale = imageBottomY.naturalHeight/imageBottomY.naturalWidth;
-            positionCanvasY.height = positionCanvasY.width*canvasScale;
- 
-            contextY.drawImage(imageBottomY, 0, 0, positionCanvasY.width, positionCanvasY.height);
-            drawRotatedImage(contextY, imageTopY, 25, -80, positionCanvasY.width, positionCanvasY.height, 0)
-
-
-            var contextX = positionCanvasX.getContext('2d');
-
-            // get scaled canvas from image size
-            var canvasScale = imageBottomX.naturalHeight/imageBottomX.naturalWidth;
-            positionCanvasX.height = positionCanvasY.width;//positionCanvasX.width*canvasScale;
- 
-            contextX.drawImage(imageBottomX, 0, 0, positionCanvasX.width, positionCanvasX.height);
-            drawRotatedImage(contextX, imageTopX, 0, 48, positionCanvasX.width, positionCanvasX.height, 0);
-
-
-
-
-;
-        }
-
-
-        function refreshFullScreen(){
+        function refreshAnimations(){
             if (document.fullscreenElement){
 
                 enableFullScreen(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
@@ -185,7 +150,7 @@
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                drawPosition(ctx, xPos, yPos);
+                drawPositionFeedbackFullScreen(ctx, xPosFeedback, yPosFeedback);
                 drawCrosshair(ctx);
 
                 if (triggered) {
@@ -196,11 +161,10 @@
             else
             {
                 disableFullScreen(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
-
-                drawImage();
+                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPosFeedback, yPosFeedback);
             }
         };
-        window.setInterval("refreshFullScreen()", 50); 
+        window.setInterval("refreshAnimations()", 50); 
 
 
         function armButtonClickCallback(){
@@ -362,10 +326,10 @@
         };
         function positionCallback(response){        
             var responseObj = JSON.parse(response);
-            xPos = parseFloat(responseObj.xPos);
-            yPos = -1*parseFloat(responseObj.yPos);
+            xPosFeedback = parseFloat(responseObj.xPos);
+            yPosFeedback = -1*parseFloat(responseObj.yPos);
         };
-        //window.setInterval("refreshPosition()", 200); 
+        window.setInterval("refreshPosition()", 200); 
 
     </script>
     </body>

@@ -1,11 +1,30 @@
 const color = "#FF0000";
 const fontName = "Arial";
 const fontSize = 25;
-const font = fontSize + "px " + fontName;
+const font = fontSize + "px" + fontName;
 const lineWidth = 2;
 
 const maxDegX = 180;
 const maxDegY = 90;
+
+
+
+const imageBottomX = new Image();
+imageBottomX.src = debugPath + "/img/turretStaticX.png";
+
+const imageTopX = new Image();
+imageTopX.src = debugPath + "/img/turretDynamicX.png";
+
+
+const imageBottomY = new Image();
+imageBottomY.src = debugPath + "/img/turretDynamicY.png";
+
+const imageTopY = new Image();
+imageTopY.src = debugPath + "/img/turretStaticY.png";
+
+const imageTopYCamera = new Image();
+imageTopYCamera.src = debugPath + "/img/turretDynamicYCamera.png";
+
 
 
 function drawInfo(context, info){
@@ -60,7 +79,7 @@ function drawCrosshair(context){
 }
 
 
-function drawPosition(context, xPos, yPos){
+function drawPositionFeedbackFullScreen(context, xPos, yPos){
 
     var width = context.canvas.width;
     var height = context.canvas.height;
@@ -140,6 +159,32 @@ function drawPosition(context, xPos, yPos){
     context.fill(path);
 
     context.stroke();
+}
+
+
+function drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPos, yPos)
+{
+    var contextX = positionCanvasX.getContext('2d');
+
+    // get scaled canvas from image size
+    var canvasScale = imageBottomX.naturalHeight/imageBottomX.naturalWidth;
+    positionCanvasX.height = positionCanvasX.width*canvasScale;
+
+    contextX.drawImage(imageBottomX, 0, 0, positionCanvasX.width, positionCanvasX.height);
+    drawRotatedImage(contextX, imageTopX, 36, 0, positionCanvasX.width, positionCanvasX.height, xPos);
+
+
+    var contextY = positionCanvasY.getContext('2d');
+
+    // get scaled canvas from image size
+    var canvasScale = imageTopY.naturalHeight/imageTopY.naturalWidth;
+    var imageHeight = positionCanvasY.width*canvasScale;
+    positionCanvasY.height = positionCanvasY.width*canvasScale/2*3;
+
+    drawRotatedImage(contextY, imageBottomY, 25, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos)
+    contextY.drawImage(imageTopY, 0, imageHeight/2, positionCanvasY.width, imageHeight); 
+    drawRotatedImage(contextY, imageTopYCamera, 35, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos)
+    
 }
 
 
