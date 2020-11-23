@@ -56,7 +56,7 @@
                         <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
                     </div>
                     <br>
-                    Y&
+                    Y%
                     <input type="range" id="ySpeedInput" min="-100" max="100">
                     <div id="tickmarks">
                         <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
@@ -154,7 +154,12 @@
         // keabouard and mouse input
         var mouseIsMovingX = false;
         var mouseIsMovingY = false;
+
+        // up - down - left - right - space
         var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
+
+        // topRight - bottomRight - topLeft - bottomLeft - center
+        var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
 
 
 
@@ -211,6 +216,7 @@
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         xSpeedInput.addEventListener("mouseup",xSpeedInputChangeCallback);
+        xSpeedInput.addEventListener("touchend",xSpeedInputChangeCallback);
 
 
         function ySpeedInputChangeCallback(event){
@@ -218,6 +224,7 @@
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         ySpeedInput.addEventListener("mouseup",ySpeedInputChangeCallback);
+        ySpeedInput.addEventListener("touchend",ySpeedInputChangeCallback);
 
 
         function xPositionInputChangeCallback(event){
@@ -225,6 +232,7 @@
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         xPositionInput.addEventListener("mouseup",xPositionInputChangeCallback);
+        xPositionInput.addEventListener("touchend",xPositionInputChangeCallback);
 
 
         function yPositionInputChangeCallback(event){
@@ -232,6 +240,50 @@
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         yPositionInput.addEventListener("mouseup",yPositionInputChangeCallback);
+        yPositionInput.addEventListener("touchend",yPositionInputChangeCallback);
+
+
+        function displayPressedCallback(event){
+            if (document.fullscreenElement) {
+                var x = event.changedTouches[0].pageX;
+                var y = event.changedTouches[0].pageY;
+
+                var w = window.screen.width;
+                var h = window.screen.height;
+
+                if ( x > w/4*3 && y<h/2) mouchMap[1] = true;
+                if ( x > w/4*3 && y>h/2) mouchMap[2] = true;
+                if ( x < w/4 && y<h/2) mouchMap[3] = true;
+                if ( x < w/4 && y>h/2) mouchMap[4] = true;
+                if ( x > w/4 && x<w/4*3) mouchMap[5] = true;
+
+                if (mouchMap[5]){
+                    httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
+                    triggered = true;
+                }
+            }
+
+        }
+        fullScreenDisplay.addEventListener('touchstart',displayPressedCallback);
+
+
+        function displayReleaseCallback(event){
+
+            if (document.fullscreenElement) {
+                var x = event.changedTouches[0].pageX;
+                var y = event.changedTouches[0].pageY;
+
+                var w = window.screen.width;
+                var h = window.screen.height;
+
+                if ( x > w/4*3 && y<h/2) mouchMap[1] = false;
+                if ( x > w/4*3 && y>h/2) mouchMap[2] = false;
+                if ( x < w/4 && y<h/2) mouchMap[3] = false;
+                if ( x < w/4 && y>h/2) mouchMap[4] = false;
+                if ( x > w/4 && x<w/4*3) mouchMap[5] = false;
+            }
+        }
+        fullScreenDisplay.addEventListener('touchend',displayReleaseCallback);
 
 
         function keyboardPressCallback(event){
@@ -266,32 +318,32 @@
             }
 
             // left, not right arrow
-            if (keyMap[37] && !keyMap[39]){
+            if ((keyMap[37] && !keyMap[39]) || (mouchMap[3] && !mouchMap[4])){
                 xSpeed = -40;
             }
             // right, not right arrow
-            if (keyMap[39] && !keyMap[37]){
+            if (keyMap[39] && !keyMap[37] || (mouchMap[4] && !mouchMap[3])){
                 xSpeed = 40;
             }
             // up, not down arrow
-            if (keyMap[38] && !keyMap[40]){
+            if (keyMap[38] && !keyMap[40] || (mouchMap[1] && !mouchMap[2])){
                 ySpeed = -45  ;
             }
             // down, not up arrow
-            if (keyMap[40] && !keyMap[38]){            
+            if (keyMap[40] && !keyMap[38] || (mouchMap[2] && !mouchMap[1])){            
                 ySpeed = 45;
             }
 
             if (xSpeed != xLastSpeed){
                 xLastSpeed = xSpeed;
                 var postString = "{\"xSpeed\":" + xSpeed + "}";
-                //console.log("xSpeed=" + xSpeed);
+                console.log("xSpeed=" + xSpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
             if (ySpeed != yLastSpeed){
                 yLastSpeed = ySpeed;
                 var postString = "{\"ySpeed\":" + -ySpeed + "}";
-                //console.log("ySpeed=" + ySpeed);
+                console.log("ySpeed=" + ySpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
         };
