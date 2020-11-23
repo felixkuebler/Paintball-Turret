@@ -9,24 +9,6 @@ const maxDegY = 90;
 
 
 
-const imageBottomX = new Image();
-imageBottomX.src = "/img/turretStaticX.png";
-
-const imageTopX = new Image();
-imageTopX.src = "/img/turretDynamicX.png";
-
-
-const imageBottomY = new Image();
-imageBottomY.src = "/img/turretDynamicY.png";
-
-const imageTopY = new Image();
-imageTopY.src = + "/img/turretStaticY.png";
-
-const imageTopYCamera = new Image();
-imageTopYCamera.src = "/img/turretDynamicYCamera.png";
-
-
-
 function drawInfo(context, info){
 
     var width = context.canvas.width;
@@ -166,7 +148,7 @@ function drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPos, yPo
 {
     var isLoadedX = imageBottomX.complete && imageBottomX.naturalHeight !== 0 && 
                     imageTopX.complete && imageTopX.naturalHeight !== 0;
-                    
+
     var isLoadedX = imageBottomY.complete && imageBottomY.naturalHeight !== 0 &&
                     imageTopY.complete && imageTopY.naturalHeight !== 0 &&
                     imageTopYCamera.complete && imageTopYCamera.naturalHeight !== 0;

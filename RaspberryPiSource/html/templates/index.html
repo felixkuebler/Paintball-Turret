@@ -97,6 +97,25 @@
         // <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
         // <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
            
+
+
+        const imageBottomX = new Image();
+        imageBottomX.src = "/img/turretStaticX.png";
+
+        const imageTopX = new Image();
+        imageTopX.src = "/img/turretDynamicX.png";
+
+
+        const imageBottomY = new Image();
+        imageBottomY.src = "/img/turretDynamicY.png";
+
+        const imageTopY = new Image();
+        imageTopY.src = + "/img/turretStaticY.png";
+
+        const imageTopYCamera = new Image();
+        imageTopYCamera.src = "/img/turretDynamicYCamera.png";
+
+
         // html objects        
         const armButton = document.getElementById("armButton");
 
@@ -329,7 +348,7 @@
             xPosFeedback = parseFloat(responseObj.xPos);
             yPosFeedback = -1*parseFloat(responseObj.yPos);
         };
-        window.setInterval("refreshPosition()", 200); 
+       // window.setInterval("refreshPosition()", 200); 
 
     </script>
     </body>
