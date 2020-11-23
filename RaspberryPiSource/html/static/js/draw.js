@@ -164,8 +164,14 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
 
 function drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPos, yPos)
 {
+    var isLoadedX = imageBottomX.complete && imageBottomX.naturalHeight !== 0 && 
+                    imageTopX.complete && imageTopX.naturalHeight !== 0;
+                    
+    var isLoadedX = imageBottomY.complete && imageBottomY.naturalHeight !== 0 &&
+                    imageTopY.complete && imageTopY.naturalHeight !== 0 &&
+                    imageTopYCamera.complete && imageTopYCamera.naturalHeight !== 0;
 
-    if (imageBottomX && imageTX) {
+    if (isLoadedX) {
         var contextX = positionCanvasX.getContext('2d');
 
         // get scaled canvas from image size
@@ -176,7 +182,7 @@ function drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPos, yPo
         drawRotatedImage(contextX, imageTopX, 36, 0, positionCanvasX.width, positionCanvasX.height, xPos);
     }
 
-    if (imageBottomY && imageTopY && imageTopYCamera) {
+    if (isLoadedX) {
         var contextY = positionCanvasY.getContext('2d');
 
         // get scaled canvas from image size
