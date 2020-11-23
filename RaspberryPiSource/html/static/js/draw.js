@@ -2,6 +2,7 @@ const color = "#FF0000";
 const fontName = "Arial";
 const fontSize = 25;
 const font = fontSize + "px" + fontName;
+
 const lineWidth = 2;
 
 const maxDegX = 180;
@@ -71,6 +72,8 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     var numberPedding = 25;
 
     var widthDeg = width/maxDegX;
+
+    console.log(font);
 
     context.fillStyle = color;
     context.globalAlpha = 1;
