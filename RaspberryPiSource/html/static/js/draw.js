@@ -10,20 +10,20 @@ const maxDegY = 90;
 
 
 const imageBottomX = new Image();
-imageBottomX.src = debugPath + "/img/turretStaticX.png";
+imageBottomX.src = "/img/turretStaticX.png";
 
 const imageTopX = new Image();
-imageTopX.src = debugPath + "/img/turretDynamicX.png";
+imageTopX.src = "/img/turretDynamicX.png";
 
 
 const imageBottomY = new Image();
-imageBottomY.src = debugPath + "/img/turretDynamicY.png";
+imageBottomY.src = "/img/turretDynamicY.png";
 
 const imageTopY = new Image();
-imageTopY.src = debugPath + "/img/turretStaticY.png";
+imageTopY.src = + "/img/turretStaticY.png";
 
 const imageTopYCamera = new Image();
-imageTopYCamera.src = debugPath + "/img/turretDynamicYCamera.png";
+imageTopYCamera.src = "/img/turretDynamicYCamera.png";
 
 
 
