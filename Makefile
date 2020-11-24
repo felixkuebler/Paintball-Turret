@@ -8,7 +8,7 @@ EXEC_FILE = start.sh
 
 TAG ?= version:1.0
 NAME ?= turretServer
-PORT ?= 8080
+PORT ?= 5000
 
 all: build run
 
