@@ -275,6 +275,7 @@
                 if (mouchMap[5]){
                     httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
                     triggered = true;
+                    mouchMap[5] = false;
                 }
             }
 
