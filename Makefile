@@ -28,7 +28,7 @@ reset:
 
 install:
 	cp $(MAKE_DIR)/Utils/autostart-turret.desktop $(AUTO_DIR)
-	sed -i 's/{{EXEC_DIR}}/$(MAKE_DIR)/g' $(AUTO_DIR)/autostart-turret.desktop
+	sed -i 's+{{EXEC_DIR}}+$(MAKE_DIR)+g' $(AUTO_DIR)/autostart-turret.desktop
 
 	cp $(MAKE_DIR)/Utils/start.sh $(MAKE_DIR)
 	chmod +x $(MAKE_DIR)/start.sh
