@@ -1,14 +1,14 @@
 MAKE_DIR = $(shell pwd)
 
 UTILS_DIR = Utils
-AUTO_FILE = autostart-turret.desktop
 AUTO_DIR = /home/pi/.config/autostart
 
+AUTO_FILE = autostart-turret.desktop
 EXEC_FILE = start.sh
 
 TAG ?= version:1.0
 NAME ?= turretServer
-PORT ?= 5000
+PORT ?= 8080
 
 all: build run
 
@@ -36,6 +36,8 @@ install:
 
 	cp $(MAKE_DIR)/$(UTILS_DIR)/$(EXEC_FILE) $(MAKE_DIR)
 	chmod +x $(MAKE_DIR)/$(EXEC_FILE)
+
+	sudo hostname -b $(NAME)
 
 info:
 	docker ps
