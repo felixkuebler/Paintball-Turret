@@ -20,7 +20,7 @@ build:
 
 # Run Docker File (--detach run in background)
 run:
-	docker run -p $(INTERNAL_PORT):$(EXTERNAL_PORT) --device /dev/video0:/dev/video0 --device /dev/ttyUSB0:/dev/ttyUSB0 --device /dev/ttyUSB1:/dev/ttyUSB1 --name $(NAME) $(TAG)
+	docker run -p $(EXTERNAL_PORT):$(INTERNAL_PORT) --device /dev/video0:/dev/video0 --device /dev/ttyUSB0:/dev/ttyUSB0 --device /dev/ttyUSB1:/dev/ttyUSB1 --name $(NAME) $(TAG)
 
 # Kill current docker container
 kill:
