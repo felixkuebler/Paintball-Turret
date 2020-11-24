@@ -1,6 +1,10 @@
 MAKE_DIR = $(shell pwd)
-AUTO_DIR = /home/pi/.config/autostart/
-EXEC_DIR = $(AUTO_DIR)/start.sh
+
+UTILS_DIR = Utils
+AUTO_FILE = autostart-turret.desktop
+AUTO_DIR = /home/pi/.config/autostart
+
+EXEC_FILE = start.sh
 
 TAG ?= version:1.0
 NAME ?= turretServer
@@ -27,11 +31,11 @@ reset:
 	docker image prune -f
 
 install:
-	cp $(MAKE_DIR)/Utils/autostart-turret.desktop $(AUTO_DIR)
-	sed -i 's+{{EXEC_DIR}}+$(MAKE_DIR)+g' $(AUTO_DIR)/autostart-turret.desktop
+	cp $(MAKE_DIR)/$(UTILS_DIR)/$(AUTO_FILE) $(AUTO_DIR)
+	sed -i 's+{{EXEC_DIR}}+$(MAKE_DIR)/$(EXEC_FILE)+g' $(AUTO_DIR)/$(AUTO_FILE)
 
-	cp $(MAKE_DIR)/Utils/start.sh $(MAKE_DIR)
-	chmod +x $(MAKE_DIR)/start.sh
+	cp $(MAKE_DIR)/$(UTILS_DIR)/$(EXEC_FILE) $(MAKE_DIR)
+	chmod +x $(MAKE_DIR)/$(EXEC_FILE)
 
 info:
 	docker ps
