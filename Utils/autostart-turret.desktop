@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=autostart-turret
+Comment=this will start the docker turret container on bootup
+Type=Application
+Exec=sh -c 'cd ~/Git/Paintball-Turret;make run'
