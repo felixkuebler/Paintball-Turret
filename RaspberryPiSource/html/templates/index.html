@@ -16,7 +16,7 @@
 
         <div class="container-parent">
 
-            <div class="container-parent container-child" style="width:60%; height:100%; position: fixed;">
+            <div class="container-parent container-child" style="width:59%; height:100%; position: fixed;">
                 <h2>Image & Position Feedback</h2>
                 <div class="container-child" style="width:70%; height:100%;" >   
                     <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
@@ -27,62 +27,79 @@
                 </div>
             </div>
 
-            <div class="container-child" style="width:40%; height:100%; margin-left:62%;">
+            <div class="container-child" style="width:39%; height:100%; margin-left:61%;">
                 <h2>Control</h2>
                 <div>
+
                     <h3>Activate</h3>
                     <hr>
                     <div id="armButton" class="button">Arm</div>
-                    <p class="description">Arm the device. WARNING! The Safety will be disengaged.<br>When armed, use the arrow keys to move and space bar to shoot.</p>
+                    <p class="description">
+                        Arm the turret and enter fullscreen mode.<br> 
+                        WARNING! The Safety will be disengaged.<br><br>
+                        On PC: Use arrow keys for motion control and space bar to trigger. <br>
+                        (trigger control is only enabled in fullscreen mode)<br><br>
+                        On Mobile: Use screen corners for motion control and screen center to trigger.<br>
+                        (all controls are only enabled in fullscreen mode)</p>
 
                     <h3>Calibrate</h3>
                     <hr>
                     <div id="resetButtonX" class="button">Reset X</div> 
                     <div id="resetButtonY" class="button">Reset Y</div> 
-                    <p class="description">Reset X or Y axis position to 0.<br>This is used for rehomeing the device.</p>
+                    <p class="description">
+                        Reset X or Y axis position to 0.<br>
+                        This is used for rehomeing the device.
+                    </p>
 
+                    <h3>Motion (Speed)</h3>
+                    <hr>
+                    <div style="margin-left: 5%; margin-right:5%; width:90%">
+                        X%
+                        <input type="range" id="xSpeedInput" min="-100" max="100">
+                        <div id="tickmarks">
+                            <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                            <p>0</p>
+                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                        </div>
+                        <br>
+                        Y%
+                        <input type="range" id="ySpeedInput" min="-100" max="100">
+                        <div id="tickmarks">
+                            <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                            <p>0</p>
+                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                        </div>
+                        <br>
+                        <p class="description">
+                            Manually set speed of X or Y axis. (-100% to 100%)
+                        </p>
+                    </div>
 
-                    <h3>Move (Speed)</h3>
+                    <h3>Motion (Position)</h3>
                     <hr>
-                    X%
-                    <input type="range" id="xSpeedInput" min="-100" max="100">
-                    <div id="tickmarks">
-                        <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                        <p>0</p>
-                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
+                    <div style="margin-left: 5%; margin-right:5%; width:90%">
+                        X°
+                        <input type="range" id="xPositionInput" min="-90" max="90">
+                        <div id="tickmarks">
+                            <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                            <p>0</p>
+                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
+                        </div>
+                        <br>
+                        Y°
+                        <input type="range" id="yPositionInput" min="-50" max="50">
+                        <div id="tickmarks">
+                            <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                            <p>0</p>
+                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
+                        </div>
+                        <br>
+                        <p class="description">
+                            Manually set Position of X or Y axis.</br>
+                            For X axis -90° to 90°. For Y axis -45° to 45°.
+                        </p>
                     </div>
-                    <br>
-                    Y%
-                    <input type="range" id="ySpeedInput" min="-100" max="100">
-                    <div id="tickmarks">
-                        <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                        <p>0</p>
-                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
-                    </div>
-                    <br>
-                    <p class="description">Manually set speed of X or Y axis. (-100% to 100%)</p>
-                    
-                    <h3>Move (Position)</h3>
-                    <hr>
-                    X°
-                    <input type="range" id="xPositionInput" min="-90" max="90">
-                    <div id="tickmarks">
-                        <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                        <p>0</p>
-                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
-                    </div>
-                    <br>
-                    Y°
-                    <input type="range" id="yPositionInput" min="-50" max="50">
-                    <div id="tickmarks">
-                        <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                        <p>0</p>
-                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
-                    </div>
-                    <br>
-                    <p class="description">Manually set Position of X or Y axis.</br>For X axis -90° to 90°. For Y axis -45° to 45°.</p>
                 </div>
-
             </div>
         </div>
 
