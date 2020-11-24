@@ -1,12 +1,11 @@
 html * {
     font: normal Arial !important;
-    color: #d6d6d6;
 }
 
 
 body {
     font-size: medium;
-    background: #141414;
+    background: #d6d6d6;
     text-align: center;
 }
 
@@ -29,6 +28,8 @@ input:focus {
 
 
 input[type=range] {
+    color: #d6d6d6;
+
     -webkit-appearance: none;
     --range: calc(var(--max) - var(--min));
     --ratio: calc((var(--val) - var(--min))/var(--range));
@@ -58,7 +59,7 @@ input[type=range]::-webkit-slider-runnable-track {
 
 
 input[type=range]::-webkit-slider-thumb {
-    margin-top: -0.6em;
+    margin-top: -0.8em;
     box-sizing: border-box;
     width: 3em;
     height: 1.5em;
@@ -133,6 +134,8 @@ input[type=range]::-moz-range-thumb {
 
 
 .button {
+    color: #d6d6d6;
+
     display: inline-block;
     text-decoration: none;
     padding: 10px 20px;
@@ -146,7 +149,7 @@ input[type=range]::-moz-range-thumb {
 
     -webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     -moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-    box-shadow: 0px 2px 4px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    box-shadow: 0px 2px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     -webkit-transition: all .01s;
     -moz-transition: all .01s;
     transition: all .01s;
