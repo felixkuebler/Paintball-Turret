@@ -13,12 +13,12 @@ from turret import Turret
 
 app = Flask(__name__, template_folder='html/templates', static_folder='html/static', static_url_path='')
 turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
+cam = Camera()
 
-
-def getFrame(camera):
+def getFrame():
     # Video streaming generator function.
     while True:
-        frame = camera.get_frame()
+        frame = cam.get_frame()
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
@@ -32,7 +32,7 @@ def index():
 @app.route('/video_feed')
 def video_feed():
     # Video streaming route. Put this in the src attribute of an img tag.
-    return Response(getFrame(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(getFrame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 @app.route('/controlle', methods=['POST'])
