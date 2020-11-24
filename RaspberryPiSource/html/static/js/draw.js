@@ -79,24 +79,28 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     for(i=0; i<=maxDegX; i+=5){
 
         var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
-        var alphaValue = Math.abs(positionShift-(width/2))/2;
 
-        if (alphaValue<1) alphaValue = 1;
-        alphaValue = (40/alphaValue);
-        if (alphaValue>1) alphaValue = 1;
+        // only draw if within range of crosshair
+        if (positionShift > width/5 && positionShift < width/5*4){
 
-        if (alphaValue<0.2) alphaValue = 0;
+            // fade out to screen edges
+            var alphaValue = Math.abs(positionShift-(width/2))/2;
+            if (alphaValue<1) alphaValue = 1;
+            alphaValue = (40/alphaValue);
+            if (alphaValue>1) alphaValue = 1;
 
-        context.globalAlpha = alphaValue;
 
-        if ((i-maxDegX/2)%10 == 0){
-            context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength);
+            context.globalAlpha = alphaValue;
 
-            context.font = font;
-            context.textAlign = "center";
-            context.fillText(i-maxDegX/2, positionShift, dashPedding+dashLength+numberPedding); 
-        } else {
-            context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength/3*2);
+            if ((i-maxDegX/2)%10 == 0){
+                context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength);
+
+                context.font = font;
+                context.textAlign = "center";
+                context.fillText(i-maxDegX/2, positionShift, dashPedding+dashLength+numberPedding); 
+            } else {
+                context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength/3*2);
+            }
         }
     }
 
@@ -113,23 +117,26 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
 
         var positionShift = height/2+((i-(yPos+maxDegY/2))*widthDeg);
 
-        var alphaValue = Math.abs(positionShift-(height/2));
-        if (alphaValue<1) alphaValue = 1;
-        alphaValue = (40/alphaValue);
-        if (alphaValue>1) alphaValue = 1;
+        // only draw if within range of crosshair
+        if (positionShift > height/5 && positionShift < height/5*4){
 
-        if (alphaValue<0.2) alphaValue = 0;
+            // fade out to screen edges
+            var alphaValue = Math.abs(positionShift-(height/2));
+            if (alphaValue<1) alphaValue = 1;
+            alphaValue = (40/alphaValue);
+            if (alphaValue>1) alphaValue = 1;
 
-        context.globalAlpha = alphaValue;
+            context.globalAlpha = alphaValue;
 
-        if ((i-maxDegY/2)%10 == 0){
-            context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
+            if ((i-maxDegY/2)%10 == 0){
+                context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
 
-            context.font = font;
-            context.textAlign = "center";
-            context.fillText(maxDegY/2-i, width-dashPedding-dashLength-numberPedding, positionShift+fontSize/3); 
-        } else {
-            context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
+                context.font = font;
+                context.textAlign = "center";
+                context.fillText(maxDegY/2-i, width-dashPedding-dashLength-numberPedding, positionShift+fontSize/3); 
+            } else {
+                context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
+            }
         }
     }
 
