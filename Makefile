@@ -8,7 +8,9 @@ EXEC_FILE = start.sh
 
 TAG ?= version:1.0
 NAME ?= turretServer
-PORT ?= 5000
+
+INTERNAL_PORT ?= 5000
+EXTERNAL_PORT ?= 80
 
 all: build run
 
@@ -18,7 +20,7 @@ build:
 
 # Run Docker File (--detach run in background)
 run:
-	docker run -p $(PORT):$(PORT) --device /dev/video0:/dev/video0 --device /dev/ttyUSB0:/dev/ttyUSB0 --device /dev/ttyUSB1:/dev/ttyUSB1 --name $(NAME) $(TAG)
+	docker run -p $(INTERNAL_PORT):$(EXTERNAL_PORT) --device /dev/video0:/dev/video0 --device /dev/ttyUSB0:/dev/ttyUSB0 --device /dev/ttyUSB1:/dev/ttyUSB1 --name $(NAME) $(TAG)
 
 # Kill current docker container
 kill:
