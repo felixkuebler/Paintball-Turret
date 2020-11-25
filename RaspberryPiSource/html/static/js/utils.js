@@ -1,6 +1,6 @@
-function enableFullScreen(container, image, canvas) {
+function displayFullScreenElements(container, image, canvas, deviceType) {
 
-    if(document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
+    if(deviceType == 0 && document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
         canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
         canvas.requestPointerLock();
     }
@@ -23,13 +23,44 @@ function enableFullScreen(container, image, canvas) {
 }
 
 
-function disableFullScreen(container, image, canvas) {
+function hideFullScreenElements(container, image, canvas) {
     if(document.pointerLockElement === canvas || document.mozPointerLockElement === canvas) {
         document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
         document.exitPointerLock();
     }
 
     container.style.display="none";
+}
+
+
+function displayJoyStick(joystickBase, joystickKnob, deviceType) {
+
+    if(deviceType==0) {
+        joystickBase.style.display="none";
+        joystickKnob.style.display="none";
+
+    }
+    else if (deviceType==1) {
+        joystickBase.style.display="block";
+        joystickKnob.style.display="block";
+
+        var width = window.screen.width;
+        var height = window.screen.height;
+
+        var baseSize = 16;
+        var knobSize = baseSize/2;
+
+        joystickBase.style.width = width/100*baseSize + "px";
+        joystickKnob.style.width = width/100*knobSize + "px";
+
+        joystickBase.style.left = width/100*80 + "px";
+        joystickKnob.style.left = width/100*(80+baseSize/2-knobSize/2) + "px";
+
+
+        joystickBase.style.top = height/100*65 + "px";
+        joystickKnob.style.top = height/100*(65+baseSize/2-knobSize/2) + 9 + "px";
+
+    }
 }
 
 
@@ -50,3 +81,4 @@ function httpPostAsync(url, data){
     xhr.setRequestHeader('Content-Type', 'text/plain');
     xhr.send(data);
 }
+
