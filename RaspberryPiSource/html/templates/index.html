@@ -13,11 +13,11 @@
             <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
             <canvas id="fullScreenCanvas"></canvas>
 
-            <div style="width: 128px; position: absolute; left:10px; top:150px;">
-                <img src="../static/img/joystickBase.png"/>
-                <div id="joystick" style="position: absolute; left:32px; top:32px;">
-                <img src="../static/img/joystickRed.png"/>        
-                </div>
+            <div id="joystickBase" style="position: absolute;">
+                <img src="../static/img/joystickBase.png" style="width:100%;"/>
+            </div>
+            <div id="joystickKnob" style="position: absolute;">
+                <img src="../static/img/joystickRed.png" style="width:100%;"/>        
             </div>
 
         </div>
@@ -246,6 +246,7 @@
         imageTopYCamera.src = "/img/turretDynamicYCamera.png";
 
 
+
         // html objects        
         const armButton = document.getElementById("armButton");
 
@@ -264,6 +265,15 @@
 
         const positionCanvasX = document.getElementById("positionCanvasX");
         const positionCanvasY = document.getElementById("positionCanvasY");
+
+        const joystickBase = document.getElementById("joystickBase");
+        const joystickKnob = document.getElementById("joystickKnob");
+        const joystick = new JoystickController("joystickKnob", 64, 8);
+
+
+        var deviceType = 0; // 0=PC, 1=mobile
+        var fullScreenMode = false;
+
 
         const mouseSpeedFactorX = 20;
         const mouseSpeedFactorY = 20;
@@ -287,6 +297,7 @@
         var mouseIsMovingX = false;
         var mouseIsMovingY = false;
 
+
         // up - down - left - right - space
         var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
 
@@ -294,11 +305,18 @@
         var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
 
 
-
+        /*
+        * Animates the fullscreen display
+        *  - draws position feedback
+        *  - draws crosshair
+        *  - draws trigger indicator
+        */
         function refreshAnimations(){
             if (document.fullscreenElement){
 
-                enableFullScreen(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
+
+                displayFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
+                displayJoyStick(joystickBase, joystickKnob, deviceType);
 
                 var ctx = fullScreenCanvas.getContext('2d');
                 ctx.globalAlpha = 1;
@@ -314,43 +332,71 @@
             }
             else
             {
-                disableFullScreen(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
+
+                hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
                 drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPosFeedback, yPosFeedback);
             }
         };
         window.setInterval("refreshAnimations()", 50); 
 
-
-        function armButtonClickCallback(){
+        /*
+        * Enable fullscreen mode of browser
+        */
+        function requestFullScreen(){
             if(fullScreenDisplay.webkitRequestFullScreen) {
                 fullScreenDisplay.webkitRequestFullScreen();
             } else {
                 fullScreenDisplay.mozRequestFullScreen();
             }
         }
-        armButton.addEventListener("click",armButtonClickCallback);
 
+        /*
+        * Arm button callback (mouse)
+        */
+        function armButtonMouseUoCallback(){
+            deviceType = 0;
+            requestFullScreen();
+        }
+        armButton.addEventListener("mouseup",armButtonMouseUoCallback);
 
+        /*
+        * Arm button callback (touch)
+        */
+        function armButtonTouchEndCallback(){
+            deviceType = 1;
+            requestFullScreen();
+        }
+        armButton.addEventListener("touchend",armButtonTouchEndCallback);
+
+        /* 
+        * Reset button callback (x)
+        */
         function resetButtonXClickCallback(){
             httpPostAsync("{{ url_for('option') }}", "{\"resetPosX\":\"1\"}");
         }
         resetButtonX.addEventListener("click",resetButtonXClickCallback);
 
-
+        /* 
+        * Reset button callback (y)
+        */
         function resetButtonYClickCallback(){
             httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":\"1\"}");
         }
         resetButtonY.addEventListener("click",resetButtonYClickCallback);
 
-
+        /* 
+        * Speed range input callback (x)
+        */
         function xSpeedInputChangeCallback(event){
             var postString = "{\"xSpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         xSpeedInput.addEventListener("mouseup",xSpeedInputChangeCallback);
         xSpeedInput.addEventListener("touchend",xSpeedInputChangeCallback);
-
-
+       
+        /* 
+        * Speed range input callback (y)
+        */
         function ySpeedInputChangeCallback(event){
             var postString = "{\"ySpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
@@ -358,7 +404,9 @@
         ySpeedInput.addEventListener("mouseup",ySpeedInputChangeCallback);
         ySpeedInput.addEventListener("touchend",ySpeedInputChangeCallback);
 
-
+        /* 
+        * Position range input callback (x)
+        */
         function xPositionInputChangeCallback(event){
             var postString = "{\"xPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
@@ -366,7 +414,9 @@
         xPositionInput.addEventListener("mouseup",xPositionInputChangeCallback);
         xPositionInput.addEventListener("touchend",xPositionInputChangeCallback);
 
-
+        /* 
+        * Position range input callback (y)
+        */
         function yPositionInputChangeCallback(event){
             var postString = "{\"yPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
@@ -374,8 +424,10 @@
         yPositionInput.addEventListener("mouseup",yPositionInputChangeCallback);
         yPositionInput.addEventListener("touchend",yPositionInputChangeCallback);
 
-
-        function displayPressedCallback(event){
+        /* 
+        * Display touch callback
+        */
+        function displayPressCallback(event){
             if (document.fullscreenElement) {
                 var x = event.changedTouches[0].pageX;
                 var y = event.changedTouches[0].pageY;
@@ -383,13 +435,7 @@
                 var w = window.screen.width;
                 var h = window.screen.height;
 
-                if ( x > w/5*4 && y<h/2) mouchMap[1] = true;
-                if ( x > w/5*4 && y>h/2) mouchMap[2] = true;
-                if ( x < w/5 && y<h/2) mouchMap[3] = true;
-                if ( x < w/5 && y>h/2) mouchMap[4] = true;
-                if ( x > w/5 && x<w/5*4) mouchMap[5] = true;
-
-                if (mouchMap[5]){
+                if (x > w/5 && x<w/5*4){
                     httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
                     triggered = true;
                     mouchMap[5] = false;
@@ -397,28 +443,11 @@
             }
 
         }
-        fullScreenDisplay.addEventListener('touchstart',displayPressedCallback);
+        fullScreenDisplay.addEventListener('touchstart',displayPressCallback);
 
-
-        function displayReleaseCallback(event){
-
-            if (document.fullscreenElement) {
-                var x = event.changedTouches[0].pageX;
-                var y = event.changedTouches[0].pageY;
-
-                var w = window.screen.width;
-                var h = window.screen.height;
-
-                if ( x > w/4*3 && y<h/2) mouchMap[1] = false;
-                if ( x > w/4*3 && y>h/2) mouchMap[2] = false;
-                if ( x < w/4 && y<h/2) mouchMap[3] = false;
-                if ( x < w/4 && y>h/2) mouchMap[4] = false;
-                if ( x > w/4 && x<w/4*3) mouchMap[5] = false;
-            }
-        }
-        fullScreenDisplay.addEventListener('touchend',displayReleaseCallback);
-
-
+        /*
+        * Keyboard keypress callback
+        */
         function keyboardPressCallback(event){
             if (event.keyCode in keyMap) {
                 keyMap[event.keyCode] = true;
@@ -432,7 +461,9 @@
         }
         window.addEventListener('keydown',keyboardPressCallback);
 
-
+        /*
+        * Keyboard keyrelease callback
+        */
         function keyboardReleaseCallback(event){
             if (event.keyCode in keyMap) {
                 keyMap[event.keyCode] = false;
@@ -440,30 +471,57 @@
         }
         window.addEventListener('keyup',keyboardReleaseCallback);
 
+        /*
+        * Control loop
+        */
+        function controlTimeoutCallback(){
 
-        function controlleTimeoutCallback(){
+            xSpeed = 0;
+            ySpeed = 0;
 
-            if (!mouseIsMovingX){
-                xSpeed = 0;
-            }
-            if (!mouseIsMovingY){
-                ySpeed = 0;
+            var minSpeed = 30;
+            var maxSpeed = 70;
+
+            if (document.fullscreenElement && deviceType==1) {
+                xSpeed = joystick.value.x * 100;
+
+                if (xSpeed > -minSpeed && xSpeed < minSpeed) {
+                    xSpeed = 0;
+                }
+                else if (xSpeed < -maxSpeed) {
+                    xSpeed = -maxSpeed;
+                }
+                else if (xSpeed > maxSpeed) {
+                    xSpeed = maxSpeed;
+                }
+
+                ySpeed = joystick.value.y * 100
+
+                if (ySpeed > -minSpeed && ySpeed < minSpeed) {
+                    ySpeed = 0;
+                }
+                else if (ySpeed < -maxSpeed) {
+                    ySpeed = -maxSpeed;
+                }
+                else if (ySpeed > maxSpeed) {
+                    ySpeed = maxSpeed;
+                }
             }
 
             // left, not right arrow
-            if ((keyMap[37] && !keyMap[39]) || (mouchMap[4] && !mouchMap[3])){
+            if ((keyMap[37] && !keyMap[39])){
                 xSpeed = -40;
             }
             // right, not right arrow
-            if (keyMap[39] && !keyMap[37] || (mouchMap[3] && !mouchMap[4])){
+            if (keyMap[39] && !keyMap[37]){
                 xSpeed = 40;
             }
             // up, not down arrow
-            if (keyMap[38] && !keyMap[40] || (mouchMap[1] && !mouchMap[2])){
+            if (keyMap[38] && !keyMap[40]){
                 ySpeed = -45  ;
             }
             // down, not up arrow
-            if (keyMap[40] && !keyMap[38] || (mouchMap[2] && !mouchMap[1])){            
+            if (keyMap[40] && !keyMap[38]){            
                 ySpeed = 45;
             }
 
@@ -480,49 +538,14 @@
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
         };
-        window.setInterval(controlleTimeoutCallback, 50); 
+        window.setInterval(controlTimeoutCallback, 50); 
 
 
-/*
-        function fullScreenDisplayClickCallback(){  
-            if (document.fullscreenElement){
-                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
-                triggered = true;
-            }
-        }
-        fullScreenDisplay.addEventListener("click",fullScreenDisplayClickCallback);
-
-
-        function fullScreenDisplayMouseMoveCallback(event){
-            if (document.fullscreenElement) {
-
-                xSpeed = (event.movementX*mouseSpeedFactorX);
-
-                if (xSpeed != 0) mouseIsMovingX = true;
-                else mouseIsMovingX = false;
-
-                if (xSpeed > 100) xSpeed = 100;
-                else if (xSpeed < -100) xSpeed = -100;
-
-                ySpeed = (event.movementY*mouseSpeedFactorY);
-
-                if (ySpeed != 0) mouseIsMovingY = true;
-                else mouseIsMovingY = false;
-
-                if (ySpeed > 100) ySpeed = 100;
-                else if (ySpeed < -100) ySpeed = -100;
-            }
-        }
-        fullScreenDisplay.addEventListener('mousemove',fullScreenDisplayMouseMoveCallback);
-
-
-        function fullScreenDisplayMouseMoveResetCallback(){
-            mouseIsMovingX = false;
-            mouseIsMovingY = false;
-        };
-        window.setInterval(fullScreenDisplayMouseMoveResetCallback, 100); 
-*/
-
+        /*
+        * Timed Position feedback poll
+        * - get request
+        * - response callback
+        */
         function refreshPosition(){
             httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
         };
@@ -531,7 +554,8 @@
             xPosFeedback = parseFloat(responseObj.xPos);
             yPosFeedback = parseFloat(responseObj.yPos);
         };
-       window.setInterval("refreshPosition()", 200); 
+       //window.setInterval("refreshPosition()", 200); 
+
 
     </script>
     </body>
