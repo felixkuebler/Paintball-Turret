@@ -1,7 +1,15 @@
 const color = "#FF0000";
 const fontName = "Arial";
-const fontSize = 25;
+const fontSize = window.screen.height/100*5;
 const font = fontSize + "px " + fontName;
+
+var dashLength = window.screen.height/100*5;
+
+var dashPeddingX= window.screen.height/100*2;
+var dashPeddingY= window.screen.width/100*1;
+
+var numberPeddingX = window.screen.height/100*5;
+var numberPeddingY = window.screen.width/100*2.5;
 
 const lineWidth = 2;
 
@@ -67,10 +75,6 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     var width = context.canvas.width;
     var height = context.canvas.height;
 
-    var dashPedding= 5;
-    var dashLength = 25;
-    var numberPedding = 25;
-
     var widthDeg = width/maxDegX;
 
     context.fillStyle = color;
@@ -93,13 +97,13 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
             context.globalAlpha = alphaValue;
 
             if ((i-maxDegX/2)%10 == 0){
-                context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength);
+                context.fillRect(positionShift-lineWidth/2, dashPeddingX, lineWidth, dashLength);
 
                 context.font = font;
                 context.textAlign = "center";
-                context.fillText(i-maxDegX/2, positionShift, dashPedding+dashLength+numberPedding); 
+                context.fillText(i-maxDegX/2, positionShift, dashPeddingX+dashLength+numberPeddingX); 
             } else {
-                context.fillRect(positionShift-lineWidth/2, dashPedding, lineWidth, dashLength/3*2);
+                context.fillRect(positionShift-lineWidth/2, dashPeddingX, lineWidth, dashLength/3*2);
             }
         }
     }
@@ -107,9 +111,9 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     context.globalAlpha = 1;
 
     var path=new Path2D();
-    path.moveTo((width/2)+widthDeg,dashPedding+dashLength+numberPedding+numberPedding);
-    path.lineTo((width/2),dashPedding+dashLength+numberPedding+numberPedding/3);
-    path.lineTo((width/2)-widthDeg,dashPedding+dashLength+numberPedding+numberPedding);
+    path.moveTo((width/2)+widthDeg,dashPeddingX+dashLength+numberPeddingX+numberPeddingX);
+    path.lineTo((width/2),dashPeddingX+dashLength+numberPeddingX+numberPeddingX/3);
+    path.lineTo((width/2)-widthDeg,dashPeddingX+dashLength+numberPeddingX+numberPeddingX);
     context.fill(path);
 
 
@@ -129,13 +133,13 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
             context.globalAlpha = alphaValue;
 
             if ((i-maxDegY/2)%10 == 0){
-                context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
+                context.fillRect(width-dashPeddingY-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
 
                 context.font = font;
                 context.textAlign = "center";
-                context.fillText(maxDegY/2-i, width-dashPedding-dashLength-numberPedding, positionShift+fontSize/3); 
+                context.fillText(maxDegY/2-i, width-dashPeddingY-dashLength-numberPeddingY, positionShift+fontSize/3); 
             } else {
-                context.fillRect(width-dashPedding-dashLength, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
+                context.fillRect(width-dashPeddingY-dashLength+dashLength/3, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
             }
         }
     }
@@ -143,9 +147,9 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     context.globalAlpha = 1;
 
     var path=new Path2D();
-    path.moveTo(width-dashPedding-dashLength-numberPedding*3, (height/2)+widthDeg);
-    path.lineTo(width-dashPedding-dashLength-numberPedding*2-numberPedding/3, (height/2));
-    path.lineTo(width-dashPedding-dashLength-numberPedding*3, (height/2)-widthDeg);
+    path.moveTo(width-dashPeddingY-dashLength-numberPeddingY*3, (height/2)+widthDeg);
+    path.lineTo(width-dashPeddingY-dashLength-numberPeddingY*2-numberPeddingY/3, (height/2));
+    path.lineTo(width-dashPeddingY-dashLength-numberPeddingY*3, (height/2)-widthDeg);
     context.fill(path);
 
     context.stroke();
@@ -197,6 +201,7 @@ function drawTriggerToggle(context){
 
     context.stroke();
 }
+
 
 function drawRotatedImage(context, image, x, y, w, h, degrees){
     context.save();
