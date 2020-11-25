@@ -479,32 +479,35 @@
             xSpeed = 0;
             ySpeed = 0;
 
-            var minSpeed = 30;
-            var maxSpeed = 70;
+            var minSpeedX = 30;
+            var maxSpeedX = 70;
+
+            var minSpeedY = 40;
+            var maxSpeedY = 70;
 
             if (document.fullscreenElement && deviceType==1) {
                 xSpeed = joystick.value.x * 100;
 
-                if (xSpeed > -minSpeed && xSpeed < minSpeed) {
+                if (xSpeed > -minSpeedX && xSpeed < minSpeedX) {
                     xSpeed = 0;
                 }
-                else if (xSpeed < -maxSpeed) {
-                    xSpeed = -maxSpeed;
+                else if (xSpeed < -maxSpeedX) {
+                    xSpeed = -maxSpeedX;
                 }
-                else if (xSpeed > maxSpeed) {
-                    xSpeed = maxSpeed;
+                else if (xSpeed > maxSpeedX) {
+                    xSpeed = maxSpeedX;
                 }
 
-                ySpeed = joystick.value.y * 100
+                ySpeed = joystick.value.y * 110
 
-                if (ySpeed > -minSpeed && ySpeed < minSpeed) {
+                if (ySpeed > -minSpeedY && ySpeed < minSpeedY) {
                     ySpeed = 0;
                 }
-                else if (ySpeed < -maxSpeed) {
-                    ySpeed = -maxSpeed;
+                else if (ySpeed < -maxSpeedY) {
+                    ySpeed = -maxSpeedY;
                 }
-                else if (ySpeed > maxSpeed) {
-                    ySpeed = maxSpeed;
+                else if (ySpeed > maxSpeedY) {
+                    ySpeed = maxSpeedY;
                 }
             }
 
