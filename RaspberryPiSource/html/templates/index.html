@@ -313,8 +313,8 @@
         */
         function refreshAnimations(){
             if (document.fullscreenElement){
-
-
+                
+                accomodateMobileRotation();
                 displayFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
                 displayJoyStick(joystickBase, joystickKnob, deviceType);
 
@@ -332,7 +332,6 @@
             }
             else
             {
-
                 hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
                 drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPosFeedback, yPosFeedback);
             }
@@ -479,52 +478,35 @@
             xSpeed = 0;
             ySpeed = 0;
 
-            var minSpeedX = 30;
-            var maxSpeedX = 70;
-
-            var minSpeedY = 40;
-            var maxSpeedY = 70;
-
             if (document.fullscreenElement && deviceType==1) {
-                xSpeed = joystick.value.x * 100;
-
-                if (xSpeed > -minSpeedX && xSpeed < minSpeedX) {
-                    xSpeed = 0;
+                if (joystick.value.x < -0.2) {
+                    xSpeed = -40;
                 }
-                else if (xSpeed < -maxSpeedX) {
-                    xSpeed = -maxSpeedX;
+                if (joystick.value.x > 0.2) {
+                    xSpeed = 40;
                 }
-                else if (xSpeed > maxSpeedX) {
-                    xSpeed = maxSpeedX;
+                if (joystick.value.y < -0.2) {
+                    ySpeed = -45  ;
                 }
-
-                ySpeed = joystick.value.y * 110
-
-                if (ySpeed > -minSpeedY && ySpeed < minSpeedY) {
-                    ySpeed = 0;
-                }
-                else if (ySpeed < -maxSpeedY) {
-                    ySpeed = -maxSpeedY;
-                }
-                else if (ySpeed > maxSpeedY) {
-                    ySpeed = maxSpeedY;
+                if (joystick.value.y > 0.2) {            
+                    ySpeed = 45;
                 }
             }
 
             // left, not right arrow
-            if ((keyMap[37] && !keyMap[39])){
+            if (keyMap[37] && !keyMap[39]) {
                 xSpeed = -40;
             }
             // right, not right arrow
-            if (keyMap[39] && !keyMap[37]){
+            if (keyMap[39] && !keyMap[37]) {
                 xSpeed = 40;
             }
             // up, not down arrow
-            if (keyMap[38] && !keyMap[40]){
+            if (keyMap[38] && !keyMap[40]) {
                 ySpeed = -45  ;
             }
             // down, not up arrow
-            if (keyMap[40] && !keyMap[38]){            
+            if (keyMap[40] && !keyMap[38]) {            
                 ySpeed = 45;
             }
 
