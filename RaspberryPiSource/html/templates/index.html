@@ -488,12 +488,12 @@
                     if (tmpXSpeed >= 32) xSpeed = tmpXSpeed;
                 }
                 if (joystick.value.y < 0) {
-                    var tmpYSpeed = map(joystick.value.y * 100, -100, 0, -50, -30);
-                    if (tmpYSpeed <= -32) ySpeed = tmpYSpeed;
+                    var tmpYSpeed = map(joystick.value.y * 100, -100, 0, -50, -35);
+                    if (tmpYSpeed <= -40) ySpeed = tmpYSpeed;
                 }
                 if (joystick.value.y > 0) {
                     var tmpYSpeed = map(joystick.value.y * 100, 0, 100, 30, 50);
-                    if (tmpYSpeed >= 32) ySpeed = tmpYSpeed;
+                    if (tmpYSpeed >= 35) ySpeed = tmpYSpeed;
                 }
             }
 
