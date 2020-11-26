@@ -268,7 +268,7 @@
 
         const joystickBase = document.getElementById("joystickBase");
         const joystickKnob = document.getElementById("joystickKnob");
-        const joystick = new JoystickController("joystickKnob", 64, 8);
+        const joystick = new JoystickController("joystickKnob", 32, 8);
 
 
         var deviceType = 0; // 0=PC, 1=mobile
@@ -491,8 +491,8 @@
                 }
                 if (joystick.value.y < 0) {
                     var tmpYSpeed = Math.round(joystick.value.y * 100);
-                    tmpYSpeed = map(tmpYSpeed, -100, 0, -60, -48);
-                    if (tmpYSpeed <= -50) ySpeed = tmpYSpeed;
+                    tmpYSpeed = map(tmpYSpeed, -100, 0, -65, -53);
+                    if (tmpYSpeed <= -55) ySpeed = tmpYSpeed;
                 }
                 if (joystick.value.y > 0) {
                     var tmpYSpeed = Math.round(joystick.value.y * 100);
