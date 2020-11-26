@@ -480,20 +480,20 @@
 
             if (document.fullscreenElement && deviceType==1) {
                 if (joystick.value.x < 0) {
-                    var tmpXSpeed = map(joystick.value.x * 100, -100, 0, -40, -15);
-                    if (tmpXSpeed <= -20) xSpeed = tmpXSpeed;
+                    var tmpXSpeed = map(joystick.value.x * 100, -100, 0, -50, -30);
+                    if (tmpXSpeed <= -32) xSpeed = tmpXSpeed;
                 }
                 if (joystick.value.x > 0) {
-                    var tmpXSpeed = map(joystick.value.x * 100, 0, 100, 15, 40);
-                    if (tmpXSpeed >= 20) xSpeed = tmpXSpeed;
+                    var tmpXSpeed = map(joystick.value.x * 100, 0, 100, 30, 50);
+                    if (tmpXSpeed >= 32) xSpeed = tmpXSpeed;
                 }
                 if (joystick.value.y < 0) {
-                    var tmpYSpeed = map(joystick.value.y * 100, -100, 0, -40, -15);
-                    if (tmpYSpeed <= -20) ySpeed = tmpYSpeed;
+                    var tmpYSpeed = map(joystick.value.y * 100, -100, 0, -50, -30);
+                    if (tmpYSpeed <= -32) ySpeed = tmpYSpeed;
                 }
                 if (joystick.value.y > 0) {
-                    var tmpYSpeed = map(joystick.value.y * 100, 0, 100, 15, 40);
-                    if (tmpYSpeed >= 20) ySpeed = tmpYSpeed;
+                    var tmpYSpeed = map(joystick.value.y * 100, 0, 100, 30, 50);
+                    if (tmpYSpeed >= 32) ySpeed = tmpYSpeed;
                 }
             }
 
