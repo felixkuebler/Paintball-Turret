@@ -479,17 +479,21 @@
             ySpeed = 0;
 
             if (document.fullscreenElement && deviceType==1) {
-                if (joystick.value.x < -0.2) {
-                    xSpeed = -40;
+                if (joystick.value.x < 0) {
+                    var tmpXSpeed = map(joystick.value.x * 100, -100, 0, -40, -15);
+                    if (tmpXSpeed <= -20) xSpeed = tmpXSpeed;
                 }
-                if (joystick.value.x > 0.2) {
-                    xSpeed = 40;
+                if (joystick.value.x > 0) {
+                    var tmpXSpeed = map(joystick.value.x * 100, 0, 100, 15, 40);
+                    if (tmpXSpeed >= 20) xSpeed = tmpXSpeed;
                 }
-                if (joystick.value.y < -0.2) {
-                    ySpeed = -45  ;
+                if (joystick.value.y < 0) {
+                    var tmpYSpeed = map(joystick.value.y * 100, -100, 0, -40, -15);
+                    if (tmpYSpeed <= -20) ySpeed = tmpYSpeed;
                 }
-                if (joystick.value.y > 0.2) {            
-                    ySpeed = 45;
+                if (joystick.value.y > 0) {
+                    var tmpYSpeed = map(joystick.value.y * 100, 0, 100, 15, 40);
+                    if (tmpYSpeed >= 20) ySpeed = tmpYSpeed;
                 }
             }
 
