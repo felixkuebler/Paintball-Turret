@@ -37,86 +37,86 @@ class Turret():
 	def setPositionX(self, pos):
 		posScaled = int(100*pos)
 		self.arduinoBottom.motorWritePosition(posScaled)
-		print('Write Position X: %s ' % posScaled, file=sys.stdout, flush=True)
+		#print('Write Position X: %s ' % posScaled, file=sys.stdout, flush=True)
 
 
 	def setPositionY(self, pos):
 		posScaled = int(100*pos)
 		self.arduinoTop.motorWritePosition(posScaled)
-		print('Write Position Y: %s' % posScaled, file=sys.stdout, flush=True)
+		#print('Write Position Y: %s' % posScaled, file=sys.stdout, flush=True)
 
 
 	def getPositionX(self):
 		pos = self.arduinoBottom.motorReadPosition()/100
-		print('Read Position X: %s ' % pos, file=sys.stdout, flush=True)
+		#print('Read Position X: %s ' % pos, file=sys.stdout, flush=True)
 		return pos
 
 
 	def getPositionY(self):
 		pos = self.arduinoTop.motorReadPosition()/100
-		print('Read Position Y: %s' % pos, file=sys.stdout, flush=True)
+		#print('Read Position Y: %s' % pos, file=sys.stdout, flush=True)
 		return pos
 
 
 	def resetPostionX(self):
 		self.arduinoBottom.motorResetPosition()
-		print('Reset Position X', file=sys.stdout, flush=True)
+		#print('Reset Position X', file=sys.stdout, flush=True)
 
 
 	def resetPostionY(self):
 		self.arduinoTop.motorResetPosition()
-		print('Reset Position Y', file=sys.stdout, flush=True)
+		#print('Reset Position Y', file=sys.stdout, flush=True)
 
 
 	def isAtTargetX(self):
 		isAtTarget = self.arduinoBottom.motorIsAtTarget() == True
-		print('Is at target X: %s' % isAtTarget, file=sys.stdout, flush=True)
+		#print('Is at target X: %s' % isAtTarget, file=sys.stdout, flush=True)
 		return isAtTarget
 
 
 	def isAtTargetY(self):
 		isAtTarget = self.arduinoTop.motorIsAtTarget() == True
-		print('Is at target Y: %s' % isAtTarget, file=sys.stdout, flush=True)
+		#print('Is at target Y: %s' % isAtTarget, file=sys.stdout, flush=True)
 		return isAtTarget
 
 
 	def setSpeedX(self, speed):
 		speedScaled = int(speed)
 		self.arduinoBottom.motorWriteSpeed(speedScaled)
-		print('Write Speed X: %s ' % speedScaled, file=sys.stdout, flush=True)
+		#print('Write Speed X: %s ' % speedScaled, file=sys.stdout, flush=True)
 
 
 	def setSpeedY(self, speed):
 		speedScaled = int(speed)
 		self.arduinoTop.motorWriteSpeed(speedScaled)
-		print('Write Speed Y: %s' % speedScaled, file=sys.stdout, flush=True)
+		#print('Write Speed Y: %s' % speedScaled, file=sys.stdout, flush=True)
 
 
 	def setMaxSpeedX(self, speed):
 		speedScaled = int(speed)
 		self.arduinoBottom.motorSetMaxSpeed(speedScaled)
-		print('Set max Speed X: %s' % speedScaled, file=sys.stdout, flush=True)
+		#print('Set max Speed X: %s' % speedScaled, file=sys.stdout, flush=True)
 
 
 	def setMaxSpeedY(self, speed):
 		speedScaled = int(speed)
 		self.arduinoTop.motorSetMaxSpeed(speedScaled)
-		print('Set max Speed Y: %s' % speedScaled, file=sys.stdout, flush=True)
+		#print('Set max Speed Y: %s' % speedScaled, file=sys.stdout, flush=True)
 
 
 	def setMinSpeedX(self, speed):
 		speedScaled = int(speed)
 		self.arduinoBottom.motorSetMinSpeed(speedScaled)
-		print('Set min Speed X: %s' % speedScaled, file=sys.stdout, flush=True)
+		#print('Set min Speed X: %s' % speedScaled, file=sys.stdout, flush=True)
 
 
 	def setMinSpeedY(self, speed):
 		speedScaled = int(speed)
 		self.arduinoTop.motorSetMinSpeed(speedScaled)
-		print('Set min Speed Y: %s' % speedScaled, file=sys.stdout, flush=True)
+		#print('Set min Speed Y: %s' % speedScaled, file=sys.stdout, flush=True)
 
 
 	def trigger(self):
 		self.arduinoTop.digitalWrite(4,1)
 		self.arduinoTop.digitalWrite(4,0)
-		print('Trigger is pushed.', file=sys.stdout, flush=True)
+		#print('Trigger is pushed.', file=sys.stdout, flush=True)
