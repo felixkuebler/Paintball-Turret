@@ -491,8 +491,8 @@
                 }
                 if (joystick.value.y < 0) {
                     var tmpYSpeed = Math.round(joystick.value.y * 100);
-                    tmpYSpeed = map(tmpYSpeed, -100, 0, -65, -53);
-                    if (tmpYSpeed <= -55) ySpeed = tmpYSpeed;
+                    tmpYSpeed = map(tmpYSpeed, -100, 0, -85, -73);
+                    if (tmpYSpeed <= -75) ySpeed = tmpYSpeed;
                 }
                 if (joystick.value.y > 0) {
                     var tmpYSpeed = Math.round(joystick.value.y * 100);
