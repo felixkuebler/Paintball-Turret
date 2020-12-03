@@ -39,7 +39,7 @@ install:
 	cp $(MAKE_DIR)/$(UTILS_DIR)/$(EXEC_FILE) $(MAKE_DIR)
 	chmod +x $(MAKE_DIR)/$(EXEC_FILE)
 
-	sudo hostname -b $(NAME)
+	#sudo hostname -b $(NAME)
 
 info:
 	docker ps
