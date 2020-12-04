@@ -33,9 +33,15 @@ reset:
 	docker image prune -f
 
 install:
+	# copy autostart .desktop to home directory
 	cp $(MAKE_DIR)/$(UTILS_DIR)/$(AUTO_FILE) $(AUTO_DIR)
 	sed -i 's+{{EXEC_DIR}}+$(MAKE_DIR)/$(EXEC_FILE)+g' $(AUTO_DIR)/$(AUTO_FILE)
 
+	# add autostart command to rc.local
+	 sed -i 's+$(MAKE_DIR)/$(EXEC_FILE) &++g' /etc/rc.local
+	 sed -i 's+exit 0+$(MAKE_DIR)/$(EXEC_FILE) \&\n\nexit 0+g' /etc/rc.local
+
+	# copy start script to root and make executable
 	cp $(MAKE_DIR)/$(UTILS_DIR)/$(EXEC_FILE) $(MAKE_DIR)
 	chmod +x $(MAKE_DIR)/$(EXEC_FILE)
 
