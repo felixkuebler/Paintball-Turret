@@ -22,7 +22,7 @@ RUN apt-get install -y python3-opencv
 
 RUN pip3 install pyserial
 
-COPY ./RaspberryPiSource .
+COPY ./TurretApp .
 
 CMD python3 main.py
 
