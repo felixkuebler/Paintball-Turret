@@ -7,7 +7,7 @@ from importlib import import_module
 from flask import Flask, request, render_template, Response, send_from_directory
 
 sys.path.append('./turret')
-from cameraDevice import Camera
+from rgbCameraDevice import Camera
 from turret import Turret
 
 
