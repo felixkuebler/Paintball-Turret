@@ -51,6 +51,22 @@
                         (top-left = right, bottom-left = left, top-right = up, bottom-right = down)<br>
                         (all controls are only enabled in fullscreen mode)</p>
 
+                    <h3>Camera Feed</h3>
+                    <hr>
+                    <div style="margin-left: 5%; margin-right:5%; width:90%">
+                        <h4>Camera Input</h4>
+                        <select name="cameraFeedSelector" id="cameraFeedSelector">
+                            <option value="rgb" selected="selected">RGB</option>
+                            <option value="thermal">Thermal</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                        <br>
+                        <br>
+                        <p class="description">
+                            Select the type of camera feed.
+                        </p>
+                    </div>
+
                     <h3>Motion (Speed)</h3>
                     <hr>
                     <div style="margin-left: 5%; margin-right:5%; width:90%">
@@ -253,6 +269,8 @@
         const resetButtonX = document.getElementById("resetButtonX");
         const resetButtonY = document.getElementById("resetButtonY");
 
+        const cameraFeedSelector = document.getElementById("cameraFeedSelector");
+
         const xSpeedInput = document.getElementById("xSpeedInput");
         const ySpeedInput = document.getElementById("ySpeedInput");
 
@@ -382,6 +400,15 @@
             httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":\"1\"}");
         }
         resetButtonY.addEventListener("click",resetButtonYClickCallback);
+
+        /* 
+        * Camera feed selector callback
+        */
+        function selectCameraFeedCallback(event){
+            var postString = "{\"setCameraFeed\":\"" + event.target.value + "\"}";
+            httpPostAsync("{{ url_for('option') }}", postString);
+        }
+        cameraFeedSelector.addEventListener("change",selectCameraFeedCallback);
 
         /* 
         * Speed range input callback (x)

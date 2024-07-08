@@ -167,6 +167,11 @@ input[type=range]::-moz-range-thumb {
     transform: translate(0, 2px);  
 }
 
+input[type="radio"] {
+    display: inline;
+    margin-right: 10px;
+}
+
 .description {
     font-size: small;
 }

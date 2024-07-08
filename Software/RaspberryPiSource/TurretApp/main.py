@@ -7,21 +7,24 @@ from importlib import import_module
 from flask import Flask, request, render_template, Response, send_from_directory
 
 sys.path.append('./turret')
-from rgbCameraDevice import RgbCamera
-from thermalCameraDevice import ThermalCamera
+
 from turret import Turret
+from cameraMux import CameraMux
 
 
 app = Flask(__name__, template_folder='html/templates', static_folder='html/static', static_url_path='')
+
 #turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
-rgbCam = RgbCamera()
-thermalCam = ThermalCamera()
+
+cam = CameraMux()
 
 
 def getFrame():
     # Video streaming generator function.
     while True:
-        frame = cam.get_frame()
+
+        frame = cam.getFrame()
+
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
@@ -64,6 +67,16 @@ def controlle():
 @app.route('/option', methods=['POST'])
 def option():
     data = json.loads(request.data)
+
+    if 'setCameraFeed' in data:
+
+        if data['setCameraFeed'] == 'rgb':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_RGB)
+        elif data['setCameraFeed'] == 'thermal':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL)
+        elif data['setCameraFeed'] == 'hybrid':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_HYBRID)
+
 
     if 'resetPosX' in data:
         turr.resetPostionX()

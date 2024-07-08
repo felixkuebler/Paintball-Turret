@@ -10,12 +10,17 @@ class RgbCamera():
         self.capture.release()
 
 
-    def get_frame(self):
+    def read(self):
         if not self.capture.isOpened():
             raise RuntimeError('Could not start camera.')
 
         # read current frame
-        _, img = self.capture.read()
+        return self.capture.read()
+        
+
+    def getFrame(self):
+        
+        ret, frame = self.read()
 
         # encode as a jpeg image and return it
-        return cv2.imencode('.jpg', img)[1].tobytes()
+        return cv2.imencode('.jpg', frame)[1].tobytes()

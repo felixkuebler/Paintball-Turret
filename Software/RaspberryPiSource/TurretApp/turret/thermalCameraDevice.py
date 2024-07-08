@@ -26,25 +26,7 @@ class ThermalCamera:
 		os.system('rm ' + self.filename)
 
 
-	def get_frame(self):
-
-		# read current frame
-		ret, img = self.read()
-
-		if not ret:
-			raise RuntimeError('Could not start camera.')
-
-		#img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-		img = cv2.bitwise_not(img)
-		img = cv2.resize(img, (640, 480))
-
-		# encode as a jpeg image and return it
-		return cv2.imencode('.jpg', img)[1].tobytes()
-
-
-	def read_raw(self):
+	def read(self):
 		try:
 			os.system('v4l2-ctl -d /dev/video' + str(self.device) + ' --stream-mmap --stream-count=1 --stream-to=' + self.filename + ' >nul 2>&1')
 
@@ -73,15 +55,27 @@ class ThermalCamera:
 			# crop unnecessary duplicates
 			uyvy = uyvy[0:192, 0:256]
 
+			frame = cv2.cvtColor(uyvy, cv2.COLOR_YUV2BGR_UYVY)
+
+			#frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
+			frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+			frame = cv2.bitwise_not(frame)
+
+			frame = cv2.resize(frame, (640, 480))
+
 		except Exception as e:
-			print(str(e))
+			raise RuntimeError('Could not start camera.')
 			return False, None
-		return True, uyvy
+
+		return True, frame
 
 
-	def read(self):
-		ret, uyvy = self.read_raw()
-		if not ret:
-			return ret, uyvy
-		bgr = cv2.cvtColor(uyvy, cv2.COLOR_YUV2BGR_UYVY)
-		return ret, bgr
+	def getFrame(self):
+
+		# read current frame
+		ret, img = self.read()
+
+		# encode as a jpeg image and return it
+		return cv2.imencode('.jpg', img)[1].tobytes()
