@@ -61,9 +61,39 @@
                             <option value="hybrid">Hybrid</option>
                         </select>
                         <br>
+
+                        <h4>Thermal Camera Color Map</h4>
+                         <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector">
+                            <option value="autumn">Autumn</option>
+                            <option value="bone" selected="selected">Bone</option>
+                            <option value="jet">Jet</option>
+                            <option value="winter">Winter</option>
+                            <option value="rainbow">Rainbow</option>
+                            <option value="ocean">Ocean</option>
+                            <option value="summer">Summer</option>
+                            <option value="spring">Spring</option>
+                            <option value="cool">Cool</option>
+                            <option value="hsv">HSV</option>
+                            <option value="pink">Pink</option>
+                            <option value="hot">Hot</option>
+                            <option value="parula">Parula</option>
+                            <option value="magma">Magma</option>
+                            <option value="inferno">Inferno</option>
+                            <option value="plasma">Plasma</option>
+                            <option value="viridis">Viridis</option>
+                            <option value="cividis">Cividis</option>
+                            <option value="twilight">Twilight</option>
+                            <option value="twilightShifted">Twilight Shifted</option>
+                            <option value="turbo">Turbo</option>
+                            <option value="deepGreen">Deep Green</option>
+                        </select>
                         <br>
+
+                       
+
+
                         <p class="description">
-                            Select the type of camera feed.
+                            Select the type of camera feed and the color map for thermal imaging.
                         </p>
                     </div>
 
@@ -270,6 +300,8 @@
         const resetButtonY = document.getElementById("resetButtonY");
 
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
+        
+        const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
 
         const xSpeedInput = document.getElementById("xSpeedInput");
         const ySpeedInput = document.getElementById("ySpeedInput");
@@ -409,6 +441,15 @@
             httpPostAsync("{{ url_for('option') }}", postString);
         }
         cameraFeedSelector.addEventListener("change",selectCameraFeedCallback);
+
+        /* 
+        * Thermal camera color map selector callback
+        */
+        function selectThermalCameraColorMapCallback(event){
+            var postString = "{\"setThermalCameraColorMap\":\"" + event.target.value + "\"}";
+            httpPostAsync("{{ url_for('option') }}", postString);
+        }
+        thermalCameraColorMapSelector.addEventListener("change",selectThermalCameraColorMapCallback);
 
         /* 
         * Speed range input callback (x)
