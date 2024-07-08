@@ -46,6 +46,9 @@ def video_feed():
 
 @app.route('/controlle', methods=['POST'])
 def controlle():
+
+    return Response("controlle_response", status=200, mimetype='text/html')
+
     # Mouse movement handling routine
     data = json.loads(request.data)
 
@@ -125,6 +128,8 @@ def option():
             cam.setThermalColorMap(cv2.COLORMAP_DEEPGREEN)
         else:
             cam.setThermalColorMap(cv2.COLORMAP_BONE)
+            
+    return Response("reset_response", status=200, mimetype='text/html')
 
     if 'resetPosX' in data:
         turr.resetPostionX()
@@ -137,6 +142,8 @@ def option():
 
 @app.route('/feedback', methods=['GET'])
 def feedback():
+
+    return '{}'
 
     if request.args.get('position'):
         xPos = turr.getPositionX()
