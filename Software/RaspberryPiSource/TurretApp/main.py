@@ -7,13 +7,16 @@ from importlib import import_module
 from flask import Flask, request, render_template, Response, send_from_directory
 
 sys.path.append('./turret')
-from rgbCameraDevice import Camera
+from rgbCameraDevice import RgbCamera
+from thermalCameraDevice import ThermalCamera
 from turret import Turret
 
 
 app = Flask(__name__, template_folder='html/templates', static_folder='html/static', static_url_path='')
-turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
-cam = Camera()
+#turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
+rgbCam = RgbCamera()
+thermalCam = ThermalCamera()
+
 
 def getFrame():
     # Video streaming generator function.

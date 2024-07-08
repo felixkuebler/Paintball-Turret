@@ -1,12 +1,14 @@
 import cv2
 
-class Camera():
+class RgbCamera():
 
-    def __init__(self):
-        self.capture=cv2.VideoCapture(0)
+    def __init__(self, device=0):
+        self.capture=cv2.VideoCapture(device)
+
 
     def __del__(self):
         self.capture.release()
+
 
     def get_frame(self):
         if not self.capture.isOpened():
