@@ -2,33 +2,32 @@ import serial
 import ctypes
 
 
-JOB_SET_OUTPUT = ctypes.c_ubyte(1)
-JOB_SET_INPUT = ctypes.c_ubyte(2)
-JOB_DIGITAL_READ = ctypes.c_ubyte(3)
-JOB_DIGITAL_WRITE = ctypes.c_ubyte(4)
-JOB_ANALOG_READ = ctypes.c_ubyte(5)
-JOB_ANALOG_WRITE = ctypes.c_ubyte(6)
-
-JOB_ATTACH_MOTOR = ctypes.c_ubyte(10)
-JOB_DETACH_MOTOR = ctypes.c_ubyte(11)
-JOB_MOTOR_WRITE_POSITION = ctypes.c_ubyte(12)
-JOB_MOTOR_WRITE_SPEED = ctypes.c_ubyte(13)
-JOB_MOTOR_READ_POSITION = ctypes.c_ubyte(14)
-JOB_MOTOR_AT_TARGET = ctypes.c_ubyte(15)
-JOB_MOTOR_OPTION = ctypes.c_ubyte(16)
-
-OPTION_MOTOR_RESET = ctypes.c_ubyte(1)
-OPTION_MOTOR_MIN_SPEED = ctypes.c_ubyte(2)
-OPTION_MOTOR_MAX_SPEED = ctypes.c_ubyte(3)
-OPTION_MOTOR_GEAR_RATIO  = ctypes.c_ubyte(4)
-OPTION_MOTOR_INVERT_DIR  = ctypes.c_ubyte(5)
-OPTION_MOTOR_RANGE = ctypes.c_ubyte(6)
-
-
-CMD_TERMINATOR = ('#').encode()
-
-
 class ArduinoSerialDevice():
+
+	JOB_SET_OUTPUT = ctypes.c_ubyte(1)
+	JOB_SET_INPUT = ctypes.c_ubyte(2)
+	JOB_DIGITAL_READ = ctypes.c_ubyte(3)
+	JOB_DIGITAL_WRITE = ctypes.c_ubyte(4)
+	JOB_ANALOG_READ = ctypes.c_ubyte(5)
+	JOB_ANALOG_WRITE = ctypes.c_ubyte(6)
+
+	JOB_ATTACH_MOTOR = ctypes.c_ubyte(10)
+	JOB_DETACH_MOTOR = ctypes.c_ubyte(11)
+	JOB_MOTOR_WRITE_POSITION = ctypes.c_ubyte(12)
+	JOB_MOTOR_WRITE_SPEED = ctypes.c_ubyte(13)
+	JOB_MOTOR_READ_POSITION = ctypes.c_ubyte(14)
+	JOB_MOTOR_AT_TARGET = ctypes.c_ubyte(15)
+	JOB_MOTOR_OPTION = ctypes.c_ubyte(16)
+
+	OPTION_MOTOR_RESET = ctypes.c_ubyte(1)
+	OPTION_MOTOR_MIN_SPEED = ctypes.c_ubyte(2)
+	OPTION_MOTOR_MAX_SPEED = ctypes.c_ubyte(3)
+	OPTION_MOTOR_GEAR_RATIO  = ctypes.c_ubyte(4)
+	OPTION_MOTOR_INVERT_DIR  = ctypes.c_ubyte(5)
+	OPTION_MOTOR_RANGE = ctypes.c_ubyte(6)
+
+	CMD_TERMINATOR = ('#').encode()
+
 
 	arduinoDev = 0
 	serialLock = False;
