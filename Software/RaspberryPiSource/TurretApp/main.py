@@ -78,8 +78,10 @@ def option():
 
         if data['setCameraFeed'] == 'rgb':
             cam.setCameraFeed(CameraMux.CAMERA_FEED_RGB)
-        elif data['setCameraFeed'] == 'thermal':
-            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL)
+        elif data['setCameraFeed'] == 'thermalAbs':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL_ABS)
+        elif data['setCameraFeed'] == 'thermalNorm':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL_NORM)
         elif data['setCameraFeed'] == 'hybrid':
             cam.setCameraFeed(CameraMux.CAMERA_FEED_HYBRID)
 

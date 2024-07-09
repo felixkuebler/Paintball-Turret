@@ -11,6 +11,8 @@ class HikMicro:
 	temperatureMin = -20
 	temperatureMax = 350
 
+	temperatureBody = 37
+
 
 class ThermalCamera:
 
@@ -24,31 +26,61 @@ class ThermalCamera:
 		os.system('rm ' + self.filename)
 
 
-	def read(self):
+	def readRaw(self):
 		try:
 			# grap frame from camera
 			os.system('v4l2-ctl -d /dev/video' + str(self.device) + ' --stream-mmap --stream-count=1 --stream-to=' + self.filename + ' >nul 2>&1')
 
 			# load 16 bit raw image from file
-			rawFrame = np.fromfile(self.filename, dtype=np.uint16, offset=0, count=self.width*self.height).reshape((self.height,self.width)) << 5
-			cv2.imshow('rawFrame', rawFrame)
-
-			# create 3 channel bgr image
-			rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
-
-			# normalize raw data
-			rgbFrame = cv2.normalize(rgbFrame, None, alpha=0, beta=np.iinfo(np.uint16).max, norm_type=cv2.NORM_MINMAX)
-			
-			# convert to 8 bit image
-			rgbFrame = (rgbFrame/256).astype('uint8')
-
-			frame = cv2.resize(rgbFrame, (640, 480))
+			rawFrame = np.fromfile(self.filename, dtype=np.uint16, offset=0, count=self.width*self.height).reshape((self.height,self.width)) << 4
 
 		except Exception as e:
 			raise RuntimeError('Could not start camera.')
 			return False, None
 
-		return True, frame
+		return True, rawFrame
+
+
+	def readNormalized(self):
+
+		ret, rawFrame = self.readRaw()
+
+		# create 3 channel bgr image
+		rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
+
+		# normalize raw data
+		rgbFrame = cv2.normalize(rgbFrame, None, alpha=0, beta=np.iinfo(np.uint16).max, norm_type=cv2.NORM_MINMAX)
+		
+		# convert to 8 bit image
+		rgbFrame = (rgbFrame/256).astype('uint8')
+
+		rgbFrame = cv2.resize(rgbFrame, (640, 480))
+
+		return ret, rgbFrame
+
+
+	def readAbsolut(self):
+
+		ret, rawFrame = self.readRaw()
+
+		bodyTemp = HikMicro.temperatureBody
+		bodyTemp = np.interp(bodyTemp, (HikMicro.temperatureMin, HikMicro.temperatureMax), (0, np.iinfo(np.uint16).max))
+
+		rawFrame[:][:] = np.interp(rawFrame[:][:], (bodyTemp, bodyTemp*2), (0, np.iinfo(np.uint16).max))
+
+		# create 3 channel bgr image
+		rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
+
+		# convert to 8 bit image
+		rgbFrame = (rgbFrame/256).astype('uint8')
+
+		rgbFrame = cv2.resize(rgbFrame, (640, 480))
+
+		return ret, rgbFrame
+
+		
+	def read(self):
+		return self.readAbsolut()
 
 
 	def getFrame(self):
