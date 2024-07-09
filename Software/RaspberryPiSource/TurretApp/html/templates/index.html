@@ -63,7 +63,8 @@
                         <br>
 
                         <h4>Thermal Camera Color Map</h4>
-                         <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector">
+                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="vertical-align: middle;" />        
+                        <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector">
                             <option value="grey" selected="selected">Grey</option>
                             <option value="autumn">Autumn</option>
                             <option value="bone">Bone</option>
@@ -303,6 +304,7 @@
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
         
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
+        const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
         const xSpeedInput = document.getElementById("xSpeedInput");
         const ySpeedInput = document.getElementById("ySpeedInput");
@@ -451,6 +453,15 @@
             httpPostAsync("{{ url_for('option') }}", postString);
         }
         thermalCameraColorMapSelector.addEventListener("change",selectThermalCameraColorMapCallback);
+
+        /* 
+        * Display map image for selected color map
+        */
+        function displayColorMapImage(event){
+            var string = event.target.value.charAt(0).toUpperCase() + event.target.value.slice(1);
+            thermalCameraColorMapDisplay.setAttribute("src", "/img/colorscale" + string + ".jpg");
+        }
+        thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
         * Speed range input callback (x)
