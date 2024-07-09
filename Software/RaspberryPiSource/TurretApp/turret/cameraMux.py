@@ -9,16 +9,13 @@ class CameraMux():
 	CAMERA_FEED_THERMAL = 1
 	CAMERA_FEED_HYBRID = 2
 
+	THERMAL_COLOR_MAP_DEFAULT = 255
+
 	def __init__(self, deviceRgb=0, deviceThermal=2):
 		self.rgbCam = RgbCamera(deviceRgb)
 		self.thermalCam = ThermalCamera(deviceThermal)
-		self.thermalColorMap = cv2.COLORMAP_BONE
+		self.thermalColorMap = self.THERMAL_COLOR_MAP_DEFAULT
 		self.cameraSelector = self.CAMERA_FEED_RGB
-
-
-	def __del__(self):
-		self.rgbCam.release()
-		self.thermalCam.release()
 
 
 	def setCameraFeed(self, cameraFeed):
@@ -33,7 +30,9 @@ class CameraMux():
 			
 		if self.cameraSelector == self.CAMERA_FEED_THERMAL:
 			ret, frame = self.thermalCam.read()
-			frame = cv2.applyColorMap(frame, self.thermalColorMap)
+
+			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
+				frame = cv2.applyColorMap(frame, self.thermalColorMap)
 
 			# encode as a jpeg image and return it
 			return cv2.imencode('.jpg', frame)[1].tobytes()

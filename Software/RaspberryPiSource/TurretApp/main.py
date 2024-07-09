@@ -86,6 +86,8 @@ def option():
     if 'setThermalCameraColorMap' in data:
         if data['setThermalCameraColorMap'] == 'autumn':
             cam.setThermalColorMap(cv2.COLORMAP_AUTUMN)
+        elif data['setThermalCameraColorMap'] == 'bone':
+            cam.setThermalColorMap(cv2.COLORMAP_BONE)
         elif data['setThermalCameraColorMap'] == 'jet':
             cam.setThermalColorMap(cv2.COLORMAP_JET)
         elif data['setThermalCameraColorMap'] == 'winter':
@@ -127,7 +129,7 @@ def option():
         elif data['setThermalCameraColorMap'] == 'deepGreen':
             cam.setThermalColorMap(cv2.COLORMAP_DEEPGREEN)
         else:
-            cam.setThermalColorMap(cv2.COLORMAP_BONE)
+            cam.setThermalColorMap(CameraMux.THERMAL_COLOR_MAP_DEFAULT)
             
     return Response("reset_response", status=200, mimetype='text/html')
 
