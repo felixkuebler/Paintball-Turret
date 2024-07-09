@@ -25,6 +25,9 @@ class VideoCaptureUYCY:
 			# create 3 channel bgr image
 			rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
 
+			# normalize raw data
+			rgbFrame = cv2.normalize(rgbFrame, None, alpha=0, beta=np.iinfo(np.uint16).max, norm_type=cv2.NORM_MINMAX)
+			
 			# convert to 8 bit image
 			rgbFrame = (rgbFrame/256).astype('uint8')
 
