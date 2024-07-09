@@ -26,7 +26,12 @@ def getFrame():
     # Video streaming generator function.
     while True:
 
-        frame = cam.getFrame()
+        ret, frame = cam.getFrame()
+
+        # use no signal image if a fault in the selected camera was returend
+        if not ret:
+            frame = cv2.imread('html/static/img/testImage.jpg')
+            frame = cv2.imencode('.jpg', frame)[1].tobytes()
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
@@ -75,8 +80,10 @@ def option():
 
         if data['setCameraFeed'] == 'rgb':
             cam.setCameraFeed(CameraMux.CAMERA_FEED_RGB)
-        elif data['setCameraFeed'] == 'thermal':
-            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL)
+        elif data['setCameraFeed'] == 'thermalAbs':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL_ABS)
+        elif data['setCameraFeed'] == 'thermalNorm':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL_NORM)
         elif data['setCameraFeed'] == 'hybrid':
             cam.setCameraFeed(CameraMux.CAMERA_FEED_HYBRID)
 

@@ -6,8 +6,9 @@ from thermalCameraDevice import ThermalCamera
 class CameraMux():
 
 	CAMERA_FEED_RGB = 0
-	CAMERA_FEED_THERMAL = 1
-	CAMERA_FEED_HYBRID = 2
+	CAMERA_FEED_THERMAL_ABS = 1
+	CAMERA_FEED_THERMAL_NORM = 2
+	CAMERA_FEED_HYBRID = 3
 
 	THERMAL_COLOR_MAP_DEFAULT = 255
 
@@ -28,14 +29,21 @@ class CameraMux():
 
 	def getFrame(self):
 			
-		if self.cameraSelector == self.CAMERA_FEED_THERMAL:
-			ret, frame = self.thermalCam.read()
+		if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM or self.cameraSelector == self.CAMERA_FEED_THERMAL_ABS:
+
+			if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM:
+				ret, frame = self.thermalCam.readNormalized()
+			else:
+				ret, frame = self.thermalCam.readAbsolut()
+
+			if not ret:
+				return False, None
 
 			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
 				frame = cv2.applyColorMap(frame, self.thermalColorMap)
 
 			# encode as a jpeg image and return it
-			return cv2.imencode('.jpg', frame)[1].tobytes()
+			return True, cv2.imencode('.jpg', frame)[1].tobytes()
 
 		elif self.cameraSelector == self.CAMERA_FEED_HYBRID:
 			return self.thermalCam.getFrame()
