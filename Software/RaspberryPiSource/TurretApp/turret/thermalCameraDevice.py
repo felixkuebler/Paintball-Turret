@@ -7,7 +7,7 @@ import numpy as np
 
 class HikMicro:
 
-	resolution = (344, 256)
+	resolution = (192, 256) # the raw width is 344px but the usable width is only 192px
 	temperatureMin = -20
 	temperatureMax = 350
 
@@ -16,8 +16,6 @@ class ThermalCamera:
 
 	def __init__(self, device=2, size=HikMicro.resolution):
 		self.height, self.width = size
-		self.shape = (int(self.height*1.5), self.width)
-		self.framelen = (int) (self.width * self.height * 2)
 		self.filename = 'thermalFrame.raw'
 		self.device = device
 
@@ -28,42 +26,20 @@ class ThermalCamera:
 
 	def read(self):
 		try:
+			# grap frame from camera
 			os.system('v4l2-ctl -d /dev/video' + str(self.device) + ' --stream-mmap --stream-count=1 --stream-to=' + self.filename + ' >nul 2>&1')
 
-			file = open(self.filename, 'rb')
-			raw = file.read(self.framelen)
-			file.close()
+			# load 16 bit raw image from file
+			rawFrame = np.fromfile(self.filename, dtype=np.uint16, offset=0, count=self.width*self.height).reshape((self.height,self.width)) << 5
+			cv2.imshow('rawFrame', rawFrame)
 
-			U  = raw[0::4]
-			Y1 = raw[1::4]
-			V  = raw[2::4]
-			Y2 = raw[3::4]
-			
-			UV = np.empty((self.height*self.width), dtype=np.uint8)
-			YY = np.empty((self.height*self.width), dtype=np.uint8)
-			
-			UV[0::2] = np.fromstring(U,  dtype=np.uint8)
-			UV[1::2] = np.fromstring(V,  dtype=np.uint8)
-			YY[0::2] = np.fromstring(Y1, dtype=np.uint8)
-			YY[1::2] = np.fromstring(Y2, dtype=np.uint8)
-			
-			UV = UV.reshape((self.height, self.width))
-			YY = YY.reshape((self.height, self.width))
-			
-			uyvy = cv2.merge([UV, YY])
+			# create 3 channel bgr image
+			rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
 
-			# crop unnecessary duplicates
-			uyvy = uyvy[0:192, 0:256]
+			# convert to 8 bit image
+			rgbFrame = (rgbFrame/256).astype('uint8')
 
-			frame = cv2.cvtColor(uyvy, cv2.COLOR_YUV2BGR_UYVY)
-
-			#frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
-
-			frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-			frame = cv2.bitwise_not(frame)
-
-			frame = cv2.resize(frame, (640, 480))
+			frame = cv2.resize(rgbFrame, (640, 480))
 
 		except Exception as e:
 			raise RuntimeError('Could not start camera.')
