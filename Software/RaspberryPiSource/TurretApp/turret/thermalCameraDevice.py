@@ -27,15 +27,17 @@ class ThermalCamera:
 
 
 	def readRaw(self):
-		try:
-			# grap frame from camera
-			os.system('v4l2-ctl -d /dev/video' + str(self.device) + ' --stream-mmap --stream-count=1 --stream-to=' + self.filename + ' >nul 2>&1')
+		# grap frame from camera
+		os.system('v4l2-ctl -d /dev/video' + str(self.device) + ' --stream-mmap --stream-count=1 --stream-to=' + self.filename + ' >nul 2>&1')
+
+		# check if a file was generated
+		if os.path.isfile(self.filename):
 
 			# load 16 bit raw image from file
 			rawFrame = np.fromfile(self.filename, dtype=np.uint16, offset=0, count=self.width*self.height).reshape((self.height,self.width)) << 4
 
-		except Exception as e:
-			raise RuntimeError('Could not start camera.')
+		else:
+			#raise RuntimeError('Could not start camera.')
 			return False, None
 
 		return True, rawFrame
@@ -44,6 +46,9 @@ class ThermalCamera:
 	def readNormalized(self):
 
 		ret, rawFrame = self.readRaw()
+
+		if not ret:
+			return ret, None
 
 		# create 3 channel bgr image
 		rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
@@ -62,6 +67,9 @@ class ThermalCamera:
 	def readAbsolut(self):
 
 		ret, rawFrame = self.readRaw()
+
+		if not ret:
+			return ret, None
 
 		bodyTemp = HikMicro.temperatureBody
 		bodyTemp = np.interp(bodyTemp, (HikMicro.temperatureMin, HikMicro.temperatureMax), (0, np.iinfo(np.uint16).max))
@@ -88,5 +96,8 @@ class ThermalCamera:
 		# read current frame
 		ret, img = self.read()
 
+		if not ret:
+			return ret, None
+
 		# encode as a jpeg image and return it
-		return cv2.imencode('.jpg', img)[1].tobytes()
+		return ret, cv2.imencode('.jpg', img)[1].tobytes()

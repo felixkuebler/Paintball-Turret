@@ -26,7 +26,12 @@ def getFrame():
     # Video streaming generator function.
     while True:
 
-        frame = cam.getFrame()
+        ret, frame = cam.getFrame()
+
+        # use no signal image if a fault in the selected camera was returend
+        if not ret:
+            frame = cv2.imread('html/static/img/testImage.jpg')
+            frame = cv2.imencode('.jpg', frame)[1].tobytes()
 
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')

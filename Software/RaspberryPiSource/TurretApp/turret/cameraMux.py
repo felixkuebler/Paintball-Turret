@@ -36,11 +36,14 @@ class CameraMux():
 			else:
 				ret, frame = self.thermalCam.readAbsolut()
 
+			if not ret:
+				return False, None
+
 			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
 				frame = cv2.applyColorMap(frame, self.thermalColorMap)
 
 			# encode as a jpeg image and return it
-			return cv2.imencode('.jpg', frame)[1].tobytes()
+			return True, cv2.imencode('.jpg', frame)[1].tobytes()
 
 		elif self.cameraSelector == self.CAMERA_FEED_HYBRID:
 			return self.thermalCam.getFrame()
