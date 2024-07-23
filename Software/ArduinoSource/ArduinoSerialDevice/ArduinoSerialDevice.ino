@@ -76,19 +76,13 @@ BasicStepperDriver motorPitch(StepperMotorConfig::Pitch::Steps, StepperMotorConf
 BasicStepperDriver motorYaw(StepperMotorConfig::Yaw::Steps, StepperMotorConfig::Yaw::Pins::Dir, StepperMotorConfig::Yaw::Pins::Step);
 
 
-
-
 uint8_t serialBuffer[255];
 uint8_t buffPointer=0;
 bool bufferComplete = false;
 
 uint64_t preTime = 0; 
 
-/*
-*
-*setup for main loop :: only Serial setup, everything else on the go
-*
-*/
+
 void setup() {
   Serial.begin(9600);
 
@@ -96,13 +90,7 @@ void setup() {
   motorYaw.begin(StepperMotorConfig::Yaw::Rpm, StepperMotorConfig::Yaw::MicroSteps);
 }
 
-/*
-*
-*main loop
-*
-*/
 void loop() {
-
 
   while(Serial.available() > 0 && buffPointer<255 && !bufferComplete) {
     serialBuffer[buffPointer] = (uint8_t)Serial.read();
