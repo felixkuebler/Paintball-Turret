@@ -163,67 +163,6 @@ void loop() {
       // buff = [uint8_t, uint8_t] 
       pinMode(serialBuffer[1], INPUT);
     }
-    else if(serialBuffer[0] == JOB_ATTACH_MOTOR){
-      // Attach CPR-Motor at pin, pin2 and intterupt pin 2,3
-      // buff = [JOB_ATTACH_MOTOR, PIN_NUM, PIN_NUM]
-      // buff = [uint8_t, uint8_t, uint8_t] 
-      attachCPRMotor(serialBuffer[1], serialBuffer[2]);
-    }
-    else if(serialBuffer[0] == JOB_DETACH_MOTOR){
-      // Detach attached CPR-Motor
-      // buff = [JOB_DETACH_MOTOR]
-      // buff = [uint8_t]
-      detachCPRMotor();
-    }
-    else if(serialBuffer[0] == JOB_MOTOR_OPTION){
-      if(serialBuffer[1] == OPTION_MOTOR_MIN_SPEED){
-        // Set motor min speed
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_MIN_SPEED, SPEED]
-        // buff = [uint8_t, uint8_t, uint8_t] 
-        if(motor){
-          motor->minSpeed=serialBuffer[2];
-        }
-      }
-      else if(serialBuffer[1] == OPTION_MOTOR_MAX_SPEED){
-         // Set motor max speed
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_MAX_SPEED, SPEED]
-        // buff = [uint8_t, uint8_t, uint8_t] 
-        if(motor){
-          motor->maxSpeed=serialBuffer[2];
-        }
-      }
-      else if(serialBuffer[1] == OPTION_MOTOR_RESET){
-        // Reset motor positions
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_RESET]
-        // buff = [uint8_t, uint8_t] 
-        if(motor){
-            motor->encoderPos=0;
-            motor->setPosition=0;
-        }
-      }
-      else if(serialBuffer[1] == OPTION_MOTOR_GEAR_RATIO){
-        // Set motor gear ratio
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_GEAR_RATION, GEAR_RATIO]
-        // buff = [uint8_t, uint8_t, uint8_t] 
-        if(motor){
-            motor->gearRatio=serialBuffer[2];
-        }
-      }
-      else if(serialBuffer[1] == OPTION_MOTOR_RANGE){
-        // Set motor angular range
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_RANGE, RANGE]
-        // buff = [uint8_t, uint8_t, uint16_t] 
-        if(motor){
-            motor->maxRange=((uint16_t) serialBuffer[2] << (8*0)) + ((uint16_t) serialBuffer[3] << (8*1));
-        }
-      }
-      else if(serialBuffer[1] == OPTION_MOTOR_INVERT_DIR){
-        // Invert motor direction
-        // buff = [JOB_MOTOR_OPTION, OPTION_MOTOR_INVERT_DIR, INVERTED]
-        // buff = [uint8_t, uint8_t, uint8_t] 
-        if(motor){
-            motor->invertDir=serialBuffer[2];
-        }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionAbsolute){
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, DEGREE]
@@ -322,15 +261,10 @@ void loop() {
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
       */
     }
-    else if(serialBuffer[0] == JOB_MOTOR_AT_TARGET){
-      // Check if motor is at target position
-      // buff = [JOB_MOTOR_AT_TARGET]
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::ReadPosition){
       // Read motor position
       // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
-      // return = uint8_t
-      Serial.write((char)(motor->isAtTarget));
       // return = int32_t
       /*
       int32_t positionDeg = motor->encoderPos/(int32_t)motor->gearRatio;
