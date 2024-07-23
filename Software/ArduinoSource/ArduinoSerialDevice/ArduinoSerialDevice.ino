@@ -2,6 +2,8 @@
 #include <math.h>
 #include <stdint.h>
 
+#include "BasicStepperDriver.h"
+
 #define JOB_SET_OUTPUT 1
 #define JOB_SET_INPUT 2
 #define JOB_DIGITAL_READ 3
@@ -26,12 +28,50 @@
 
 
 
+namespace StepperMotorConfig {
 
+    namespace Pitch {
+      static constexpr uint8_t Steps = 200;
+      static constexpr uint8_t MicroSteps = 1;
 
+      static constexpr uint8_t Rpm = 120;
+      static constexpr uint8_t MinRpm = 0;
+      static constexpr uint8_t MaxRpm = 150;
 
+      static constexpr uint8_t GearRation = 10;
+      
+      namespace Pins {
+        static constexpr uint8_t Enable = 0;
+        static constexpr uint8_t Dir = 0;
+        static constexpr uint8_t Step = 0;
+      }
 
+      uint8_t currentPosition = 0;
+    }
+
+    namespace Yaw {
+      static constexpr uint8_t Steps = 200;
+      static constexpr uint8_t MicroSteps = 1;
+
+      static constexpr uint8_t Rpm = 120;
+      static constexpr uint8_t MinRpm = 0;
+      static constexpr uint8_t MaxRpm = 150;
+
+      static constexpr uint8_t GearRation = 10;
+      
+      namespace Pins {
+        static constexpr uint8_t Enable = 0;
+        static constexpr uint8_t Dir = 0;
+        static constexpr uint8_t Step = 0;
+      }
+
+      uint8_t currentPosition = 0;
+    }
 }
 
+
+BasicStepperDriver motorPitch(StepperMotorConfig::Pitch::Steps, StepperMotorConfig::Pitch::Pins::Dir, StepperMotorConfig::Pitch::Pins::Step);
+BasicStepperDriver motorYaw(StepperMotorConfig::Yaw::Steps, StepperMotorConfig::Yaw::Pins::Dir, StepperMotorConfig::Yaw::Pins::Step);
 
 
 
@@ -49,6 +89,9 @@ uint64_t preTime = 0;
 */
 void setup() {
   Serial.begin(9600);
+
+  motorPitch.begin(StepperMotorConfig::Pitch::Rpm, StepperMotorConfig::Pitch::MicroSteps);
+  motorYaw.begin(StepperMotorConfig::Yaw::Rpm, StepperMotorConfig::Yaw::MicroSteps);
 }
 
 /*
