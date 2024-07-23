@@ -4,29 +4,31 @@
 
 #include "BasicStepperDriver.h"
 
-#define JOB_SET_OUTPUT 1
-#define JOB_SET_INPUT 2
-#define JOB_DIGITAL_READ 3
-#define JOB_DIGITAL_WRITE 4
-#define JOB_ANALOG_READ 5
-#define JOB_ANALOG_WRITE 6
+namespace SerialCommands {
+  namespace Io {
+    static constexpr uint8_t SetOutput = 1;
+    static constexpr uint8_t SetInput = 2;
+    static constexpr uint8_t DigitalRead = 3;
+    static constexpr uint8_t DigitalWrite = 4;
+    static constexpr uint8_t AnalogRead = 5;
+    static constexpr uint8_t AnalogWrite = 6;
+  }
 
-#define JOB_ATTACH_MOTOR 10
-#define JOB_DETACH_MOTOR 11
-#define JOB_MOTOR_WRITE_POSITION 12
-#define JOB_MOTOR_WRITE_SPEED 13
-#define JOB_MOTOR_READ_POSITION 14
-#define JOB_MOTOR_AT_TARGET 15
-#define JOB_MOTOR_OPTION 16
-
-#define OPTION_MOTOR_RESET 1
-#define OPTION_MOTOR_MIN_SPEED 2
-#define OPTION_MOTOR_MAX_SPEED 3
-#define OPTION_MOTOR_GEAR_RATIO 4
-#define OPTION_MOTOR_INVERT_DIR 5
-#define OPTION_MOTOR_RANGE 6
-
-
+  namespace Motor {
+    namespace Pitch {
+       static constexpr uint8_t WritePositionAbsolute = 10;
+       static constexpr uint8_t WritePositionRelative = 11;
+       static constexpr uint8_t WriteSpeed = 12;
+       static constexpr uint8_t ReadPosition = 13;
+    }
+    namespace Yaw {
+       static constexpr uint8_t WritePositionAbsolute = 20;
+       static constexpr uint8_t WritePositionRelative = 21;
+       static constexpr uint8_t WriteSpeed = 22;
+       static constexpr uint8_t ReadPosition = 23;
+    }
+  }
+}
 
 namespace StepperMotorConfig {
 
@@ -117,26 +119,26 @@ void loop() {
     bufferComplete = false;
     buffPointer=0;
 
-    if(serialBuffer[0] == JOB_DIGITAL_WRITE){
+    if(serialBuffer[0] == SerialCommands::Io::DigitalWrite){
       // Toggle digital write
       // buff = [JOB_DIGITAL_WRITE, PIN_NUM, VALUE]
       // buff = [uint8_t, uint8_t, uint8_t] 
       digitalWrite(serialBuffer[1], serialBuffer[2]>0);
     }
-    else if(serialBuffer[0] == JOB_DIGITAL_READ){
+    else if(serialBuffer[0] == SerialCommands::Io::DigitalRead){
       // Toggle digital read
       // buff = [JOB_DIGITAL_READ, PIN_NUM]
       // buff = [uint8_t, uint8_t] 
       // return = uint8_t
       Serial.write((char)((uint8_t)digitalRead(serialBuffer[1])));
     }
-    else if(serialBuffer[0] == JOB_ANALOG_WRITE){  
+    else if(serialBuffer[0] == SerialCommands::Io::AnalogWrite){  
       // Toggle analog write
       // buff = [JOB_ANALOG_WRITE, PIN_NUM, VALUE]
       // buff = [uint8_t, uint8_t, uint8_t]     
       analogWrite(serialBuffer[1], serialBuffer[2]);
     }
-    else if(serialBuffer[0] == JOB_ANALOG_READ){
+    else if(serialBuffer[0] == SerialCommands::Io::AnalogRead){
       // Toggle analog read
       // buff = [JOB_ANALOG_READ, PIN_NUM]
       // buff = [uint8_t, uint8_t]   
@@ -149,13 +151,13 @@ void loop() {
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
-    else if(serialBuffer[0] == JOB_SET_OUTPUT){
+    else if(serialBuffer[0] == SerialCommands::Io::SetOutput){
       // Set pin mode as output
       // buff = [JOB_SET_OUTPUT, PIN_NUM]
       // buff = [uint8_t, uint8_t]  
       pinMode(serialBuffer[1], OUTPUT);
     }
-    else if(serialBuffer[0] == JOB_SET_INPUT){
+    else if(serialBuffer[0] == SerialCommands::Io::SetInput){
       // Set pin mode as input
       // buff = [JOB_SET_INPUT, PIN_NUM]
       // buff = [uint8_t, uint8_t] 
@@ -222,9 +224,22 @@ void loop() {
         if(motor){
             motor->invertDir=serialBuffer[2];
         }
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionAbsolute){
+      // Set motor position or speed
+      // buff = [JOB_MOTOR_WRITE_POSITION, DEGREE]
+      // buff = [uint8_t, int32_t]
+      /*
+      if(motor){
+        int32_t degree = ((int32_t) serialBuffer[1] << (8*0)) + ((int32_t) serialBuffer[2] <<  (8*1)) + ((int32_t) serialBuffer[3] <<  (8*2)) + ((int32_t) serialBuffer[4] <<  (8*3));
+        degree*=motor->gearRatio;
+        if (motor->invertDir) degree*= -1;
+
+        motor->motionMode = 0;
+        motor->setPosition = degree;
       }
+      */
     }
-    else if(serialBuffer[0] == JOB_MOTOR_WRITE_POSITION){
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WritePositionAbsolute){
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, DEGREE]
       // buff = [uint8_t, int32_t] 
@@ -239,7 +254,21 @@ void loop() {
       }
       */
     }
-    else if(serialBuffer[0] == JOB_MOTOR_WRITE_SPEED){
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionRelative){
+      // Set motor position or speed
+      // buff = [WritePositionRelative, Degree]
+      // buff = [uint8_t, int32_t]
+      int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
+      motorPitch.rotate(degree);
+    }
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WritePositionRelative){
+      // Set motor position or speed
+      // buff = [WritePositionRelative, Degree]
+      // buff = [uint8_t, int32_t]
+      int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
+      motorYaw.rotate(degree);
+    }
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WriteSpeed){
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
       // buff = [uint8_t, int16_t] 
@@ -253,7 +282,21 @@ void loop() {
       }
       */
     }
-    else if(serialBuffer[0] == JOB_MOTOR_READ_POSITION){
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WriteSpeed){
+      // Set motor position or speed
+      // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
+      // buff = [uint8_t, int16_t] 
+      /*
+      if(motor){
+        int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) + ((int16_t) serialBuffer[2] <<  (8*1));
+        if (motor->invertDir) speed*= -1;
+
+        motor->motionMode = 1;
+        motor->setSpeed = speed;
+      }
+      */
+    }
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::ReadPosition){
       // Read motor position
       // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
@@ -282,9 +325,33 @@ void loop() {
     else if(serialBuffer[0] == JOB_MOTOR_AT_TARGET){
       // Check if motor is at target position
       // buff = [JOB_MOTOR_AT_TARGET]
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::ReadPosition){
+      // Read motor position
+      // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
       // return = uint8_t
       Serial.write((char)(motor->isAtTarget));
+      // return = int32_t
+      /*
+      int32_t positionDeg = motor->encoderPos/(int32_t)motor->gearRatio;
+      if (motor->invertDir) positionDeg*= -1;
+
+      uint8_t outputBuffer[4];
+      if(motor){
+        outputBuffer[0] = (positionDeg >> (8*0)) & 0xff;
+        outputBuffer[1] = (positionDeg >> (8*1)) & 0xff;
+        outputBuffer[2] = (positionDeg >> (8*2)) & 0xff;
+        outputBuffer[3] = (positionDeg >> (8*3)) & 0xff;
+      }
+      else {
+        outputBuffer[0] = 0;
+        outputBuffer[1] = 0;
+        outputBuffer[2] = 0;
+        outputBuffer[3] = 0;
+      }
+      // send message
+      Serial.write((char*)outputBuffer, sizeof(outputBuffer));
+      */
     }
     
     // clear buffer
