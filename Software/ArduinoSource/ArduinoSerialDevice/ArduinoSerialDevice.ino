@@ -25,127 +25,13 @@
 #define OPTION_MOTOR_RANGE 6
 
 
-/*
-*
-*Motor with CPR-Encoder setup
-*
-*/
-struct CPRMotor {
-
-  // pin variables
-  uint8_t pin1;
-  uint8_t pin2;
-  uint8_t encoderPinA;
-  uint8_t encoderPinB;
-
-  // position variables
-  volatile int32_t encoderPos;
-  int32_t setPosition;
-  uint16_t maxRange; // maximum range in degree from -maxRange/2 to +maxRange/2
-
-  uint8_t invertDir; // 0=non inverted, 1=inverted
-  uint8_t motionMode; // 0=angular contolle, 1=speed controlle
-
-  // position threshold
-  uint16_t posThresh; // threashold for angular positioning
-  uint8_t isAtTarget; // true if setPosiont = encoderPosition
-
-  // speed variables
-  uint8_t maxSpeed;
-  uint8_t minSpeed;
-  int16_t setSpeed;
-
-  // ration between output shaft and encoder
-  uint8_t gearRatio;
-
-  // controller variables
-  float Kp;
-  float Ki;
-  float Kd;
-  float integral;
-  float preError;
-};
-
-struct CPRMotor *motor; 
 
 
-/*
-*
-*interrupt handler handles cpr encoder signal count
-*
-*/
-void interruptHandler(){
 
 
-  if (digitalRead(motor->encoderPinA) == digitalRead(motor->encoderPinB)) {
-      motor->encoderPos--;   
-  }
-  else
-  {
-      motor->encoderPos++;    
-  }
+
 }
 
-
-/*
-*
-*attach motor with cpr encoder at pin1, pin2 and interrupt pins 2,3
-*
-*/
-void attachCPRMotor(uint8_t pin1, uint8_t pin2){
-  
-  motor =  (struct CPRMotor *)malloc(sizeof(struct CPRMotor));
-
-  motor->pin1=pin1;
-  motor->pin2=pin2;
-  motor->encoderPinA=2;
-  motor->encoderPinB=3;
-
-  motor->encoderPos=0;
-  motor->setPosition=0;
-  //motor->maxRange = 9000; //for top
-  motor->maxRange = 27000; // for bottom
-
-  
-  motor->invertDir = false;
-  motor->motionMode = 0; // for angular controlle
-  //motor->motionMode = 1; // for speed controlle
-
-  motor->posThresh = 300;
-  motor->isAtTarget = true;
-
-  motor->maxSpeed=200;
-  motor->minSpeed=100;
-  motor->setSpeed=0;
-
-  //motor->gearRatio=5; // for top
-  motor->gearRatio=10; // for bottom
-
-  motor->Kp = 10;
-  motor->Ki = 0;
-  motor->Kd = 0;
-
-  motor->integral = 0;
-  motor->preError = 0;
-  
-  pinMode(motor->encoderPinA,INPUT);
-  pinMode(motor->encoderPinB,INPUT);
-  pinMode(motor->pin1,OUTPUT);
-  pinMode(motor->pin2,OUTPUT);
-
-  attachInterrupt(digitalPinToInterrupt(motor->encoderPinA), interruptHandler, CHANGE);
-}
-
-
-/*
-*
-*detach motor with cpr encoder
-*
-*/
-void detachCPRMotor(){
-  free(motor);
-  detachInterrupt(0);
-}
 
 
 
@@ -299,6 +185,7 @@ void loop() {
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, DEGREE]
       // buff = [uint8_t, int32_t] 
+      /*
       if(motor){
         int32_t degree = ((int32_t) serialBuffer[1] << (8*0)) + ((int32_t) serialBuffer[2] <<  (8*1)) + ((int32_t) serialBuffer[3] <<  (8*2)) + ((int32_t) serialBuffer[4] <<  (8*3));
         degree*=motor->gearRatio;
@@ -307,11 +194,13 @@ void loop() {
         motor->motionMode = 0;
         motor->setPosition = degree;
       }
+      */
     }
     else if(serialBuffer[0] == JOB_MOTOR_WRITE_SPEED){
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
       // buff = [uint8_t, int16_t] 
+      /*
       if(motor){
         int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) + ((int16_t) serialBuffer[2] <<  (8*1));
         if (motor->invertDir) speed*= -1;
@@ -319,12 +208,14 @@ void loop() {
         motor->motionMode = 1;
         motor->setSpeed = speed;
       }
+      */
     }
     else if(serialBuffer[0] == JOB_MOTOR_READ_POSITION){
       // Read motor position
       // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
       // return = int32_t
+      /*
       int32_t positionDeg = motor->encoderPos/(int32_t)motor->gearRatio;
       if (motor->invertDir) positionDeg*= -1;
 
@@ -342,7 +233,8 @@ void loop() {
         outputBuffer[3] = 0;
       }
       // send message
-      Serial.write((char*)outputBuffer, sizeof(outputBuffer));  
+      Serial.write((char*)outputBuffer, sizeof(outputBuffer));
+      */
     }
     else if(serialBuffer[0] == JOB_MOTOR_AT_TARGET){
       // Check if motor is at target position
@@ -356,6 +248,7 @@ void loop() {
     for (uint8_t i=0; i<255; i++) serialBuffer[i]=0;
   }  
 
+/*
   if(motor){
 
     if (!motor->motionMode){  
@@ -416,5 +309,7 @@ void loop() {
       }
     }
   }  
+
+  */
   delay(1);       
 }
