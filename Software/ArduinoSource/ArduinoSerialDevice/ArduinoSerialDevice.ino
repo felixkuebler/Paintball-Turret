@@ -53,18 +53,20 @@ namespace StepperMotorConfig {
 
     namespace Yaw {
       static constexpr uint8_t Steps = 200;
-      static constexpr uint8_t MicroSteps = 1;
+      static constexpr uint8_t MicroSteps = 16;
 
       static constexpr uint8_t Rpm = 120;
       static constexpr uint8_t MinRpm = 0;
       static constexpr uint8_t MaxRpm = 150;
 
-      static constexpr uint8_t GearRation = 10;
+      static constexpr uint8_t GearTeeth1 = 16;
+      static constexpr uint8_t GearTeeth2 = 156;
+      static constexpr float GearRation = static_cast<float>(GearTeeth2)/static_cast<float>(GearTeeth1);
       
       namespace Pins {
-        static constexpr uint8_t Enable = 0;
-        static constexpr uint8_t Dir = 0;
-        static constexpr uint8_t Step = 0;
+        static constexpr uint8_t Enable = 13;
+        static constexpr uint8_t Dir = 12;
+        static constexpr uint8_t Step = 11;
       }
 
       uint8_t currentPosition = 0;
@@ -73,8 +75,8 @@ namespace StepperMotorConfig {
 
 
 BasicStepperDriver motorPitch(StepperMotorConfig::Pitch::Steps, StepperMotorConfig::Pitch::Pins::Dir, StepperMotorConfig::Pitch::Pins::Step);
-BasicStepperDriver motorYaw(StepperMotorConfig::Yaw::Steps, StepperMotorConfig::Yaw::Pins::Dir, StepperMotorConfig::Yaw::Pins::Step);
 
+BasicStepperDriver motorYaw(StepperMotorConfig::Yaw::Steps, StepperMotorConfig::Yaw::Pins::Dir, StepperMotorConfig::Yaw::Pins::Step, StepperMotorConfig::Yaw::Pins::Enable);
 
 uint8_t serialBuffer[255];
 uint8_t buffPointer=0;
@@ -88,6 +90,8 @@ void setup() {
 
   motorPitch.begin(StepperMotorConfig::Pitch::Rpm, StepperMotorConfig::Pitch::MicroSteps);
   motorYaw.begin(StepperMotorConfig::Yaw::Rpm, StepperMotorConfig::Yaw::MicroSteps);
+  motorYaw.setEnableActiveState(LOW);
+  motorYaw.enable();
 }
 
 void loop() {
@@ -180,6 +184,8 @@ void loop() {
         motor->setPosition = degree;
       }
       */
+      int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
+      motorYaw.rotate(degree);
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionRelative){
       // Set motor position or speed
@@ -193,7 +199,7 @@ void loop() {
       // buff = [WritePositionRelative, Degree]
       // buff = [uint8_t, int32_t]
       int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
-      motorYaw.rotate(degree);
+      motorYaw.rotate(degree*StepperMotorConfig::Yaw::GearRation);
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WriteSpeed){
       // Set motor position or speed
