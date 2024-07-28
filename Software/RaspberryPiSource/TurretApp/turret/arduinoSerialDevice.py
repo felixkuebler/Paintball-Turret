@@ -4,27 +4,27 @@ import ctypes
 
 class ArduinoSerialDevice():
 
-	JOB_SET_OUTPUT = ctypes.c_ubyte(1)
-	JOB_SET_INPUT = ctypes.c_ubyte(2)
-	JOB_DIGITAL_READ = ctypes.c_ubyte(3)
-	JOB_DIGITAL_WRITE = ctypes.c_ubyte(4)
-	JOB_ANALOG_READ = ctypes.c_ubyte(5)
-	JOB_ANALOG_WRITE = ctypes.c_ubyte(6)
+	CMD_SET_OUTPUT = ctypes.c_ubyte(1)
+	CMD_SET_INPUT = ctypes.c_ubyte(2)
+	CMD_DIGITAL_READ = ctypes.c_ubyte(3)
+	CMD_DIGITAL_WRITE = ctypes.c_ubyte(4)
+	CMD_ANALOG_READ = ctypes.c_ubyte(5)
+	CMD_ANALOG_WRITE = ctypes.c_ubyte(6)
 
-	JOB_ATTACH_MOTOR = ctypes.c_ubyte(10)
-	JOB_DETACH_MOTOR = ctypes.c_ubyte(11)
-	JOB_MOTOR_WRITE_POSITION = ctypes.c_ubyte(12)
-	JOB_MOTOR_WRITE_SPEED = ctypes.c_ubyte(13)
-	JOB_MOTOR_READ_POSITION = ctypes.c_ubyte(14)
-	JOB_MOTOR_AT_TARGET = ctypes.c_ubyte(15)
-	JOB_MOTOR_OPTION = ctypes.c_ubyte(16)
+	CMD_MOTOR_PITCH_WRITE_POSITION_ABSOLUTE = ctypes.c_ubyte(10)
+	CMD_MOTOR_PITCH_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(11)
+	CMD_MOTOR_PITCH_WRITE_SPEED = ctypes.c_ubyte(12)
+	CMD_MOTOR_PITCH_READ_POSITION = ctypes.c_ubyte(13)
 
+	CMD_MOTOR_YAW_WRITE_POSITION_ABSOLUTE = ctypes.c_ubyte(20)
+	CMD_MOTOR_YAW_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(21)
+	CMD_MOTOR_YAW_WRITE_SPEED = ctypes.c_ubyte(22)
+	CMD_MOTOR_YAW_READ_POSITION = ctypes.c_ubyte(23)
+
+	CMD_MOTOR_AT_TARGET = ctypes.c_ubyte(15)
+
+	CMD_MOTOR_OPTION = ctypes.c_ubyte(16)
 	OPTION_MOTOR_RESET = ctypes.c_ubyte(1)
-	OPTION_MOTOR_MIN_SPEED = ctypes.c_ubyte(2)
-	OPTION_MOTOR_MAX_SPEED = ctypes.c_ubyte(3)
-	OPTION_MOTOR_GEAR_RATIO  = ctypes.c_ubyte(4)
-	OPTION_MOTOR_INVERT_DIR  = ctypes.c_ubyte(5)
-	OPTION_MOTOR_RANGE = ctypes.c_ubyte(6)
 
 	CMD_TERMINATOR = ('#').encode()
 
@@ -56,7 +56,7 @@ class ArduinoSerialDevice():
 
 	def pinModeInput(self, pin):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_SET_INPUT)
+		self.arduinoDev.write(CMD_SET_INPUT)
 		self.arduinoDev.write(ctypes.c_ubyte(pin))
 		self.arduinoDev.write(CMD_TERMINATOR)
 		self.unlockDevice()
@@ -64,7 +64,7 @@ class ArduinoSerialDevice():
 
 	def pinModeOutput(self, pin):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_SET_OUTPUT)
+		self.arduinoDev.write(CMD_SET_OUTPUT)
 		self.arduinoDev.write(ctypes.c_ubyte(pin))
 		self.arduinoDev.write(CMD_TERMINATOR)
 		self.unlockDevice()
@@ -72,7 +72,7 @@ class ArduinoSerialDevice():
 
 	def digitalWrite(self, pin, value):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_DIGITAL_WRITE)
+		self.arduinoDev.write(CMD_DIGITAL_WRITE)
 		self.arduinoDev.write(ctypes.c_ubyte(pin))
 		self.arduinoDev.write(ctypes.c_ubyte(value))
 		self.arduinoDev.write(CMD_TERMINATOR)
@@ -81,7 +81,7 @@ class ArduinoSerialDevice():
 
 	def digitalRead(self, pin):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_DIGITAL_READ)
+		self.arduinoDev.write(CMD_DIGITAL_READ)
 		self.arduinoDev.write(ctypes.c_ubyte(pin))
 		self.arduinoDev.write(CMD_TERMINATOR)
 
@@ -93,7 +93,7 @@ class ArduinoSerialDevice():
 
 	def analogWrite(self, pin, value):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_ANALOG_WRITE)
+		self.arduinoDev.write(CMD_ANALOG_WRITE)
 		self.arduinoDev.write(ctypes.c_ubyte(pin))
 		self.arduinoDev.write(ctypes.c_ubyte(value))
 		self.arduinoDev.write(CMD_TERMINATOR)
@@ -102,7 +102,7 @@ class ArduinoSerialDevice():
 
 	def analogRead(self, pin):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_ANALOG_READ)
+		self.arduinoDev.write(CMD_ANALOG_READ)
 		self.arduinoDev.write(ctypes.c_ubyte(pin))
 		self.arduinoDev.write(CMD_TERMINATOR)
 
@@ -112,25 +112,68 @@ class ArduinoSerialDevice():
 		return ctypes.c_int16(int.from_bytes(byteStream, 'little')).value
 
 
-	def motorWritePosition(self, position):
+	def motorPitchWritePositionAbsolute(self, position):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_WRITE_POSITION)
+		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_POSITION_ABSOLUTE)
 		self.arduinoDev.write(ctypes.c_int32(position))
-		self.arduinoDev.write(CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_TERMINATOR)
 		self.unlockDevice()
 
 
-	def motorWriteSpeed(self, speed):
+	def motorPitchWritePositionRelative(self, position):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_WRITE_SPEED)
+		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_POSITION_RELATIVE)
+		self.arduinoDev.write(ctypes.c_int32(position))
+		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.unlockDevice()
+
+
+	def motorPitchWriteSpeed(self, speed):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_SPEED)
 		self.arduinoDev.write(ctypes.c_int16(speed))
-		self.arduinoDev.write(CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_TERMINATOR)
 		self.unlockDevice()
 
 
-	def motorReadPosition(self):
+	def motorPitchReadPosition(self):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_READ_POSITION)
+		self.arduinoDev.write(CMD_MOTOR_PITCH_READ_POSITION)
+		self.arduinoDev.write(CMD_TERMINATOR)
+
+		byteStream = self.arduinoDev.read(4)
+		self.unlockDevice()
+
+		return ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
+
+
+	def motorYawWritePositionAbsolute(self, position):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_YAW_WRITE_POSITION_ABSOLUTE)
+		self.arduinoDev.write(ctypes.c_int32(position))
+		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.unlockDevice()
+
+
+	def motorYawWritePositionRelative(self, position):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_YAW_WRITE_POSITION_RELATIVE)
+		self.arduinoDev.write(ctypes.c_int32(position))
+		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.unlockDevice()
+
+
+	def motorYawWriteSpeed(self, speed):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_YAW_WRITE_SPEED)
+		self.arduinoDev.write(ctypes.c_int16(speed))
+		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.unlockDevice()
+
+
+	def motorYawReadPosition(self):
+		self.lockDevice()
+		self.arduinoDev.write(CMD_MOTOR_YAW_READ_POSITION)
 		self.arduinoDev.write(CMD_TERMINATOR)
 
 		byteStream = self.arduinoDev.read(4)
@@ -141,7 +184,7 @@ class ArduinoSerialDevice():
 
 	def motorIsAtTarget(self):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_AT_TARGET)
+		self.arduinoDev.write(CMD_MOTOR_AT_TARGET)
 		self.arduinoDev.write(CMD_TERMINATOR)
 
 		byteStream = self.arduinoDev.read()
@@ -150,70 +193,9 @@ class ArduinoSerialDevice():
 		return ctypes.c_byte(int.from_bytes(byteStream, 'little')).value
 
 
-	def motorAttach(self, pin1, pin2):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_ATTACH_MOTOR)
-		self.arduinoDev.write(ctypes.c_ubyte(pin1))
-		self.arduinoDev.write(ctypes.c_ubyte(pin2))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorDetach(self, pin1, pin2):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_DETACH_MOTOR)
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
 	def motorResetPosition(self):
 		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_OPTION)
+		self.arduinoDev.write(CMD_MOTOR_OPTION)
 		self.arduinoDev.write(OPTION_MOTOR_RESET)
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorSetMaxSpeed(self, value):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_OPTION)
-		self.arduinoDev.write(OPTION_MOTOR_MAX_SPEED)
-		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorSetMinSpeed(self, value):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_OPTION)
-		self.arduinoDev.write(OPTION_MOTOR_MIN_SPEED)
-		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorSetGearRatio(self, value):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_OPTION)
-		self.arduinoDev.write(OPTION_MOTOR_GEAR_RATIO)
-		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorInvertDir(self, value):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_OPTION)
-		self.arduinoDev.write(OPTION_MOTOR_INVERT_DIR)
-		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorSetRange(self, value):
-		self.lockDevice()
-		self.arduinoDev.write(JOB_MOTOR_OPTION)
-		self.arduinoDev.write(OPTION_MOTOR_RANGE)
-		self.arduinoDev.write(ctypes.c_uint16(value))
 		self.arduinoDev.write(CMD_TERMINATOR)
 		self.unlockDevice()
