@@ -21,11 +21,6 @@ class ArduinoSerialDevice():
 	CMD_MOTOR_YAW_WRITE_SPEED = ctypes.c_ubyte(22)
 	CMD_MOTOR_YAW_READ_POSITION = ctypes.c_ubyte(23)
 
-	CMD_MOTOR_AT_TARGET = ctypes.c_ubyte(15)
-
-	CMD_MOTOR_OPTION = ctypes.c_ubyte(16)
-	OPTION_MOTOR_RESET = ctypes.c_ubyte(1)
-
 	CMD_TERMINATOR = ('#').encode()
 
 
@@ -180,22 +175,3 @@ class ArduinoSerialDevice():
 		self.unlockDevice()
 
 		return ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
-
-
-	def motorIsAtTarget(self):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_MOTOR_AT_TARGET)
-		self.arduinoDev.write(CMD_TERMINATOR)
-
-		byteStream = self.arduinoDev.read()
-		self.unlockDevice()
-
-		return ctypes.c_byte(int.from_bytes(byteStream, 'little')).value
-
-
-	def motorResetPosition(self):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_MOTOR_OPTION)
-		self.arduinoDev.write(OPTION_MOTOR_RESET)
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
