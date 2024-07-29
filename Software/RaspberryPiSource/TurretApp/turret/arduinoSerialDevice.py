@@ -28,12 +28,7 @@ class ArduinoSerialDevice():
 	serialLock = False;
 
 
-	def __init__(self, port, baudrate, timeout):
-		self.arduinoDev = serial.Serial(port=port, baudrate=baudrate, timeout=timeout)
-		self.serialLock = False;
-
-
-	def __init__(self, port, baudrate):
+	def __init__(self, port='/dev/ttyUSB0', baudrate=9600):
 		self.arduinoDev = serial.Serial(port=port, baudrate=baudrate)
 		self.serialLock = False;
 
