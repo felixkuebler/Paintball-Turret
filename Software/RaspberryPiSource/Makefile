@@ -23,6 +23,9 @@ run:
 	#docker run -p $(EXTERNAL_PORT):$(INTERNAL_PORT) --name $(NAME) $(TAG)
 	docker run -p $(EXTERNAL_PORT):$(INTERNAL_PORT) --device /dev/video0:/dev/video0 --device /dev/video2:/dev/video2 --device /dev/ttyUSB0:/dev/ttyUSB0 --name $(NAME) $(TAG)
 
+# Restart a running docker container
+restart: kill clean build run
+
 # Kill current docker container
 kill:
 	docker kill $(NAME)
