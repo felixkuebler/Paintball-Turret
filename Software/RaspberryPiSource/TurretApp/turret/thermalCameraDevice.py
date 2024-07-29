@@ -34,7 +34,7 @@ class ThermalCamera:
 		if os.path.isfile(self.filename):
 
 			# load 16 bit raw image from file
-			rawFrame = np.fromfile(self.filename, dtype=np.uint16, offset=0, count=self.width*self.height).reshape((self.height,self.width)) << 4
+			rawFrame = np.fromfile(self.filename, dtype=np.uint16, count=self.width*self.height).reshape((self.height,self.width)) << 4
 
 		else:
 			#raise RuntimeError('Could not start camera.')
