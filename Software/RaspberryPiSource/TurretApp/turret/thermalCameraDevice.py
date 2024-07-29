@@ -73,8 +73,8 @@ class ThermalCamera:
 
 		bodyTemp = HikMicro.temperatureBody
 		bodyTemp = np.interp(bodyTemp, (HikMicro.temperatureMin, HikMicro.temperatureMax), (0, np.iinfo(np.uint16).max))
-
-		rawFrame[:][:] = np.interp(rawFrame[:][:], (bodyTemp, bodyTemp*2), (0, np.iinfo(np.uint16).max))
+		
+		rawFrame[:][:] = np.interp(rawFrame[:][:], (bodyTemp/2, bodyTemp*2), (0, np.iinfo(np.uint16).max))
 
 		# create 3 channel bgr image
 		rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
