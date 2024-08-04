@@ -55,10 +55,10 @@ def controlle():
     data = json.loads(request.data)
 
     if 'xPos' in data:
-        serial.motorYawWritePositionAbsolute(int(data['xPos']))
+        #serial.motorYawWritePositionAbsolute(-int(data['xPos']))
 
     if 'yPos' in data:
-        serial.motorPitchWritePositionAbsolute(int(data['yPos']))
+        serial.motorPitchWritePositionAbsolute(-int(data['yPos']))
 
     if 'trigger' in data:
         pass
