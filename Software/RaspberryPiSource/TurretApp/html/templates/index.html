@@ -279,8 +279,8 @@
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
         const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
-        const xSpeedInput = document.getElementById("xSpeedInput");
-        const ySpeedInput = document.getElementById("ySpeedInput");
+        //const xSpeedInput = document.getElementById("xSpeedInput");
+        //const ySpeedInput = document.getElementById("ySpeedInput");
 
         const xPositionInput = document.getElementById("xPositionInput");
         const yPositionInput = document.getElementById("yPositionInput");
@@ -443,23 +443,27 @@
         /* 
         * Speed range input callback (x)
         */
+        /*
         function xSpeedInputChangeCallback(event){
             var postString = "{\"xSpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         xSpeedInput.addEventListener("mouseup",xSpeedInputChangeCallback);
         xSpeedInput.addEventListener("touchend",xSpeedInputChangeCallback);
-       
+        */
+        
         /* 
         * Speed range input callback (y)
         */
+        /*
         function ySpeedInputChangeCallback(event){
             var postString = "{\"ySpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
         ySpeedInput.addEventListener("mouseup",ySpeedInputChangeCallback);
         ySpeedInput.addEventListener("touchend",ySpeedInputChangeCallback);
-
+        */
+        
         /* 
         * Position range input callback (x)
         */
