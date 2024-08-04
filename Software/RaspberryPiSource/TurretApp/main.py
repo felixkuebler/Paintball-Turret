@@ -56,6 +56,7 @@ def controlle():
 
     if 'xPos' in data:
         #serial.motorYawWritePositionAbsolute(-int(data['xPos']))
+        serial.motorYawWriteSpeed(-int(data['xPos']))
 
     if 'yPos' in data:
         serial.motorPitchWritePositionAbsolute(-int(data['yPos']))
