@@ -32,13 +32,22 @@ namespace SerialCommands {
 
 namespace StepperMotorConfig {
 
+    enum MotionMode: uint8_t {
+      none = 0,
+      position = 1,
+      rpm = 2
+    };
+
+    uint8_t NextActionTimeout = 100;
+    uint8_t MaxConsecutiveActions = 200*8;
+
     namespace Pitch {
       static constexpr uint8_t Steps = 200;
       static constexpr uint8_t MicroSteps = 8;
 
       static constexpr uint8_t Rpm = 120;
-      static constexpr uint8_t MinRpm = 0;
-      static constexpr uint8_t MaxRpm = 150;
+      static constexpr uint8_t MinRpm = 2;
+      static constexpr uint8_t MaxRpm = 200;
 
       static constexpr uint8_t GearTeeth1 = 16;
       static constexpr uint8_t GearTeeth2 = 68;
@@ -50,7 +59,10 @@ namespace StepperMotorConfig {
         static constexpr uint8_t Step = 6;
       }
 
-      int16_t currentPosition = 0;
+      int32_t targetPosition = 0;
+      int32_t currentPosition = 0;
+
+      MotionMode motionMode = MotionMode::none;
     }
 
     namespace Yaw {
@@ -58,8 +70,8 @@ namespace StepperMotorConfig {
       static constexpr uint8_t MicroSteps = 16;
 
       static constexpr uint8_t Rpm = 120;
-      static constexpr uint8_t MinRpm = 0;
-      static constexpr uint8_t MaxRpm = 150;
+      static constexpr uint8_t MinRpm = 2;
+      static constexpr uint8_t MaxRpm = 200;
 
       static constexpr uint8_t GearTeeth1 = 16;
       static constexpr uint8_t GearTeeth2 = 156;
@@ -71,7 +83,10 @@ namespace StepperMotorConfig {
         static constexpr uint8_t Step = 11;
       }
 
-      int16_t currentPosition = 0;
+      int32_t targetPosition = 0;
+      int32_t currentPosition = 0;
+
+      MotionMode motionMode = MotionMode::none;
     }
 }
 
@@ -82,8 +97,8 @@ uint8_t serialBuffer[255];
 uint8_t buffPointer=0;
 bool bufferComplete = false;
 
-uint64_t preTime = 0; 
-
+uint8_t motorPitchConsecutiveStep = 0;
+uint8_t motorYawConsecutiveStep = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -170,9 +185,13 @@ void loop() {
         degree -= div*360;
       }
 
+      StepperMotorConfig::Pitch::targetPosition = degree;
       int16_t absDegree = degree - StepperMotorConfig::Pitch::currentPosition;
-      motorPitch.rotate(absDegree * StepperMotorConfig::Pitch::GearRation);
-      StepperMotorConfig::Pitch::currentPosition = degree;
+
+      motorPitch.setRPM(StepperMotorConfig::Pitch::Rpm);
+      motorPitch.startRotate(absDegree * StepperMotorConfig::Pitch::GearRation);
+
+      StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::position;
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WritePositionAbsolute){
       // Set motor position or speed
@@ -184,51 +203,86 @@ void loop() {
         int16_t div = degree / 360;
         degree -= div*360;
       }
+
+      StepperMotorConfig::Yaw::targetPosition = degree;
       int16_t absDegree = degree - StepperMotorConfig::Yaw::currentPosition;
-      motorYaw.rotate(absDegree * StepperMotorConfig::Yaw::GearRation);
-      StepperMotorConfig::Yaw::currentPosition = degree;
+
+      motorYaw.setRPM(StepperMotorConfig::Yaw::Rpm);
+      motorYaw.startRotate(absDegree * StepperMotorConfig::Yaw::GearRation);
+
+      StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::position;
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionRelative){
       // Set motor position or speed
       // buff = [WritePositionRelative, Degree]
       // buff = [uint8_t, int32_t]
       int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
-      motorPitch.rotate(degree*StepperMotorConfig::Pitch::GearRation);
+      StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition + degree;
+
+      motorPitch.setRPM(StepperMotorConfig::Pitch::Rpm);
+      motorPitch.startRotate(degree*StepperMotorConfig::Pitch::GearRation);
+
+      StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::position;
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WritePositionRelative){
       // Set motor position or speed
       // buff = [WritePositionRelative, Degree]
       // buff = [uint8_t, int32_t]
-      int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
-      motorYaw.rotate(degree*StepperMotorConfig::Yaw::GearRation);
+      int32_t degree = ((int32_t) serialBuffer[1] << (8*0)) | ((int32_t) serialBuffer[2] <<  (8*1)) | ((int32_t) serialBuffer[3] <<  (8*2)) | ((int32_t) serialBuffer[4] <<  (8*3));
+      StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition + degree;
+
+      motorYaw.setRPM(StepperMotorConfig::Yaw::Rpm);
+      motorYaw.startRotate(degree*StepperMotorConfig::Yaw::GearRation);
+
+      StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::position;
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WriteSpeed){
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
       // buff = [uint8_t, int16_t] 
-      /*
-      if(motor){
-        int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) + ((int16_t) serialBuffer[2] <<  (8*1));
-        if (motor->invertDir) speed*= -1;
+      int16_t rpm = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
 
-        motor->motionMode = 1;
-        motor->setSpeed = speed;
+      int16_t rpmDir = rpm < 0 ? -1 : 1;
+      rpm = abs(rpm);
+      rpm = rpm > StepperMotorConfig::Pitch::MaxRpm ? StepperMotorConfig::Pitch::MaxRpm : rpm;
+      rpm = rpm < StepperMotorConfig::Pitch::MinRpm ? 0 : rpm;
+
+      if (rpm <= 0) {
+        motorPitch.stop();
+        StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::none;
       }
-      */
+      else {
+        double degree = rpmDir*90;
+        StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition + degree;
+
+        motorPitch.setRPM(rpm);
+        motorPitch.startRotate(degree*StepperMotorConfig::Pitch::GearRation);
+        StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::rpm;
+      }
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WriteSpeed){
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
       // buff = [uint8_t, int16_t] 
-      /*
-      if(motor){
-        int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) + ((int16_t) serialBuffer[2] <<  (8*1));
-        if (motor->invertDir) speed*= -1;
+      int16_t rpm = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
 
-        motor->motionMode = 1;
-        motor->setSpeed = speed;
+      int16_t rpmDir = rpm < 0 ? -1 : 1;
+      rpm = abs(rpm);
+      rpm = rpm > StepperMotorConfig::Yaw::MaxRpm ? StepperMotorConfig::Yaw::MaxRpm : rpm;
+      rpm = rpm < StepperMotorConfig::Yaw::MinRpm ? 0 : rpm;
+
+      if (rpm <= 0) {
+        motorYaw.stop();
+        StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::none;
       }
-      */
+      else {
+        double degree = rpmDir*90;
+        StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition + degree;
+
+        motorYaw.setRPM(rpm);
+        motorYaw.startRotate(degree*StepperMotorConfig::Yaw::GearRation);
+        StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::rpm;
+      }
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::ReadPosition){
       // Read motor position
@@ -287,5 +341,27 @@ void loop() {
     for (uint8_t i=0; i<255; i++) serialBuffer[i]=0;
   }  
 
-  delay(1);       
+
+  // controll motor steps and only do serial communication if there is time inbetween
+  while (motorPitch.nextAction() < StepperMotorConfig::NextActionTimeout && 
+          motorPitch.nextAction() > 0 && !Serial.available() &&
+          motorPitchConsecutiveStep <= StepperMotorConfig::MaxConsecutiveActions){}
+
+  if (StepperMotorConfig::Pitch::motionMode == StepperMotorConfig::MotionMode::rpm &&
+        motorPitch.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
+      motorPitch.startRotate(motorPitch.getDirection()*90*StepperMotorConfig::Pitch::GearRation);
+  }
+
+  while (motorYaw.nextAction() < StepperMotorConfig::NextActionTimeout && 
+          motorYaw.nextAction() > 0 && !Serial.available() && 
+          motorYawConsecutiveStep <= StepperMotorConfig::MaxConsecutiveActions){}
+
+  if (StepperMotorConfig::Yaw::motionMode == StepperMotorConfig::MotionMode::rpm && motorYaw.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
+    motorYaw.startRotate(motorYaw.getDirection()*90*StepperMotorConfig::Yaw::GearRation);
+  }
+  motorPitchConsecutiveStep = 0;
+  motorYawConsecutiveStep = 0;
+
+  StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRation;
+  StepperMotorConfig::Yaw::currentPosition = StepperMotorConfig::Yaw::targetPosition - motorYaw.getDirection() * (motorYaw.getStepsRemaining() * 360 / (motorYaw.getSteps() * motorYaw.getMicrostep()))/StepperMotorConfig::Yaw::GearRation;     
 }
