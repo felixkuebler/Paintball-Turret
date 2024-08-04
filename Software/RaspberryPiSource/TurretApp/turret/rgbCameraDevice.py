@@ -34,7 +34,10 @@ class RgbCamera():
         
         roi = cv2.resize(roi, (640, 480))
 
-        return ret, roi
+        # dont use roi for now
+        frame = cv2.resize(frame, (640, 480))
+        
+        return ret, frame
         
 
     def getFrame(self):
