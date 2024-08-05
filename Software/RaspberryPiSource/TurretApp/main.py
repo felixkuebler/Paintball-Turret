@@ -64,8 +64,7 @@ def controlle():
         serial.motorYawWriteSpeed(-int(data['yawSpeed']))
 
     if 'pitchSpeed' in data:
-        pass
-        #serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
+        serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
 
     if 'trigger' in data:
         pass
