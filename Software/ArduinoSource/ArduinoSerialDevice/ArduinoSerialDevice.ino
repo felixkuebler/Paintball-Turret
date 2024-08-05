@@ -350,11 +350,25 @@ void loop() {
 
   uint8_t motorConsecutiveStep = 0;
 
+  long nextActionPitch = StepperMotorConfig::NextActionTimeout/4;
+  long nextActionYaw = StepperMotorConfig::NextActionTimeout/4;
+
   // controll motor steps and only do serial communication if there is time inbetween
   while ( !Serial.available() &&
-          motorYaw.nextAction() + motorPitch.nextAction() < StepperMotorConfig::NextActionTimeout && 
-          motorYaw.nextAction() + motorPitch.nextAction() > 0 && 
-          motorConsecutiveStep++ <= StepperMotorConfig::MaxConsecutiveActions){}
+          nextActionPitch + nextActionYaw < StepperMotorConfig::NextActionTimeout && 
+          nextActionPitch + nextActionYaw > 0 && 
+          motorConsecutiveStep++ <= StepperMotorConfig::MaxConsecutiveActions){
+
+    nextActionPitch = motorPitch.nextAction();
+    nextActionYaw = motorYaw.nextAction();
+
+    if (nextActionPitch > nextActionYaw) {
+      nextActionYaw = motorYaw.nextAction();
+    }
+    else {
+      nextActionPitch = motorPitch.nextAction();
+    }
+  }
 
   if (  StepperMotorConfig::Pitch::motionMode == StepperMotorConfig::MotionMode::rpm &&
         motorPitch.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
