@@ -327,6 +327,9 @@
         var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
 
 
+        var gamepadConnected = false;
+
+
         /*
         * Animates the fullscreen display
         *  - draws position feedback
@@ -528,10 +531,19 @@
         window.addEventListener('keyup',keyboardReleaseCallback);
 
         /*
+        * Gamepad connect callback
+        */
+        function gamepadConnectCallback(event){
+            gamepadConnected = event.gamepad.connected;
+        }
+        window.addEventListener("gamepadconnected", gamepadConnectCallback);
+        window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
+
+        /*
         * Control loop
         */
         function controlTimeoutCallback(){
-
+            /*
             yawSpeed = 0;
             pitchSpeed = 0;
 
@@ -587,9 +599,37 @@
                 console.log("pitchSpeed=" + pitchSpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
+            */
+
+            if (gamepadConnected) {
+
+                var gamepad = navigator.getGamepads()[0];
+
+                yawSpeed = parseInt(gamepad.axes[2] * 100);
+                pitchSpeed = parseInt(gamepad.axes[3] * 100);
+
+                console.log(
+                    "Gamepad Axis0: %s | Axis1: %s",
+                    yawSpeed,
+                    pitchSpeed,
+              );
+
+                if (yawSpeed != yawLastSpeed){
+                    yawLastSpeed = yawSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + "}";
+                    console.log("yawSpeed=" + yawSpeed);
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                if (pitchSpeed != pitchLastSpeed){
+                    pitchLastSpeed = pitchSpeed;
+                    var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
+                    console.log("pitchSpeed=" + pitchSpeed);
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+            }
+
         };
         window.setInterval(controlTimeoutCallback, 50); 
-
 
         /*
         * Timed Position feedback poll
@@ -605,9 +645,6 @@
             pitchPosFeedback = parseFloat(responseObj.pitchPos);
         };
         window.setInterval("refreshPosition()", 200); 
-
-
-        
 
 
     </script>
