@@ -256,7 +256,6 @@
         const imageTopX = new Image();
         imageTopX.src = "/img/turretDynamicX.png";
 
-
         const imageBottomY = new Image();
         imageBottomY.src = "/img/turretDynamicY.png";
 
@@ -279,9 +278,6 @@
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
         const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
-        //const yawSpeedInput = document.getElementById("yawSpeedInput");
-        //const pitchSpeedInput = document.getElementById("pitchSpeedInput");
-
         const yawPositionInput = document.getElementById("yawPositionInput");
         const pitchPositionInput = document.getElementById("pitchPositionInput");
 
@@ -299,9 +295,6 @@
 
         var deviceType = 0; // 0=PC, 1=mobile
         var fullScreenMode = false;
-
-        var yawPosFeedback = 0;
-        var pitchPosFeedback = 0;
 
         // input variables
         var yawSpeed = 0;
@@ -440,30 +433,6 @@
         thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
-        * Speed range input callback (x)
-        */
-        /*
-        function yawSpeedInputChangeCallback(event){
-            var postString = "{\"yawSpeed\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-        }
-        yawSpeedInput.addEventListener("mouseup",yawSpeedInputChangeCallback);
-        yawSpeedInput.addEventListener("touchend",yawSpeedInputChangeCallback);
-        */
-        
-        /* 
-        * Speed range input callback (y)
-        */
-        /*
-        function pitchSpeedInputChangeCallback(event){
-            var postString = "{\"pitchSpeed\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-        }
-        pitchSpeedInput.addEventListener("mouseup",pitchSpeedInputChangeCallback);
-        pitchSpeedInput.addEventListener("touchend",pitchSpeedInputChangeCallback);
-        */
-        
-        /* 
         * Position range input callback (x)
         */
         function yawPositionInputChangeCallback(event){
@@ -505,32 +474,6 @@
         fullScreenDisplay.addEventListener('touchstart',displayPressCallback);
 
         /*
-        * Keyboard keypress callback
-        */
-        function keyboardPressCallback(event){
-            if (event.keyCode in keyMap) {
-                keyMap[event.keyCode] = true;
-            }
-
-            // trigger only on button down one
-            if (document.fullscreenElement && keyMap[32]) {
-                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
-                triggered = true;
-            }
-        }
-        window.addEventListener('keydown',keyboardPressCallback);
-
-        /*
-        * Keyboard key release callback
-        */
-        function keyboardReleaseCallback(event){
-            if (event.keyCode in keyMap) {
-                keyMap[event.keyCode] = false;
-            }
-        }
-        window.addEventListener('keyup',keyboardReleaseCallback);
-
-        /*
         * Gamepad connect callback
         */
         function gamepadConnectCallback(event){
@@ -543,64 +486,6 @@
         * Control loop
         */
         function controlTimeoutCallback(){
-            /*
-            yawSpeed = 0;
-            pitchSpeed = 0;
-
-            if (document.fullscreenElement && deviceType==1) {
-                if (joystick.value.x < 0) {
-                    var tmpXSpeed = joystick.value.x * 100;
-                    tmpXSpeed = map(tmpXSpeed, -100, 0, -50, -30);
-                    if (tmpXSpeed <= -32) yawSpeed = Math.round(tmpXSpeed);
-                }
-                if (joystick.value.x > 0) {
-                    var tmpXSpeed = joystick.value.x * 100;
-                    tmpXSpeed = map(tmpXSpeed, 0, 100, 30, 50);
-                    if (tmpXSpeed >= 32) yawSpeed = Math.round(tmpXSpeed);
-                }
-                if (joystick.value.y < 0) {
-                    var tmpYSpeed = joystick.value.y * 100;
-                    tmpYSpeed = map(tmpYSpeed, -100, 0, -55, -33);
-                    if (tmpYSpeed <= -35) pitchSpeed = Math.round(tmpYSpeed);
-                }
-                if (joystick.value.y > 0) {
-                    var tmpYSpeed = joystick.value.y * 100;
-                    tmpYSpeed = map(tmpYSpeed, 0, 100, 43, 65);
-                    if (tmpYSpeed >= 45) pitchSpeed = Math.round(tmpYSpeed);
-                }
-            }
-
-            // left, not right arrow
-            if (keyMap[37] && !keyMap[39]) {
-                yawSpeed = -40;
-            }
-            // right, not right arrow
-            if (keyMap[39] && !keyMap[37]) {
-                yawSpeed = 40;
-            }
-            // up, not down arrow
-            if (keyMap[38] && !keyMap[40]) {
-                pitchSpeed = -40  ;
-            }
-            // down, not up arrow
-            if (keyMap[40] && !keyMap[38]) {            
-                pitchSpeed = 40;
-            }
-
-            if (yawSpeed != yawLastSpeed){
-                yawLastSpeed = yawSpeed;
-                var postString = "{\"yawSpeed\":" + yawSpeed + "}";
-                console.log("yawSpeed=" + yawSpeed);
-                httpPostAsync("{{ url_for('controlle') }}", postString);
-            }
-            if (pitchSpeed != pitchLastSpeed){
-                pitchLastSpeed = pitchSpeed;
-                var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
-                console.log("pitchSpeed=" + pitchSpeed);
-                httpPostAsync("{{ url_for('controlle') }}", postString);
-            }
-            */
-
             if (gamepadConnected) {
 
                 var gamepad = navigator.getGamepads()[0];
