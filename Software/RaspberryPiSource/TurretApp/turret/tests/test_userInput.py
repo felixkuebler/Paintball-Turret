@@ -5,7 +5,7 @@ sys.path.append('..')
 
 from arduinoSerialDevice import ArduinoSerialDevice
 
-arduino = ArduinoSerialDevice(port='/dev/tty.usbserial-14220', baudrate=9600)
+arduino = ArduinoSerialDevice(port='/dev/tty.usbserial-14240', baudrate=9600)
 
 print('Enter Arduino ID:\n- 0 for Yaw\n- 1 for Pitch')
 motorSelect = input()

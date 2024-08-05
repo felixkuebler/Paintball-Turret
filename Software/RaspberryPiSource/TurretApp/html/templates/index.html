@@ -98,7 +98,7 @@
                 
                 <div style="margin-left: 10%; margin-right:10%; width:80%;">
                     Pitch
-                    <input type="range" id="yPositionInput" min="-50" max="50">
+                    <input type="range" id="pitchPositionInput" min="-50" max="50">
                     <div id="tickmarks">
                         <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
                         <p>0</p>
@@ -106,7 +106,7 @@
                     </div>
                     <br>
                     Yaw
-                    <input type="range" id="xPositionInput" min="-180" max="180">
+                    <input type="range" id="yawPositionInput" min="-180" max="180">
                     <div id="tickmarks">
                         <p>-180</p><p>-170</p><p>-160</p><p>-150</p><p>-140</p><p>-130</p><p>-120</p><p>-110</p><p>-100</p>
                         <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
@@ -207,18 +207,18 @@
                     const yDiff = event.clientY - self.dragStart.y;
                     const angle = Math.atan2(yDiff, xDiff);
                     const distance = Math.min(maxDistance, Math.hypot(xDiff, yDiff));
-                    const xPosition = distance * Math.cos(angle);
-                    const yPosition = distance * Math.sin(angle);
+                    const yawPosition = distance * Math.cos(angle);
+                    const pitchPosition = distance * Math.sin(angle);
 
                     // move stick image to new position
-                    stick.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
+                    stick.style.transform = `translate3d(${yawPosition}px, ${pitchPosition}px, 0px)`;
 
                     // deadzone adjustment
                     const distance2 = (distance < deadzone) ? 0 : maxDistance / (maxDistance - deadzone) * (distance - deadzone);
-                    const xPosition2 = distance2 * Math.cos(angle);
-                    const yPosition2 = distance2 * Math.sin(angle);
-                    const xPercent = parseFloat((xPosition2 / maxDistance).toFixed(4));
-                    const yPercent = parseFloat((yPosition2 / maxDistance).toFixed(4));
+                    const yawPosition2 = distance2 * Math.cos(angle);
+                    const pitchPosition2 = distance2 * Math.sin(angle);
+                    const xPercent = parseFloat((yawPosition2 / maxDistance).toFixed(4));
+                    const yPercent = parseFloat((pitchPosition2 / maxDistance).toFixed(4));
                     
                     self.value = { x: xPercent, y: yPercent };
                 }
@@ -279,11 +279,11 @@
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
         const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
-        //const xSpeedInput = document.getElementById("xSpeedInput");
-        //const ySpeedInput = document.getElementById("ySpeedInput");
+        //const yawSpeedInput = document.getElementById("yawSpeedInput");
+        //const pitchSpeedInput = document.getElementById("pitchSpeedInput");
 
-        const xPositionInput = document.getElementById("xPositionInput");
-        const yPositionInput = document.getElementById("yPositionInput");
+        const yawPositionInput = document.getElementById("yawPositionInput");
+        const pitchPositionInput = document.getElementById("pitchPositionInput");
 
         const fullScreenDisplay = document.getElementById("fullScreenDisplay");
         const fullScreenImage = document.getElementById("fullScreenImage");
@@ -300,24 +300,20 @@
         var deviceType = 0; // 0=PC, 1=mobile
         var fullScreenMode = false;
 
-
-        const mouseSpeedFactorX = 20;
-        const mouseSpeedFactorY = 20;
-
-        var xPosFeedback = 0;
-        var yPosFeedback = 0;
+        var yawPosFeedback = 0;
+        var pitchPosFeedback = 0;
 
         // input variables
-        var xSpeed = 0;
-        var ySpeed = 0;
-        var xLastSpeed = 0;
-        var yLastSpeed = 0;
+        var yawSpeed = 0;
+        var pitchSpeed = 0;
+        var yawLastSpeed = 0;
+        var pitchLastSpeed = 0;
 
         var triggered = false;
 
         // readback variables
-        var xPosFeedback = 0;
-        var yPosFeedback = 0;
+        var yawPosFeedback = 0;
+        var pitchPosFeedback = 0;
 
         // keyboard and mouse input
         var mouseIsMovingX = false;
@@ -348,7 +344,7 @@
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                drawPositionFeedbackFullScreen(ctx, xPosFeedback, -yPosFeedback);
+                drawPositionFeedbackFullScreen(ctx, yawPosFeedback, -pitchPosFeedback);
                 drawCrosshair(ctx);
 
                 if (triggered) {
@@ -359,7 +355,7 @@
             else
             {
                 hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
-                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPosFeedback, yPosFeedback);
+                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, yawPosFeedback, pitchPosFeedback);
             }
         };
         window.setInterval("refreshAnimations()", 50); 
@@ -444,45 +440,45 @@
         * Speed range input callback (x)
         */
         /*
-        function xSpeedInputChangeCallback(event){
-            var postString = "{\"xSpeed\":" + event.target.value + "}";
+        function yawSpeedInputChangeCallback(event){
+            var postString = "{\"yawSpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        xSpeedInput.addEventListener("mouseup",xSpeedInputChangeCallback);
-        xSpeedInput.addEventListener("touchend",xSpeedInputChangeCallback);
+        yawSpeedInput.addEventListener("mouseup",yawSpeedInputChangeCallback);
+        yawSpeedInput.addEventListener("touchend",yawSpeedInputChangeCallback);
         */
         
         /* 
         * Speed range input callback (y)
         */
         /*
-        function ySpeedInputChangeCallback(event){
-            var postString = "{\"ySpeed\":" + event.target.value + "}";
+        function pitchSpeedInputChangeCallback(event){
+            var postString = "{\"pitchSpeed\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        ySpeedInput.addEventListener("mouseup",ySpeedInputChangeCallback);
-        ySpeedInput.addEventListener("touchend",ySpeedInputChangeCallback);
+        pitchSpeedInput.addEventListener("mouseup",pitchSpeedInputChangeCallback);
+        pitchSpeedInput.addEventListener("touchend",pitchSpeedInputChangeCallback);
         */
         
         /* 
         * Position range input callback (x)
         */
-        function xPositionInputChangeCallback(event){
-            var postString = "{\"xPos\":" + event.target.value + "}";
+        function yawPositionInputChangeCallback(event){
+            var postString = "{\"yawPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        xPositionInput.addEventListener("mouseup",xPositionInputChangeCallback);
-        xPositionInput.addEventListener("touchend",xPositionInputChangeCallback);
+        yawPositionInput.addEventListener("mouseup",yawPositionInputChangeCallback);
+        yawPositionInput.addEventListener("touchend",yawPositionInputChangeCallback);
 
         /* 
         * Position range input callback (y)
         */
-        function yPositionInputChangeCallback(event){
-            var postString = "{\"yPos\":" + event.target.value + "}";
+        function pitchPositionInputChangeCallback(event){
+            var postString = "{\"pitchPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        yPositionInput.addEventListener("mouseup",yPositionInputChangeCallback);
-        yPositionInput.addEventListener("touchend",yPositionInputChangeCallback);
+        pitchPositionInput.addEventListener("mouseup",pitchPositionInputChangeCallback);
+        pitchPositionInput.addEventListener("touchend",pitchPositionInputChangeCallback);
 
         /* 
         * Display touch callback
@@ -536,59 +532,59 @@
         */
         function controlTimeoutCallback(){
 
-            xSpeed = 0;
-            ySpeed = 0;
+            yawSpeed = 0;
+            pitchSpeed = 0;
 
-            if (document.fullscreenElement && deviceType==1) {
+            if (document.fullscreenElement && deviceType==1) {
                 if (joystick.value.x < 0) {
                     var tmpXSpeed = joystick.value.x * 100;
                     tmpXSpeed = map(tmpXSpeed, -100, 0, -50, -30);
-                    if (tmpXSpeed <= -32) xSpeed = Math.round(tmpXSpeed);
+                    if (tmpXSpeed <= -32) yawSpeed = Math.round(tmpXSpeed);
                 }
                 if (joystick.value.x > 0) {
                     var tmpXSpeed = joystick.value.x * 100;
                     tmpXSpeed = map(tmpXSpeed, 0, 100, 30, 50);
-                    if (tmpXSpeed >= 32) xSpeed = Math.round(tmpXSpeed);
+                    if (tmpXSpeed >= 32) yawSpeed = Math.round(tmpXSpeed);
                 }
                 if (joystick.value.y < 0) {
                     var tmpYSpeed = joystick.value.y * 100;
                     tmpYSpeed = map(tmpYSpeed, -100, 0, -55, -33);
-                    if (tmpYSpeed <= -35) ySpeed = Math.round(tmpYSpeed);
+                    if (tmpYSpeed <= -35) pitchSpeed = Math.round(tmpYSpeed);
                 }
                 if (joystick.value.y > 0) {
                     var tmpYSpeed = joystick.value.y * 100;
                     tmpYSpeed = map(tmpYSpeed, 0, 100, 43, 65);
-                    if (tmpYSpeed >= 45) ySpeed = Math.round(tmpYSpeed);
+                    if (tmpYSpeed >= 45) pitchSpeed = Math.round(tmpYSpeed);
                 }
             }
 
             // left, not right arrow
             if (keyMap[37] && !keyMap[39]) {
-                xSpeed = -40;
+                yawSpeed = -40;
             }
             // right, not right arrow
             if (keyMap[39] && !keyMap[37]) {
-                xSpeed = 40;
+                yawSpeed = 40;
             }
             // up, not down arrow
             if (keyMap[38] && !keyMap[40]) {
-                ySpeed = -45  ;
+                pitchSpeed = -40  ;
             }
             // down, not up arrow
             if (keyMap[40] && !keyMap[38]) {            
-                ySpeed = 45;
+                pitchSpeed = 40;
             }
 
-            if (xSpeed != xLastSpeed){
-                xLastSpeed = xSpeed;
-                var postString = "{\"xSpeed\":" + xSpeed + "}";
-                console.log("xSpeed=" + xSpeed);
+            if (yawSpeed != yawLastSpeed){
+                yawLastSpeed = yawSpeed;
+                var postString = "{\"yawSpeed\":" + yawSpeed + "}";
+                console.log("yawSpeed=" + yawSpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
-            if (ySpeed != yLastSpeed){
-                yLastSpeed = ySpeed;
-                var postString = "{\"ySpeed\":" + -ySpeed + "}";
-                console.log("ySpeed=" + ySpeed);
+            if (pitchSpeed != pitchLastSpeed){
+                pitchLastSpeed = pitchSpeed;
+                var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
+                console.log("pitchSpeed=" + pitchSpeed);
                 httpPostAsync("{{ url_for('controlle') }}", postString);
             }
         };
@@ -605,10 +601,13 @@
         };
         function positionCallback(response){        
             var responseObj = JSON.parse(response);
-            xPosFeedback = parseFloat(responseObj.xPos);
-            yPosFeedback = parseFloat(responseObj.yPos);
+            yawPosFeedback = parseFloat(responseObj.yawPos);
+            pitchPosFeedback = parseFloat(responseObj.pitchPos);
         };
-       window.setInterval("refreshPosition()", 200); 
+        window.setInterval("refreshPosition()", 200); 
+
+
+        
 
 
     </script>
