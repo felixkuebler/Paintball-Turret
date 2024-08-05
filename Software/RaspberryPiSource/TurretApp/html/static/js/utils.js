@@ -35,12 +35,12 @@ function hideFullScreenElements(container, image, canvas) {
 
 function displayJoyStick(joystickBase, joystickKnob, deviceType) {
 
-    if(deviceType==0) {
+    if(deviceType==0) {
         joystickBase.style.display="none";
         joystickKnob.style.display="none";
 
     }
-    else if (deviceType==1) {
+    else if (deviceType==1) {
         joystickBase.style.display="block";
         joystickKnob.style.display="block";
 
