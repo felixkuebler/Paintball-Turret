@@ -3,6 +3,8 @@
 #include <stdint.h>
 
 #include "BasicStepperDriver.h"
+#include "MultiDriver.h"
+
 
 namespace SerialCommands {
   namespace Io {
@@ -93,12 +95,12 @@ namespace StepperMotorConfig {
 BasicStepperDriver motorPitch(StepperMotorConfig::Pitch::Steps, StepperMotorConfig::Pitch::Pins::Dir, StepperMotorConfig::Pitch::Pins::Step,StepperMotorConfig::Pitch::Pins::Enable);
 BasicStepperDriver motorYaw(StepperMotorConfig::Yaw::Steps, StepperMotorConfig::Yaw::Pins::Dir, StepperMotorConfig::Yaw::Pins::Step, StepperMotorConfig::Yaw::Pins::Enable);
 
+MultiDriver controller(motorPitch, motorYaw);
+
+
 uint8_t serialBuffer[255];
 uint8_t buffPointer=0;
 bool bufferComplete = false;
-
-uint8_t motorPitchConsecutiveStep = 0;
-uint8_t motorYawConsecutiveStep = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -116,12 +118,11 @@ void setup() {
 void loop() {
 
   while(Serial.available() > 0 && buffPointer<255 && !bufferComplete) {
-    serialBuffer[buffPointer] = (uint8_t)Serial.read();
+    serialBuffer[buffPointer++] = (uint8_t)Serial.read();
       
     if (serialBuffer[buffPointer]=='#' ) {
       bufferComplete=true;
     }
-    buffPointer++;
   }
 
   if (bufferComplete) {
@@ -289,6 +290,8 @@ void loop() {
         double degree = dir*90;
         StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition + degree;
 
+        int32_t remainingPitchAngle = motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
+
         motorYaw.setRPM(rpm);
         motorYaw.startRotate(degree * StepperMotorConfig::Yaw::GearRatio);
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::rpm;
@@ -351,26 +354,22 @@ void loop() {
     for (uint8_t i=0; i<255; i++) serialBuffer[i]=0;
   }  
 
+  uint8_t motorConsecutiveStep = 0;
 
   // controll motor steps and only do serial communication if there is time inbetween
-  while (motorPitch.nextAction() < StepperMotorConfig::NextActionTimeout && 
-          motorPitch.nextAction() > 0 && !Serial.available() &&
-          motorPitchConsecutiveStep <= StepperMotorConfig::MaxConsecutiveActions){}
+  while ( !Serial.available() &&
+          controller.nextAction() > 0 &&
+          motorConsecutiveStep++ <= StepperMotorConfig::MaxConsecutiveActions){}
 
-  if (StepperMotorConfig::Pitch::motionMode == StepperMotorConfig::MotionMode::rpm &&
+  if (  StepperMotorConfig::Pitch::motionMode == StepperMotorConfig::MotionMode::rpm &&
         motorPitch.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
       motorPitch.startRotate(motorPitch.getDirection()*90*StepperMotorConfig::Pitch::GearRatio);
   }
 
-  while (motorYaw.nextAction() < StepperMotorConfig::NextActionTimeout && 
-          motorYaw.nextAction() > 0 && !Serial.available() && 
-          motorYawConsecutiveStep <= StepperMotorConfig::MaxConsecutiveActions){}
-
-  if (StepperMotorConfig::Yaw::motionMode == StepperMotorConfig::MotionMode::rpm && motorYaw.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
+  if (  StepperMotorConfig::Yaw::motionMode == StepperMotorConfig::MotionMode::rpm && 
+        motorYaw.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
     motorYaw.startRotate(motorYaw.getDirection()*90*StepperMotorConfig::Yaw::GearRatio);
   }
-  motorPitchConsecutiveStep = 0;
-  motorYawConsecutiveStep = 0;
 
   StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
   StepperMotorConfig::Yaw::currentPosition = StepperMotorConfig::Yaw::targetPosition - motorYaw.getDirection() * (motorYaw.getStepsRemaining() * 360 / (motorYaw.getSteps() * motorYaw.getMicrostep()))/StepperMotorConfig::Yaw::GearRatio;     
