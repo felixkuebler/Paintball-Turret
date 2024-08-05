@@ -297,10 +297,10 @@
         var fullScreenMode = false;
 
         // input variables
-        var yawSpeed = 0;
-        var pitchSpeed = 0;
-        var yawLastSpeed = 0;
-        var pitchLastSpeed = 0;
+        var lastYawSpeed = 0;
+        var lastPitchSpeed = 0;
+        var lastLbButtonPressed = 0;
+        var lastRbButtonPressed = 0;
 
         var triggered = false;
 
@@ -319,7 +319,7 @@
         // topRight - bottomRight - topLeft - bottomLeft - center
         var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
 
-
+        // status if a gamepad is connected
         var gamepadConnected = false;
 
 
@@ -489,30 +489,44 @@
             if (gamepadConnected) {
 
                 var gamepad = navigator.getGamepads()[0];
+                
+                var yawSpeed = gamepad.axes[2] * 100;
+                yawSpeed = Math.abs(yawSpeed) < 5 ? 5 : yawSpeed; // broken stick
+                yawSpeed = parseInt(Math.sign(yawSpeed)*map(Math.abs(yawSpeed), 5, 100, 0, 100 ));
 
-                yawSpeed = parseInt(gamepad.axes[2] * 100);
-                pitchSpeed = parseInt(gamepad.axes[3] * 100);
+                var pitchSpeed = gamepad.axes[3] * 100;
+                pitchSpeed = Math.abs(pitchSpeed) < 5 ? 5 : pitchSpeed; // broken stick
+                pitchSpeed = parseInt(Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
 
-                console.log(
-                    "Gamepad Axis0: %s | Axis1: %s",
-                    yawSpeed,
-                    pitchSpeed,
-              );
-
-                if (yawSpeed != yawLastSpeed){
-                    yawLastSpeed = yawSpeed;
-                    var postString = "{\"yawSpeed\":" + yawSpeed + "}";
-                    console.log("yawSpeed=" + yawSpeed);
+                if (yawSpeed != lastYawSpeed && pitchSpeed != lastPitchSpeed) {
+                    lastYawSpeed = yawSpeed;
+                    lastPitchSpeed = pitchSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + ",\"pitchSpeed\":" + -pitchSpeed + "}";
                     httpPostAsync("{{ url_for('controlle') }}", postString);
                 }
-                if (pitchSpeed != pitchLastSpeed){
-                    pitchLastSpeed = pitchSpeed;
-                    var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
-                    console.log("pitchSpeed=" + pitchSpeed);
+                else if (yawSpeed != lastYawSpeed){
+                    lastYawSpeed = yawSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + "}";
                     httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                else if (pitchSpeed != lastPitchSpeed){
+                    lastPitchSpeed = pitchSpeed;
+                    var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                
+                var lbButtonPressed = (gamepad.axes[4] > 0.5);
+                if (lbButtonPressed != lastLbButtonPressed) {
+                    lastLbButtonPressed = lbButtonPressed;
+                    console.log("zoom: %s", lbButtonPressed);
+                }
+                
+                var rbButtonPressed = (gamepad.axes[5] > 0.5);
+                if (rbButtonPressed != lastRbButtonPressed) {
+                    lastRbButtonPressed = rbButtonPressed;
+                    console.log("trigger: %s", rbButtonPressed);
                 }
             }
-
         };
         window.setInterval(controlTimeoutCallback, 50); 
 
