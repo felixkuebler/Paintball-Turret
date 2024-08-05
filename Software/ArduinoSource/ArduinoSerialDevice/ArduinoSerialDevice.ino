@@ -240,23 +240,28 @@ void loop() {
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
       // buff = [uint8_t, int16_t] 
-      int16_t rpm = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
+      int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1));
 
-      int16_t rpmDir = rpm < 0 ? -1 : 1;
-      rpm = abs(rpm);
-      rpm = rpm > StepperMotorConfig::Pitch::MaxRpm ? StepperMotorConfig::Pitch::MaxRpm : rpm;
-      rpm = rpm < StepperMotorConfig::Pitch::MinRpm ? 0 : rpm;
+      // extract direction from speed
+      int16_t dir = speed < 0 ? -1 : 1;
+
+      // limit speed to 0-100
+      speed = abs(speed);
+      speed = speed > 100 ? speed = 100 : speed;
+
+      // calculate rpm from speed
+      int16_t rpm = map(speed, 0, 100, 0, StepperMotorConfig::Pitch::MaxRpm * StepperMotorConfig::Pitch::GearRatio);
 
       if (rpm <= 0) {
         motorPitch.stop();
         StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::none;
       }
       else {
-        double degree = rpmDir*90;
+        double degree = dir*90;
         StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition + degree;
 
         motorPitch.setRPM(rpm);
-        motorPitch.startRotate(degree*StepperMotorConfig::Pitch::GearRation);
+        motorPitch.startRotate(degree * StepperMotorConfig::Pitch::GearRatio);
         StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::rpm;
       }
     }
@@ -264,23 +269,28 @@ void loop() {
       // Set motor position or speed
       // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
       // buff = [uint8_t, int16_t] 
-      int16_t rpm = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
+      int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1));
 
-      int16_t rpmDir = rpm < 0 ? -1 : 1;
-      rpm = abs(rpm);
-      rpm = rpm > StepperMotorConfig::Yaw::MaxRpm ? StepperMotorConfig::Yaw::MaxRpm : rpm;
-      rpm = rpm < StepperMotorConfig::Yaw::MinRpm ? 0 : rpm;
+      // extract direction from speed
+      int16_t dir = speed < 0 ? -1 : 1;
+
+      // limit speed to 0-100
+      speed = abs(speed);
+      speed = speed > 100 ? speed = 100 : speed;
+
+      // calculate rpm from speed
+      int16_t rpm = map(speed, 0, 100, 0, StepperMotorConfig::Yaw::MaxRpm * StepperMotorConfig::Yaw::GearRatio);
 
       if (rpm <= 0) {
         motorYaw.stop();
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::none;
       }
       else {
-        double degree = rpmDir*90;
+        double degree = dir*90;
         StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition + degree;
 
         motorYaw.setRPM(rpm);
-        motorYaw.startRotate(degree*StepperMotorConfig::Yaw::GearRation);
+        motorYaw.startRotate(degree * StepperMotorConfig::Yaw::GearRatio);
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::rpm;
       }
     }
@@ -357,11 +367,11 @@ void loop() {
           motorYawConsecutiveStep <= StepperMotorConfig::MaxConsecutiveActions){}
 
   if (StepperMotorConfig::Yaw::motionMode == StepperMotorConfig::MotionMode::rpm && motorYaw.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
-    motorYaw.startRotate(motorYaw.getDirection()*90*StepperMotorConfig::Yaw::GearRation);
+    motorYaw.startRotate(motorYaw.getDirection()*90*StepperMotorConfig::Yaw::GearRatio);
   }
   motorPitchConsecutiveStep = 0;
   motorYawConsecutiveStep = 0;
 
-  StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRation;
-  StepperMotorConfig::Yaw::currentPosition = StepperMotorConfig::Yaw::targetPosition - motorYaw.getDirection() * (motorYaw.getStepsRemaining() * 360 / (motorYaw.getSteps() * motorYaw.getMicrostep()))/StepperMotorConfig::Yaw::GearRation;     
+  StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
+  StepperMotorConfig::Yaw::currentPosition = StepperMotorConfig::Yaw::targetPosition - motorYaw.getDirection() * (motorYaw.getStepsRemaining() * 360 / (motorYaw.getSteps() * motorYaw.getMicrostep()))/StepperMotorConfig::Yaw::GearRatio;     
 }
