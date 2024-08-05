@@ -256,7 +256,6 @@
         const imageTopX = new Image();
         imageTopX.src = "/img/turretDynamicX.png";
 
-
         const imageBottomY = new Image();
         imageBottomY.src = "/img/turretDynamicY.png";
 
@@ -279,9 +278,6 @@
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
         const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
-        //const yawSpeedInput = document.getElementById("yawSpeedInput");
-        //const pitchSpeedInput = document.getElementById("pitchSpeedInput");
-
         const yawPositionInput = document.getElementById("yawPositionInput");
         const pitchPositionInput = document.getElementById("pitchPositionInput");
 
@@ -300,14 +296,11 @@
         var deviceType = 0; // 0=PC, 1=mobile
         var fullScreenMode = false;
 
-        var yawPosFeedback = 0;
-        var pitchPosFeedback = 0;
-
         // input variables
-        var yawSpeed = 0;
-        var pitchSpeed = 0;
-        var yawLastSpeed = 0;
-        var pitchLastSpeed = 0;
+        var lastYawSpeed = 0;
+        var lastPitchSpeed = 0;
+        var lastLbButtonPressed = 0;
+        var lastRbButtonPressed = 0;
 
         var triggered = false;
 
@@ -325,6 +318,9 @@
 
         // topRight - bottomRight - topLeft - bottomLeft - center
         var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
+
+        // status if a gamepad is connected
+        var gamepadConnected = false;
 
 
         /*
@@ -437,30 +433,6 @@
         thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
-        * Speed range input callback (x)
-        */
-        /*
-        function yawSpeedInputChangeCallback(event){
-            var postString = "{\"yawSpeed\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-        }
-        yawSpeedInput.addEventListener("mouseup",yawSpeedInputChangeCallback);
-        yawSpeedInput.addEventListener("touchend",yawSpeedInputChangeCallback);
-        */
-        
-        /* 
-        * Speed range input callback (y)
-        */
-        /*
-        function pitchSpeedInputChangeCallback(event){
-            var postString = "{\"pitchSpeed\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-        }
-        pitchSpeedInput.addEventListener("mouseup",pitchSpeedInputChangeCallback);
-        pitchSpeedInput.addEventListener("touchend",pitchSpeedInputChangeCallback);
-        */
-        
-        /* 
         * Position range input callback (x)
         */
         function yawPositionInputChangeCallback(event){
@@ -502,94 +474,63 @@
         fullScreenDisplay.addEventListener('touchstart',displayPressCallback);
 
         /*
-        * Keyboard keypress callback
+        * Gamepad connect callback
         */
-        function keyboardPressCallback(event){
-            if (event.keyCode in keyMap) {
-                keyMap[event.keyCode] = true;
-            }
-
-            // trigger only on button down one
-            if (document.fullscreenElement && keyMap[32]) {
-                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
-                triggered = true;
-            }
+        function gamepadConnectCallback(event){
+            gamepadConnected = event.gamepad.connected;
         }
-        window.addEventListener('keydown',keyboardPressCallback);
-
-        /*
-        * Keyboard key release callback
-        */
-        function keyboardReleaseCallback(event){
-            if (event.keyCode in keyMap) {
-                keyMap[event.keyCode] = false;
-            }
-        }
-        window.addEventListener('keyup',keyboardReleaseCallback);
+        window.addEventListener("gamepadconnected", gamepadConnectCallback);
+        window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
 
         /*
         * Control loop
         */
         function controlTimeoutCallback(){
+            if (gamepadConnected) {
 
-            yawSpeed = 0;
-            pitchSpeed = 0;
+                var gamepad = navigator.getGamepads()[0];
+                
+                var yawSpeed = gamepad.axes[2] * 100;
+                yawSpeed = Math.abs(yawSpeed) < 5 ? 5 : yawSpeed; // broken stick
+                yawSpeed = parseInt(Math.sign(yawSpeed)*map(Math.abs(yawSpeed), 5, 100, 0, 100 ));
 
-            if (document.fullscreenElement && deviceType==1) {
-                if (joystick.value.x < 0) {
-                    var tmpXSpeed = joystick.value.x * 100;
-                    tmpXSpeed = map(tmpXSpeed, -100, 0, -50, -30);
-                    if (tmpXSpeed <= -32) yawSpeed = Math.round(tmpXSpeed);
-                }
-                if (joystick.value.x > 0) {
-                    var tmpXSpeed = joystick.value.x * 100;
-                    tmpXSpeed = map(tmpXSpeed, 0, 100, 30, 50);
-                    if (tmpXSpeed >= 32) yawSpeed = Math.round(tmpXSpeed);
-                }
-                if (joystick.value.y < 0) {
-                    var tmpYSpeed = joystick.value.y * 100;
-                    tmpYSpeed = map(tmpYSpeed, -100, 0, -55, -33);
-                    if (tmpYSpeed <= -35) pitchSpeed = Math.round(tmpYSpeed);
-                }
-                if (joystick.value.y > 0) {
-                    var tmpYSpeed = joystick.value.y * 100;
-                    tmpYSpeed = map(tmpYSpeed, 0, 100, 43, 65);
-                    if (tmpYSpeed >= 45) pitchSpeed = Math.round(tmpYSpeed);
-                }
-            }
+                var pitchSpeed = gamepad.axes[3] * 100;
+                pitchSpeed = Math.abs(pitchSpeed) < 5 ? 5 : pitchSpeed; // broken stick
+                pitchSpeed = parseInt(Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
 
-            // left, not right arrow
-            if (keyMap[37] && !keyMap[39]) {
-                yawSpeed = -40;
-            }
-            // right, not right arrow
-            if (keyMap[39] && !keyMap[37]) {
-                yawSpeed = 40;
-            }
-            // up, not down arrow
-            if (keyMap[38] && !keyMap[40]) {
-                pitchSpeed = -40  ;
-            }
-            // down, not up arrow
-            if (keyMap[40] && !keyMap[38]) {            
-                pitchSpeed = 40;
-            }
-
-            if (yawSpeed != yawLastSpeed){
-                yawLastSpeed = yawSpeed;
-                var postString = "{\"yawSpeed\":" + yawSpeed + "}";
-                console.log("yawSpeed=" + yawSpeed);
-                httpPostAsync("{{ url_for('controlle') }}", postString);
-            }
-            if (pitchSpeed != pitchLastSpeed){
-                pitchLastSpeed = pitchSpeed;
-                var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
-                console.log("pitchSpeed=" + pitchSpeed);
-                httpPostAsync("{{ url_for('controlle') }}", postString);
+                if (yawSpeed != lastYawSpeed && pitchSpeed != lastPitchSpeed) {
+                    lastYawSpeed = yawSpeed;
+                    lastPitchSpeed = pitchSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + ",\"pitchSpeed\":" + -pitchSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                else if (yawSpeed != lastYawSpeed){
+                    lastYawSpeed = yawSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                else if (pitchSpeed != lastPitchSpeed){
+                    lastPitchSpeed = pitchSpeed;
+                    var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                
+                var lbButtonPressed = (gamepad.axes[4] > 0.5);
+                if (lbButtonPressed != lastLbButtonPressed) {
+                    lastLbButtonPressed = lbButtonPressed;
+                    console.log("zoom: %s", lbButtonPressed);
+                }
+                
+                var rbButtonPressed = (gamepad.axes[5] > 0.5);
+                if (rbButtonPressed != lastRbButtonPressed) {
+                    lastRbButtonPressed = rbButtonPressed;
+                    console.log("trigger: %s", rbButtonPressed);
+                    var postString = "{\"trigger\":" + rbButtonPressed + "}";
+                    httpPostAsync("{{ url_for('control') }}", postString);
+                }
             }
         };
         window.setInterval(controlTimeoutCallback, 50); 
-
 
         /*
         * Timed Position feedback poll
@@ -605,9 +546,6 @@
             pitchPosFeedback = parseFloat(responseObj.pitchPos);
         };
         window.setInterval("refreshPosition()", 200); 
-
-
-        
 
 
     </script>
