@@ -48,8 +48,8 @@ def video_feed():
     return Response(getFrame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/controlle', methods=['POST'])
-def controlle():
+@app.route('/control', methods=['POST'])
+def control():
 
     # Mouse movement handling routine
     data = json.loads(request.data)
@@ -70,7 +70,7 @@ def controlle():
         pass
         #turr.trigger()
 
-    return Response("controlle_response", status=200, mimetype='text/html')
+    return Response("control_response", status=200, mimetype='text/html')
 
 
 @app.route('/option', methods=['POST'])
