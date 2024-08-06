@@ -527,6 +527,8 @@
                 if (rbButtonPressed != lastRbButtonPressed) {
                     lastRbButtonPressed = rbButtonPressed;
                     console.log("trigger: %s", rbButtonPressed);
+                    var postString = "{\"trigger\":" + rbButtonPressed + "}";
+                    httpPostAsync("{{ url_for('control') }}", postString);
                 }
             }
         };
