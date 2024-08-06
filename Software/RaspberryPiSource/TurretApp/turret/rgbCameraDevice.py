@@ -10,31 +10,25 @@ class RgbCamera():
         self.capture.release()
 
 
-    def read(self):
+    def readRaw(self):
         if not self.capture.isOpened():
             #raise RuntimeError('Could not start camera.')
             return False, None
 
         # read current frame
-        ret, frame = self.capture.read()
+        return self.capture.read()
         
-        # calculate the roi of the thermal camera
-        # only show the part of the image that overlap
-        # TODO make roi adjustable
-        width  = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    
-        offsetX = int(width/5)
-        offsetY = int(height/9)
-        
-        sizeX = int(width/1.5)
-        sizeY = int(height/1.5)
-        
-        roi = frame[offsetY:offsetY+sizeY, offsetX:offsetX+sizeX]
-        
-        roi = cv2.resize(roi, (640, 480))
 
-        # dont use roi for now
+    def read(self, zoomEnabled=False):
+        ret, frame = self.readRaw()
+        
+        if (zoomEnabled):
+
+            width  = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+            height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        
+            frame = frame[int(height/4):int(height*3/4), int(width/4):int(width*3/4)]
+            
         frame = cv2.resize(frame, (640, 480))
         
         return ret, frame
