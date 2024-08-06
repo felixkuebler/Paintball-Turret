@@ -15,12 +15,17 @@ class CameraMux():
 	def __init__(self, deviceRgb=0, deviceThermal=2):
 		self.rgbCam = RgbCamera(deviceRgb)
 		self.thermalCam = ThermalCamera(deviceThermal)
+		self.zoomEnabled = False
 		self.thermalColorMap = self.THERMAL_COLOR_MAP_DEFAULT
 		self.cameraSelector = self.CAMERA_FEED_RGB
-
-
-	def setCameraFeed(self, cameraFeed):
-		self.cameraSelector = cameraFeed
+	
+	
+	def setCameraZoom(self, zoomEnabled):
+		self.zoomEnabled = zoomEnabled
+		
+		
+	def setCameraFeed(self, cameraSelector):
+		self.cameraSelector = cameraSelector
 
 
 	def setThermalColorMap(self, thermalColorMap):
@@ -63,4 +68,10 @@ class CameraMux():
 			
 			return (retThermal and retRgb), cv2.imencode('.jpg', dst)[1].tobytes()
 
-		return self.rgbCam.getFrame()
+		else:
+			
+			retRgb, frameRgb = self.rgbCam.read(self.zoomEnabled)
+			
+			return retRgb, cv2.imencode('.jpg', frameRgb)[1].tobytes()
+
+				

@@ -519,6 +519,8 @@
                 if (lbButtonPressed != lastLbButtonPressed) {
                     lastLbButtonPressed = lbButtonPressed;
                     console.log("zoom: %s", lbButtonPressed);
+                    var postString = "{\"setCameraZoom\":\"" + lbButtonPressed + "\"}";
+                    httpPostAsync("{{ url_for('option') }}", postString);
                 }
                 
                 var rbButtonPressed = (gamepad.axes[5] > 0.5);
