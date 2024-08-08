@@ -60,11 +60,16 @@ def control():
     if 'pitchPos' in data:
         serial.motorPitchWritePositionAbsolute(-int(data['pitchPos']))
 
-    if 'yawSpeed' in data:
-        serial.motorYawWriteSpeed(-int(data['yawSpeed']))
-
-    if 'pitchSpeed' in data:
-        serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
+    if ('pitchSpeed' in data) and ('yawSpeed' in data):
+        serial.motorWriteSpeed(-int(data['pitchSpeed']), -int(data['yawSpeed']))
+        
+    else:
+        
+        if 'pitchSpeed' in data:
+            serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
+            
+        if 'yawSpeed' in data:
+            serial.motorYawWriteSpeed(-int(data['yawSpeed']))
 
     if 'trigger' in data:
         pass
