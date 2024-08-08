@@ -1,6 +1,6 @@
 import serial
 import ctypes
-
+import time
 
 class ArduinoSerialDevice():
 
@@ -31,6 +31,9 @@ class ArduinoSerialDevice():
 	def __init__(self, port='/dev/ttyUSB0', baudrate=9600):
 		self.arduinoDev = serial.Serial(port=port, baudrate=baudrate)
 		self.serialLock = False;
+
+		# delay untlins serial connection has been established
+		time.sleep(2)
 
 
 	def lockDevice(self):
@@ -128,8 +131,8 @@ class ArduinoSerialDevice():
 
 	def motorPitchReadPosition(self):
 		self.lockDevice()
-		self.arduinoDev.write(CMD_MOTOR_PITCH_READ_POSITION)
-		self.arduinoDev.write(CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_MOTOR_PITCH_READ_POSITION)
+		self.arduinoDev.write(self.CMD_TERMINATOR)
 
 		byteStream = self.arduinoDev.read(4)
 		self.unlockDevice()
@@ -163,8 +166,8 @@ class ArduinoSerialDevice():
 
 	def motorYawReadPosition(self):
 		self.lockDevice()
-		self.arduinoDev.write(CMD_MOTOR_YAW_READ_POSITION)
-		self.arduinoDev.write(CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_MOTOR_YAW_READ_POSITION)
+		self.arduinoDev.write(self.CMD_TERMINATOR)
 
 		byteStream = self.arduinoDev.read(4)
 		self.unlockDevice()
