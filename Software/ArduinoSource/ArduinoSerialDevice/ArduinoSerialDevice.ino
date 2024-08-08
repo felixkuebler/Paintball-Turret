@@ -118,11 +118,13 @@ void setup() {
 void loop() {
 
   while(Serial.available() > 0 && buffPointer<255 && !bufferComplete) {
-    serialBuffer[buffPointer++] = (uint8_t)Serial.read();
+    serialBuffer[buffPointer] = (uint8_t)Serial.read();
       
     if (serialBuffer[buffPointer]=='#' ) {
       bufferComplete=true;
     }
+
+    buffPointer++;
   }
 
   if (bufferComplete) {
