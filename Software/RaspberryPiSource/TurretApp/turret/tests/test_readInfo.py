@@ -1,20 +1,19 @@
 import time
+import sys
+
+sys.path.append('..')
+
 from arduinoSerialDevice import ArduinoSerialDevice
 
-arduino = ArduinoSerialDevice(port='/dev/ttyUSB0', baudrate=9600)
-time.sleep(2)
-
-arduino.pinModeInput(10)
-arduino.pinModeInput(14)
-time.sleep(1)
+serial = ArduinoSerialDevice(port='/dev/tty.usbserial-14240', baudrate=9600)
 
 while True:
 
-	value = arduino.digitalRead(10);
-	print('Digital Read = %s' % value)
+	#value = serial.digitalRead(10);
+	#print('Digital Read = %s' % value)
 
-	#value = arduino.analogRead(14)
+	#value = serial.analogRead(14)
 	#print('Analog Read = %s' % value)
 
-	#value = arduino.motorReadPosition()
-	#print('Motor Position = %s' % value)
+	value = serial.motorYawReadPosition()
+	print('Motor Yaw Position = %s' % value)
