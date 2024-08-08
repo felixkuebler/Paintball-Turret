@@ -17,18 +17,25 @@ namespace SerialCommands {
   }
 
   namespace Motor {
+
     namespace Pitch {
        static constexpr uint8_t WritePositionAbsolute = 10;
        static constexpr uint8_t WritePositionRelative = 11;
        static constexpr uint8_t WriteSpeed = 12;
        static constexpr uint8_t ReadPosition = 13;
     }
+
     namespace Yaw {
        static constexpr uint8_t WritePositionAbsolute = 20;
        static constexpr uint8_t WritePositionRelative = 21;
        static constexpr uint8_t WriteSpeed = 22;
        static constexpr uint8_t ReadPosition = 23;
     }
+
+    static constexpr uint8_t WritePositionAbsolute = 30;
+    static constexpr uint8_t WritePositionRelative = 31;
+    static constexpr uint8_t WriteSpeed = 32;
+    static constexpr uint8_t ReadPosition = 33;
   }
 }
 
@@ -299,57 +306,86 @@ void loop() {
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::rpm;
       }
     }
+else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
+      // Set motor position or speed for both axis
+      // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
+      // buff = [uint8_t, int16_t] 
+      int16_t speedPitch = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1));
+      int16_t speedYaw = ((int16_t) serialBuffer[3] << (8*0)) | ((int16_t) serialBuffer[4] <<  (8*1));
+
+      // extract direction from speed
+      int16_t dirPitch = speedPitch < 0 ? -1 : 1;
+      int16_t dirYaw = speedYaw < 0 ? -1 : 1;
+
+      // limit speed to 0-100
+      speedPitch = abs(speedPitch);
+      speedPitch = speedPitch > 100 ? speedPitch = 100 : speedPitch;
+
+      speedYaw = abs(speedYaw);
+      speedYaw = speedYaw > 100 ? speedYaw = 100 : speedYaw;
+
+      // calculate rpm from speed
+      int16_t rpmPitch = map(speedPitch, 0, 100, 0, StepperMotorConfig::Pitch::MaxRpm * StepperMotorConfig::Pitch::GearRatio);
+      int16_t rpmYaw = map(speedYaw, 0, 100, 0, StepperMotorConfig::Yaw::MaxRpm * StepperMotorConfig::Yaw::GearRatio);
+
+      if (rpmPitch <= 0) {
+        motorPitch.stop();
+        StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::none;
+      }
+      else {
+        double degree = dirPitch*90;
+        StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition + degree;
+
+        //int32_t remainingPitchAngle = motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
+
+        motorPitch.setRPM(rpmPitch);
+        motorPitch.startRotate(degree * StepperMotorConfig::Pitch::GearRatio);
+        StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::rpm;
+      }
+
+      if (rpmYaw <= 0) {
+        motorYaw.stop();
+        StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::none;
+      }
+      else {
+        double degree = dirYaw*90;
+        StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition + degree;
+
+        //int32_t remainingPitchAngle = motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
+
+        motorYaw.setRPM(rpmYaw);
+        motorYaw.startRotate(degree * StepperMotorConfig::Yaw::GearRatio);
+        StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::rpm;
+      }
+    }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::ReadPosition){
       // Read motor position
       // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
       // return = int32_t
-      /*
-      int32_t positionDeg = motor->encoderPos/(int32_t)motor->gearRatio;
-      if (motor->invertDir) positionDeg*= -1;
 
       uint8_t outputBuffer[4];
-      if(motor){
-        outputBuffer[0] = (positionDeg >> (8*0)) & 0xff;
-        outputBuffer[1] = (positionDeg >> (8*1)) & 0xff;
-        outputBuffer[2] = (positionDeg >> (8*2)) & 0xff;
-        outputBuffer[3] = (positionDeg >> (8*3)) & 0xff;
-      }
-      else {
-        outputBuffer[0] = 0;
-        outputBuffer[1] = 0;
-        outputBuffer[2] = 0;
-        outputBuffer[3] = 0;
-      }
+      outputBuffer[0] = (StepperMotorConfig::Pitch::currentPosition >> (8*0)) & 0xff;
+      outputBuffer[1] = (StepperMotorConfig::Pitch::currentPosition >> (8*1)) & 0xff;
+      outputBuffer[2] = (StepperMotorConfig::Pitch::currentPosition >> (8*2)) & 0xff;
+      outputBuffer[3] = (StepperMotorConfig::Pitch::currentPosition >> (8*3)) & 0xff;
+
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
-      */
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::ReadPosition){
       // Read motor position
       // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
       // return = int32_t
-      /*
-      int32_t positionDeg = motor->encoderPos/(int32_t)motor->gearRatio;
-      if (motor->invertDir) positionDeg*= -1;
-
       uint8_t outputBuffer[4];
-      if(motor){
-        outputBuffer[0] = (positionDeg >> (8*0)) & 0xff;
-        outputBuffer[1] = (positionDeg >> (8*1)) & 0xff;
-        outputBuffer[2] = (positionDeg >> (8*2)) & 0xff;
-        outputBuffer[3] = (positionDeg >> (8*3)) & 0xff;
-      }
-      else {
-        outputBuffer[0] = 0;
-        outputBuffer[1] = 0;
-        outputBuffer[2] = 0;
-        outputBuffer[3] = 0;
-      }
+      outputBuffer[0] = (StepperMotorConfig::Yaw::currentPosition >> (8*0)) & 0xff;
+      outputBuffer[1] = (StepperMotorConfig::Yaw::currentPosition >> (8*1)) & 0xff;
+      outputBuffer[2] = (StepperMotorConfig::Yaw::currentPosition >> (8*2)) & 0xff;
+      outputBuffer[3] = (StepperMotorConfig::Yaw::currentPosition >> (8*3)) & 0xff;
+
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
-      */
     }
     
     // clear buffer

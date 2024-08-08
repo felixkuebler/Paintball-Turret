@@ -20,6 +20,11 @@ class ArduinoSerialDevice():
 	CMD_MOTOR_YAW_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(21)
 	CMD_MOTOR_YAW_WRITE_SPEED = ctypes.c_ubyte(22)
 	CMD_MOTOR_YAW_READ_POSITION = ctypes.c_ubyte(23)
+	
+	CMD_MOTOR_WRITE_POSITION_ABSOLUTE = ctypes.c_ubyte(30)
+	CMD_MOTOR_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(31)
+	CMD_MOTOR_WRITE_SPEED = ctypes.c_ubyte(32)
+	CMD_MOTOR_READ_POSITION = ctypes.c_ubyte(33)
 
 	CMD_TERMINATOR = ('#').encode()
 
@@ -125,6 +130,15 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_SPEED)
 		self.arduinoDev.write(ctypes.c_int16(speed))
+		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.unlockDevice()
+
+
+	def motorWriteSpeed(self, speedPitch, speedYaw):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_WRITE_SPEED)
+		self.arduinoDev.write(ctypes.c_int16(speedPitch))
+		self.arduinoDev.write(ctypes.c_int16(speedYaw))
 		self.arduinoDev.write(self.CMD_TERMINATOR)
 		self.unlockDevice()
 
