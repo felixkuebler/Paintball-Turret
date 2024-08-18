@@ -110,7 +110,7 @@ uint8_t buffPointer=0;
 bool bufferComplete = false;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   motorPitch.begin(StepperMotorConfig::Pitch::Rpm * StepperMotorConfig::Pitch::GearRatio, StepperMotorConfig::Pitch::MicroSteps);
   motorYaw.begin(StepperMotorConfig::Yaw::Rpm * StepperMotorConfig::Yaw::GearRatio, StepperMotorConfig::Yaw::MicroSteps);
