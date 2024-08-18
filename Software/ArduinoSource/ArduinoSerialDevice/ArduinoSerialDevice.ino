@@ -265,6 +265,7 @@ void loop() {
       if (rpm <= 0) {
         motorPitch.stop();
         StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::none;
+        StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition;
       }
       else {
         double degree = dir*90;
@@ -294,6 +295,7 @@ void loop() {
       if (rpm <= 0) {
         motorYaw.stop();
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::none;
+        StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition;
       }
       else {
         double degree = dir*90;
@@ -331,6 +333,7 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
       if (rpmPitch <= 0) {
         motorPitch.stop();
         StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::none;
+        StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition;
       }
       else {
         double degree = dirPitch*90;
@@ -346,6 +349,7 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
       if (rpmYaw <= 0) {
         motorYaw.stop();
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::none;
+        StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition;
       }
       else {
         double degree = dirYaw*90;
@@ -364,6 +368,9 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
       // buff = [uint8_t] 
       // return = int32_t
 
+      // update the position member first
+      StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
+
       uint8_t outputBuffer[4];
       outputBuffer[0] = (StepperMotorConfig::Pitch::currentPosition >> (8*0)) & 0xff;
       outputBuffer[1] = (StepperMotorConfig::Pitch::currentPosition >> (8*1)) & 0xff;
@@ -378,6 +385,10 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
       // buff = [JOB_MOTOR_READ_POSITION]
       // buff = [uint8_t] 
       // return = int32_t
+
+      // update the position member first
+      StepperMotorConfig::Yaw::currentPosition = StepperMotorConfig::Yaw::targetPosition - motorYaw.getDirection() * (motorYaw.getStepsRemaining() * 360 / (motorYaw.getSteps() * motorYaw.getMicrostep()))/StepperMotorConfig::Yaw::GearRatio;
+
       uint8_t outputBuffer[4];
       outputBuffer[0] = (StepperMotorConfig::Yaw::currentPosition >> (8*0)) & 0xff;
       outputBuffer[1] = (StepperMotorConfig::Yaw::currentPosition >> (8*1)) & 0xff;
@@ -402,11 +413,13 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
   if (  StepperMotorConfig::Pitch::motionMode == StepperMotorConfig::MotionMode::rpm &&
         motorPitch.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
       motorPitch.startRotate(motorPitch.getDirection()*90*StepperMotorConfig::Pitch::GearRatio);
+      StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition +  motorPitch.getDirection()*90;
   }
 
   if (  StepperMotorConfig::Yaw::motionMode == StepperMotorConfig::MotionMode::rpm && 
         motorYaw.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
     motorYaw.startRotate(motorYaw.getDirection()*90*StepperMotorConfig::Yaw::GearRatio);
+    StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition + motorYaw.getDirection()*90;
   }
 
   StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
