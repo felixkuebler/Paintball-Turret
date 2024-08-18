@@ -331,6 +331,7 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
       if (rpmPitch <= 0) {
         motorPitch.stop();
         StepperMotorConfig::Pitch::motionMode = StepperMotorConfig::MotionMode::none;
+        StepperMotorConfig::Pitch::targetPosition = StepperMotorConfig::Pitch::currentPosition;
       }
       else {
         double degree = dirPitch*90;
@@ -346,6 +347,7 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
       if (rpmYaw <= 0) {
         motorYaw.stop();
         StepperMotorConfig::Yaw::motionMode = StepperMotorConfig::MotionMode::none;
+        StepperMotorConfig::Yaw::targetPosition = StepperMotorConfig::Yaw::currentPosition;
       }
       else {
         double degree = dirYaw*90;
