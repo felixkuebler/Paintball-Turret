@@ -72,8 +72,7 @@ def control():
             serial.motorYawWriteSpeed(-int(data['yawSpeed']))
 
     if 'trigger' in data:
-        pass
-        #turr.trigger()
+        serial.triggerPrimary(int(data['trigger']))
 
     return Response("control_response", status=200, mimetype='text/html')
 
