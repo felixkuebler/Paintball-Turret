@@ -4,12 +4,8 @@ import time
 
 class ArduinoSerialDevice():
 
-	CMD_SET_OUTPUT = ctypes.c_ubyte(1)
-	CMD_SET_INPUT = ctypes.c_ubyte(2)
-	CMD_DIGITAL_READ = ctypes.c_ubyte(3)
-	CMD_DIGITAL_WRITE = ctypes.c_ubyte(4)
-	CMD_ANALOG_READ = ctypes.c_ubyte(5)
-	CMD_ANALOG_WRITE = ctypes.c_ubyte(6)
+	CMD_TRIGGER_PRIMARY = ctypes.c_ubyte(1)
+	CMD_TRIGGER_SECONDARY = ctypes.c_ubyte(2)
 
 	CMD_MOTOR_PITCH_WRITE_POSITION_ABSOLUTE = ctypes.c_ubyte(10)
 	CMD_MOTOR_PITCH_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(11)
@@ -52,62 +48,12 @@ class ArduinoSerialDevice():
 		self.serialLock = False
 
 
-	def pinModeInput(self, pin):
+	def triggerPrimary(self, value):
 		self.lockDevice()
-		self.arduinoDev.write(CMD_SET_INPUT)
-		self.arduinoDev.write(ctypes.c_ubyte(pin))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def pinModeOutput(self, pin):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_SET_OUTPUT)
-		self.arduinoDev.write(ctypes.c_ubyte(pin))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def digitalWrite(self, pin, value):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_DIGITAL_WRITE)
-		self.arduinoDev.write(ctypes.c_ubyte(pin))
+		self.arduinoDev.write(self.CMD_TRIGGER_PRIMARY)
 		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_TERMINATOR)
 		self.unlockDevice()
-
-
-	def digitalRead(self, pin):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_DIGITAL_READ)
-		self.arduinoDev.write(ctypes.c_ubyte(pin))
-		self.arduinoDev.write(CMD_TERMINATOR)
-
-		byteStream = self.arduinoDev.read()
-		self.unlockDevice()
-
-		return ctypes.c_byte(int.from_bytes(byteStream, 'little')).value
-
-
-	def analogWrite(self, pin, value):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_ANALOG_WRITE)
-		self.arduinoDev.write(ctypes.c_ubyte(pin))
-		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def analogRead(self, pin):
-		self.lockDevice()
-		self.arduinoDev.write(CMD_ANALOG_READ)
-		self.arduinoDev.write(ctypes.c_ubyte(pin))
-		self.arduinoDev.write(CMD_TERMINATOR)
-
-		byteStream = self.arduinoDev.read(2)
-		self.unlockDevice()
-
-		return ctypes.c_int16(int.from_bytes(byteStream, 'little')).value
 
 
 	def motorPitchWritePositionAbsolute(self, position):
