@@ -59,7 +59,7 @@ class ThermalCamera:
 		# convert to 8 bit image
 		rgbFrame = (rgbFrame/256).astype('uint8')
 
-		rgbFrame = cv2.resize(rgbFrame, (640, 480))
+		rgbFrame = cv2.resize(rgbFrame, (854, 480))
 
 		return ret, rgbFrame
 
@@ -82,7 +82,7 @@ class ThermalCamera:
 		# convert to 8 bit image
 		rgbFrame = (rgbFrame/256).astype('uint8')
 
-		rgbFrame = cv2.resize(rgbFrame, (640, 480))
+		rgbFrame = cv2.resize(rgbFrame, (854, 480))
 
 		return ret, rgbFrame
 
