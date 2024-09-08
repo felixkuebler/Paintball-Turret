@@ -175,6 +175,10 @@
         var lastPitchSpeed = 0;
         var lastLbButtonPressed = 0;
         var lastRbButtonPressed = 0;
+        var lastUpButtonPressed = 0;
+        var lastDownButtonPressed = 0;
+        var lastRightButtonPressed = 0;
+        var lastLeftButtonPressed = 0;
 
         var triggered = false;
 
@@ -301,11 +305,22 @@
 
                 var gamepad = navigator.getGamepads()[0];
                 
-                var yawSpeed = gamepad.axes[2] * 100;
+                var axisIdYaw = 2;
+                var axisIdPitch = 3;
+
+                var buttonIdLb = 6;
+                var buttonIdRb = 7;
+                var buttonIdStart = 9;
+                var buttonIdUp= 12;
+                var buttonIdDown= 13;
+                var buttonIdLeft= 14;
+                var buttonIdRight= 15;
+
+                var yawSpeed = gamepad.axes[axisIdYaw] * 100;
                 yawSpeed = Math.abs(yawSpeed) < 5 ? 5 : yawSpeed; // broken stick
                 yawSpeed = parseInt(Math.sign(yawSpeed)*map(Math.abs(yawSpeed), 5, 100, 0, 100 ));
 
-                var pitchSpeed = gamepad.axes[3] * 100;
+                var pitchSpeed = gamepad.axes[axisIdPitch] * 100;
                 pitchSpeed = Math.abs(pitchSpeed) < 5 ? 5 : pitchSpeed; // broken stick
                 pitchSpeed = parseInt(Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
 
@@ -326,7 +341,8 @@
                     httpPostAsync("{{ url_for('control') }}", postString);
                 }
                 
-                var lbButtonPressed = (gamepad.axes[4] > 0.5);
+                // zoom
+                var lbButtonPressed = gamepad.buttons[buttonIdLb].value > 0;
                 if (lbButtonPressed != lastLbButtonPressed) {
                     lastLbButtonPressed = lbButtonPressed;
                     console.log("zoom: %s", lbButtonPressed);
@@ -334,13 +350,58 @@
                     httpPostAsync("{{ url_for('option') }}", postString);
                 }
                 
-                var rbButtonPressed = (gamepad.axes[5] > 0.5);
+                // trigger
+                var rbButtonPressed = gamepad.buttons[buttonIdRb].value > 0;
                 if (rbButtonPressed != lastRbButtonPressed) {
                     lastRbButtonPressed = rbButtonPressed;
                     console.log("trigger: %s", rbButtonPressed);
                     var postString = "{\"trigger\":" + rbButtonPressed + "}";
                     httpPostAsync("{{ url_for('control') }}", postString);
                 }
+                
+                // camera selection
+                var upButtonPressed = gamepad.buttons[buttonIdUp].value
+                if (upButtonPressed != lastUpButtonPressed && upButtonPressed) {
+                    var idx = document.getElementById("cameraFeedSelector").selectedIndex + 1;
+                    if (idx >= document.getElementById("cameraFeedSelector").length) idx = 0;
+                    document.getElementById("cameraFeedSelector").selectedIndex = idx;
+                    document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
+                }
+                lastUpButtonPressed = upButtonPressed
+                
+                var downButtonPressed = gamepad.buttons[buttonIdDown].value
+                if (downButtonPressed != lastDownButtonPressed && downButtonPressed) {
+                    var idx = document.getElementById("cameraFeedSelector").selectedIndex - 1;
+                    if (idx < 0) idx = document.getElementById("cameraFeedSelector").length-1;
+                    document.getElementById("cameraFeedSelector").selectedIndex = idx;
+                    document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
+                }
+                lastDownButtonPressed = downButtonPressed
+                
+                // color map selection
+                var rightButtonPressed = gamepad.buttons[buttonIdRight].value
+                if (rightButtonPressed != lastRightButtonPressed && rightButtonPressed) {
+                    var idx = document.getElementById("thermalCameraColorMapSelector").selectedIndex + 1;
+                    if (idx >= document.getElementById("thermalCameraColorMapSelector").length) idx = 0;
+                    document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
+                    document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
+                }
+                lastRightButtonPressed = rightButtonPressed
+                
+                var leftButtonPressed = gamepad.buttons[buttonIdLeft].value
+                if (leftButtonPressed != lastLeftButtonPressed && leftButtonPressed) {
+                    var idx = document.getElementById("thermalCameraColorMapSelector").selectedIndex - 1;
+                    if (idx < 0) idx = document.getElementById("thermalCameraColorMapSelector").length-1;
+                    document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
+                    document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
+                }
+                lastLeftButtonPressed = leftButtonPressed
+                
+                /*
+                for (i = 0; i<gamepad.buttons.length; i++) {
+                    if (gamepad.buttons[i].value) console.log("Button:" + i);
+                }
+                */
             }
         };
         window.setInterval(controlTimeoutCallback, 50); 
