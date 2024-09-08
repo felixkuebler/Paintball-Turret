@@ -126,24 +126,6 @@ def option():
             cam.setThermalColorMap(cv2.COLORMAP_HOT)
         elif data['setThermalCameraColorMap'] == 'parula':
             cam.setThermalColorMap(cv2.COLORMAP_PARULA)
-        elif data['setThermalCameraColorMap'] == 'magma':
-            cam.setThermalColorMap(cv2.COLORMAP_MAGMA)
-        elif data['setThermalCameraColorMap'] == 'inferno':
-            cam.setThermalColorMap(cv2.COLORMAP_INFERNO)
-        elif data['setThermalCameraColorMap'] == 'plasma':
-            cam.setThermalColorMap(cv2.COLORMAP_PLASMA)
-        elif data['setThermalCameraColorMap'] == 'viridis':
-            cam.setThermalColorMap(cv2.COLORMAP_VIRIDIS)
-        elif data['setThermalCameraColorMap'] == 'cividis':
-            cam.setThermalColorMap(cv2.COLORMAP_CIVIDIS)
-        elif data['setThermalCameraColorMap'] == 'twilight':
-            cam.setThermalColorMap(cv2.COLORMAP_TWILIGHT)
-        elif data['setThermalCameraColorMap'] == 'twilightShifted':
-            cam.setThermalColorMap(cv2.COLORMAP_TWILIGHT_SHIFTED)
-        elif data['setThermalCameraColorMap'] == 'turbo':
-            cam.setThermalColorMap(cv2.COLORMAP_TURBO)
-        elif data['setThermalCameraColorMap'] == 'deepGreen':
-            cam.setThermalColorMap(cv2.COLORMAP_DEEPGREEN)
         else:
             cam.setThermalColorMap(CameraMux.THERMAL_COLOR_MAP_DEFAULT)
             
