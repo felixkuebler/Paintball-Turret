@@ -54,9 +54,15 @@ class CameraMux():
 			retThermal, frameThermal = self.thermalCam.readAbsolut()
 			retRgb, frameRgb = self.rgbCam.read()
 			
+			xOffset = 20
+			yOffset = 0
+			height, width, channels = frameRgb.shape
+			frameRgb = frameRgb[int(height/3)+yOffset:int(height*2/3)+yOffset, int(width/3)+xOffset:int(width*2/3)+xOffset]
+			frameRgb = cv2.resize(frameRgb, (854, 480))
+			
 			# create mask from thermal image
 			# TODO make threshold adjustable 
-			_, mask = cv2.threshold(frameThermal, 170 ,255, cv2.THRESH_BINARY)
+			#_, mask = cv2.threshold(frameThermal, 170 ,255, cv2.THRESH_BINARY)
 			
 			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
 				frameThermal = cv2.applyColorMap(frameThermal, self.thermalColorMap)
