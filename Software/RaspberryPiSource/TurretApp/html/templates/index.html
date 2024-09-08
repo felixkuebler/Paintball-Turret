@@ -14,13 +14,6 @@
             <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
             <canvas id="fullScreenCanvas"></canvas>
 
-            <div id="joystickBase" style="position: absolute;">
-                <img src="/img/joystickBase.png" style="width:100%;"/>
-            </div>
-            <div id="joystickKnob" style="position: absolute;">
-                <img src="/img/joystickRed.png" style="width:100%;"/>        
-            </div>
-            
         </div>
         
         <div style="width:80%; height:100%; margin:0 auto;">    
@@ -160,9 +153,6 @@
         // html objects        
         const armButton = document.getElementById("armButton");
 
-        //const resetButtonX = document.getElementById("resetButtonX");
-        //const resetButtonY = document.getElementById("resetButtonY");
-
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
         
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
@@ -178,7 +168,6 @@
         const positionCanvasX = document.getElementById("positionCanvasX");
         const positionCanvasY = document.getElementById("positionCanvasY");
 
-        var deviceType = 0; // 0=PC, 1=mobile
         var fullScreenMode = false;
 
         // input variables
@@ -193,17 +182,6 @@
         var yawPosFeedback = 0;
         var pitchPosFeedback = 0;
 
-        // keyboard and mouse input
-        var mouseIsMovingX = false;
-        var mouseIsMovingY = false;
-
-
-        // up - down - left - right - space
-        var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
-
-        // topRight - bottomRight - topLeft - bottomLeft - center
-        var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
-
         // status if a gamepad is connected
         var gamepadConnected = false;
 
@@ -217,9 +195,7 @@
         function refreshAnimations(){
             if (document.fullscreenElement){
                 
-                accomodateMobileRotation();
-                displayFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas, deviceType);
-                displayJoyStick(joystickBase, joystickKnob, deviceType);
+                displayFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
 
                 var ctx = fullScreenCanvas.getContext('2d');
                 ctx.globalAlpha = 1;
@@ -255,40 +231,11 @@
         /*
         * Arm button callback (mouse)
         */
-        function armButtonMouseUoCallback(){
-            deviceType = 0;
+        function armButtonMouseUpCallback(){
             requestFullScreen();
         }
-        armButton.addEventListener("mouseup",armButtonMouseUoCallback);
+        armButton.addEventListener("mouseup",armButtonMouseUpCallback);
 
-        /*
-        * Arm button callback (touch)
-        */
-        function armButtonTouchEndCallback(){
-            deviceType = 1;
-            requestFullScreen();
-        }
-        armButton.addEventListener("touchend",armButtonTouchEndCallback);
-
-        /* 
-        * Reset button callback (x)
-        */
-        /*
-        function resetButtonXClickCallback(){
-            httpPostAsync("{{ url_for('option') }}", "{\"resetPosX\":\"1\"}");
-        }
-        resetButtonX.addEventListener("click",resetButtonXClickCallback);
-        */
-        
-        /* 
-        * Reset button callback (y)
-        */
-        /*
-        function resetButtonYClickCallback(){
-            httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":\"1\"}");
-        }
-        resetButtonY.addEventListener("click",resetButtonYClickCallback);
-        */
         
         /* 
         * Camera feed selector callback

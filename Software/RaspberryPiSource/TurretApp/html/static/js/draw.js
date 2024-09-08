@@ -18,34 +18,6 @@ var numberPeddingX = window.screen.height/100*5;
 var numberPeddingY = window.screen.width/100*2.5;
 
 
-function accomodateMobileRotation(){
-    if (window.screen.height < window.screen.width){
-
-        fontSize = window.screen.height/100*5;
-        font = fontSize + "px " + fontName;
-
-        dashLength = window.screen.height/100*5;
-
-        dashPeddingX= window.screen.height/100*2;
-        dashPeddingY= window.screen.width/100*1;
-
-        numberPeddingX = window.screen.height/100*5;
-        numberPeddingY = window.screen.width/100*2.5;
-    } else {
-        fontSize = window.screen.width/100*5;
-        font = fontSize + "px " + fontName;
-
-        dashLength = window.screen.width/100*5;
-
-        dashPeddingX= window.screen.width/100*2;
-        dashPeddingY= window.screen.height/100*1;
-
-        numberPeddingX = window.screen.width/100*5;
-        numberPeddingY = window.screen.height/100*2.5;
-    }
-}
-
-
 function drawInfo(context, info){
 
     var width = context.canvas.width;
