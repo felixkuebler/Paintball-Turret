@@ -95,35 +95,11 @@ namespace StepperMotorConfig {
 }
 
 namespace TiggerConfig {
-  
-  namespace Primary {
 
+  namespace Primary {
     namespace Pins {
       static constexpr uint8_t Enable = 3;
     }
-    static constexpr uint8_t minTriggerTime = 1000;
-
-    bool state = false;
-
-    unsigned long triggerTime = 0;
-
-    void enable() {
-      triggerTime = millis();
-      digitalWrite(Pins::Enable, HIGH);
-      state = true;
-    }
-
-    void requestDisable() {
-      state = false;
-    }
-
-    void disable() {
-      if(state == false && millis() - triggerTime >= minTriggerTime) {
-        triggerTime = 0;
-        digitalWrite(Pins::Enable, LOW);
-      }
-    }
-
   }
   
 }
@@ -176,10 +152,10 @@ void loop() {
       // buff = [JOB_DIGITAL_WRITE, VALUE]
       // buff = [uint8_t, uint8_t] 
       if (serialBuffer[1]>0) {
-        TiggerConfig::Primary::enable();
+        digitalWrite(TiggerConfig::Primary::Pins::Enable, HIGH);
       }
       else {
-        TiggerConfig::Primary::requestDisable();
+        digitalWrite(TiggerConfig::Primary::Pins::Enable, LOW);
       }
     }
     else if(serialBuffer[0] == SerialCommands::Trigger::Secondary){
@@ -413,8 +389,6 @@ else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed){
         motorYaw.getStepsRemaining() < StepperMotorConfig::MaxConsecutiveActions) {
     motorYaw.startRotate(motorYaw.getDirection()*90*StepperMotorConfig::Yaw::GearRatio);
   }
-
-  TiggerConfig::Primary::disable();
 
   StepperMotorConfig::Pitch::currentPosition = StepperMotorConfig::Pitch::targetPosition - motorPitch.getDirection() * (motorPitch.getStepsRemaining() * 360 / (motorPitch.getSteps() * motorPitch.getMicrostep()))/StepperMotorConfig::Pitch::GearRatio;
   StepperMotorConfig::Yaw::currentPosition = StepperMotorConfig::Yaw::targetPosition - motorYaw.getDirection() * (motorYaw.getStepsRemaining() * 360 / (motorYaw.getSteps() * motorYaw.getMicrostep()))/StepperMotorConfig::Yaw::GearRatio;     
