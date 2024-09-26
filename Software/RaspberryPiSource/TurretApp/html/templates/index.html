@@ -254,6 +254,15 @@
         */
         function gamepadConnectCallback(event){
             gamepadConnected = event.gamepad.connected;
+            
+            if (gamepadConnected) {
+                gamepadConnectedInfoButton.style.display = "none";
+                gamepadInfoButton.style.display = "inline-block";
+            }
+            else {
+                gamepadConnectedInfoButton.style.display = "inline-block";
+                gamepadInfoButton.style.display = "none";
+            }
         }
         window.addEventListener("gamepadconnected", gamepadConnectCallback);
         window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
