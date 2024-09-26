@@ -196,34 +196,12 @@
                     triggered = false;
                 }
             }
-            else
-            {
+            else {
                 hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
-                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, yawPosFeedback, pitchPosFeedback);
             }
         };
         window.setInterval("refreshAnimations()", 50); 
 
-        /*
-        * Enable fullscreen mode of browser
-        */
-        function requestFullScreen(){
-            if(fullScreenDisplay.webkitRequestFullScreen) {
-                fullScreenDisplay.webkitRequestFullScreen();
-            } else {
-                fullScreenDisplay.mozRequestFullScreen();
-            }
-        }
-
-        /*
-        * Arm button callback (mouse)
-        */
-        function armButtonMouseUpCallback(){
-            requestFullScreen();
-        }
-        armButton.addEventListener("mouseup",armButtonMouseUpCallback);
-
-        
         /* 
         * Camera feed selector callback
         */
@@ -279,6 +257,21 @@
         }
         window.addEventListener("gamepadconnected", gamepadConnectCallback);
         window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
+
+        /*
+        /*
+        * Fullscreen enable button callback
+        */
+        function pressFullscreenButtonCallback(event){
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            else {
+                fullScreenDisplay.requestFullscreen();
+            }
+        }
+        fullscreenButton.addEventListener("mouseup",pressFullscreenButtonCallback);
+        fullscreenButton.addEventListener("touchend",pressFullscreenButtonCallback);
 
         /*
         * Control loop
@@ -380,6 +373,17 @@
                 }
                 lastLeftButtonPressed = leftButtonPressed
                 
+                var startButtonPressed = gamepad.buttons[buttonIdStart].value
+                if (startButtonPressed != lastStartButtonPressed && startButtonPressed) {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    else {
+                        fullScreenDisplay.requestFullscreen();
+                    }
+                }
+                lastStartButtonPressed = startButtonPressed;
+                                
                 /*
                 for (i = 0; i<gamepad.buttons.length; i++) {
                     if (gamepad.buttons[i].value) console.log("Button:" + i);
