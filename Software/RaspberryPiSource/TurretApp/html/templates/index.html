@@ -230,7 +230,7 @@
         thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
-        * Position range input callback (x)
+        * Yaw Position range input callback
         */
         function yawPositionInputChangeCallback(event){
             var postString = "{\"yawPos\":" + event.target.value + "}";
@@ -240,7 +240,7 @@
         yawPositionInput.addEventListener("touchend",yawPositionInputChangeCallback);
 
         /* 
-        * Position range input callback (y)
+        * Pitch Position range input callback
         */
         function pitchPositionInputChangeCallback(event){
             var postString = "{\"pitchPos\":" + event.target.value + "}";
@@ -369,7 +369,7 @@
                     document.getElementById("cameraFeedSelector").selectedIndex = idx;
                     document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
                 }
-                lastUpButtonPressed = upButtonPressed
+                lastUpButtonPressed = upButtonPressed;
                 
                 var downButtonPressed = gamepad.buttons[buttonIdDown].value
                 if (downButtonPressed != lastDownButtonPressed && downButtonPressed) {
@@ -378,7 +378,7 @@
                     document.getElementById("cameraFeedSelector").selectedIndex = idx;
                     document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
                 }
-                lastDownButtonPressed = downButtonPressed
+                lastDownButtonPressed = downButtonPressed;
                 
                 // color map selection
                 var rightButtonPressed = gamepad.buttons[buttonIdRight].value
@@ -388,7 +388,7 @@
                     document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
                     document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
                 }
-                lastRightButtonPressed = rightButtonPressed
+                lastRightButtonPressed = rightButtonPressed;
                 
                 var leftButtonPressed = gamepad.buttons[buttonIdLeft].value
                 if (leftButtonPressed != lastLeftButtonPressed && leftButtonPressed) {
@@ -397,7 +397,7 @@
                     document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
                     document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
                 }
-                lastLeftButtonPressed = leftButtonPressed
+                lastLeftButtonPressed = leftButtonPressed;
                 
                 var startButtonPressed = gamepad.buttons[buttonIdStart].value
                 if (startButtonPressed != lastStartButtonPressed && startButtonPressed) {
