@@ -8,7 +8,7 @@
         <title>Turret Control</title>
     </head>
     <body>
-
+        
         <div id="fullScreenDisplay" style="display: none;">
             
             <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
@@ -16,29 +16,35 @@
 
         </div>
         
-        <div style="width:80%; height:100%; margin:0 auto;">    
+        <div id="popup" class="hoverPopupBackground">
+            <div class="popup">
+                <img  src="/img/gamepadOverview.png" style="width:100%; margin:0 auto;">
+            </div>
+        </div>
+            
+        <div style="width:90%; height:100%; margin:0 auto;">
+            
             <h1>Turret Web-UI</h1>
             <h2>Control & Feedback</h2>
             <br>
             
-            <div class="container-parent" style="width:100%; height:60%;">
+            <div style="width:100%; height:65%;">
                 
-                <div class="container-child" style="width:65%; height:100%;" >   
+                <div style="height:100%; aspect-ratio:16/9; position:relative; margin:auto">   
 
-                    <div style="width:100%; height:95%;" >   
-                        <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
+                    <div style="width:100%; height:100%; position:absolute;">   
+                        <img src="{{ url_for('video_feed') }}" style="object-fit: contain; height:100%;">
                     </div>
                     
-       
-                    <div style="width:100%; height:5%;">
+                    <div style="width:100%; height:5%; position:absolute; bottom:0; background: rgba(0, 0, 0, .5); padding:0.5% 0 0.5% 0;">
                         
-                        <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; display: inline-block;">
+                        <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; display:inline-block;">
                             <option value="rgb" selected="selected">RGB</option>
                             <option value="thermalAbs">Thermal (Absolut)</option>
                             <option value="thermalNorm">Thermal (Normalized)</option>
                             <option value="hybrid">Hybrid</option>
                         </select>
-                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left: 5%; vertical-align: middle;" />        
+                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left:3%; vertical-align:middle;" />        
                         <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; display: inline-block;">
                             <option value="grey" selected="selected">Grey</option>
                             <option value="autumn">Autumn</option>
@@ -55,30 +61,25 @@
                             <option value="hot">Hot</option>
                             <option value="parula">Parula</option>
                         </select>
-                        <br>
-                    </div>
-                </div>
-                    
-                <div class="container-child" style="width:30%; height:100%; margin-left:1%;">   
-
-                    <div style="height:60%; margin:0 auto;">   
-                        <div id="armButton" class="button">Arm</div>
                         
-                        <p class="description">
-                            Arm the turret and enter fullscreen mode.<br> 
-                            WARNING! The Safety will be disengaged.<br><br>
-                        </p>
+                        <div id="gamepadConnectedInfoButton" style="height:100%; margin-left:10%; display: inline-block;">
+                            <img  src="/img/gamepadNotConnected.png" style="height:100%; vertical-align:middle;">
+                        </div>
+                        <div id="gamepadInfoButton" style="height:100%; margin-left:10%; display: none;">
+                            <img  src="/img/gamepadInfo.png" style="height:100%; vertical-align:middle;">
+                        </div>
+                    
+                        <div id="fullscreenButton" style="height:100%; margin-left:2%; display: inline-block;">
+                            <img  src="/img/fullscreen.png" style="height:100%; vertical-align:middle;">
+                        </div>
                     </div>
                     
-                    <div style="height:30%; margin:0 auto;">   
-                        <canvas id="positionCanvasX" style="width:30%; "></canvas>
-                        <canvas id="positionCanvasY" style="width:30%; "></canvas>
-                    </div>
+                    
+                    
                 </div>
-                
             </div>
 
-            <div class="container-parent" style="width:100%; height:38%; margin-top:2%;">
+            <div style="width:100%; height:auto; margin-top:2%;">
                 
                 <div style="margin-left: 10%; margin-right:10%; width:80%;">
                     Pitch
@@ -124,26 +125,8 @@
         // <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
         // <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
 
-        const imageBottomX = new Image();
-        imageBottomX.src = "/img/turretStaticX.png";
-
-        const imageTopX = new Image();
-        imageTopX.src = "/img/turretDynamicX.png";
-
-        const imageBottomY = new Image();
-        imageBottomY.src = "/img/turretDynamicY.png";
-
-        const imageTopY = new Image();
-        imageTopY.src = "/img/turretStaticY.png";
-
-        const imageTopYCamera = new Image();
-        imageTopYCamera.src = "/img/turretDynamicYCamera.png";
-
-
 
         // html objects        
-        const armButton = document.getElementById("armButton");
-
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
         
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
@@ -155,6 +138,15 @@
         const fullScreenDisplay = document.getElementById("fullScreenDisplay");
         const fullScreenImage = document.getElementById("fullScreenImage");
         const fullScreenCanvas = document.getElementById("fullScreenCanvas");
+        
+        const fullscreenButton = document.getElementById("fullscreenButton");
+
+        const gamepadConnectedInfoButton = document.getElementById("gamepadConnectedInfoButton");
+        const gamepadInfoButton = document.getElementById("gamepadInfoButton");
+
+        const popup = document.getElementById("popup");
+        const popupCloseButton = document.getElementById("popupCloseButton");
+
 
         const positionCanvasX = document.getElementById("positionCanvasX");
         const positionCanvasY = document.getElementById("positionCanvasY");
@@ -170,6 +162,7 @@
         var lastDownButtonPressed = 0;
         var lastRightButtonPressed = 0;
         var lastLeftButtonPressed = 0;
+        var lastStartButtonPressed = 0;
 
         var triggered = false;
 
@@ -179,7 +172,6 @@
 
         // status if a gamepad is connected
         var gamepadConnected = false;
-
 
         /*
         * Animates the fullscreen display
