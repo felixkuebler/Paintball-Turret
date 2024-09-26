@@ -1,4 +1,13 @@
+html {
+    height:100%;
+    width:100%;
+    overflow: hidden;
+}
+
 body {
+    height:100%;
+    width:100%;
+    
     font-size: normal;
     font-family: Arial;
     background: #d6d6d6;
@@ -13,7 +22,8 @@ body {
 
 div {
     padding: 0;
-    border: 1px solid black;
+    margin: 0;
+    #border: 1px solid black;
 }
 
 
@@ -35,14 +45,11 @@ h3 {
 }
 
 
-.container-parent {
-    text-align: center;
+img {
+    padding: 0;
+    margin: 0;
 }
 
-
-.container-child {
-    display: inline-block;
-}
 
 input:focus {
     outline: none;
@@ -96,6 +103,8 @@ input[type=range]::-webkit-slider-thumb {
     background-size:3em;
     background-repeat: no-repeat;
     background-position: 50%;
+    
+    font-size: normal;
 }
 
 
@@ -160,6 +169,7 @@ input[type=range]::-moz-range-thumb {
 
     display: inline-block;
     text-decoration: none;
+    font-size: normal;
     padding: 5px 15px;
 
     background-image: -moz-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
@@ -203,12 +213,57 @@ select {
     border-radius: 5px;
 
     border-style: none;
+    
+    font-size: normal;
 
-    -webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-    -moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
-    box-shadow: 0px 2px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    #-webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    #-moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
+    #box-shadow: 0px 2px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 }
 
 .description {
-    font-size: small;
+    font-size: normal;
+    padding: 0;
 }
+
+
+.hoverPopupBackground{
+    background:rgba(0,0,0,.4);
+    cursor:pointer;
+    display:none;
+    height:100%;
+    position: fixed;
+    text-align:center;
+    top:0;
+    width:100%;
+    z-index:10000;
+    vertical-align:middle;
+}
+
+
+.popup{
+    display:inline-block;
+    height:100%;
+    vertical-align:middle;
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+
+.hoverPopupBackground > div {
+    background-color: #fff;
+    box-shadow: 10px 10px 60px #555;
+    display: inline-block;
+    height: auto;
+    max-width: 551px;
+    min-height: 100px;
+    vertical-align: middle;
+    width: 60%;
+    position: relative;
+    border-radius: 8px;
+    padding: 15px 5%;
+}
+
