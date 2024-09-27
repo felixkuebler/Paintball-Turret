@@ -42,8 +42,8 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/video_feed')
-def video_feed():
+@app.route('/videoFeed')
+def videoFeed():
     # Video streaming route. Put this in the src attribute of an img tag.
     return Response(getFrame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
