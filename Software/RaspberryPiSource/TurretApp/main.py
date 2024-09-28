@@ -9,6 +9,8 @@ import json
 from importlib import import_module
 from flask import Flask, request, render_template, Response, send_from_directory
 
+import time
+
 sys.path.append('./turret')
 
 from arduinoSerialDevice import ArduinoSerialDevice
@@ -35,6 +37,19 @@ def getFrame():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+def getPosition():
+    # Position streaming generator function.
+    while True:
+
+        pitchPos = serial.motorPitchReadPosition()
+        yawPos = serial.motorYawReadPosition()
+        data = '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}\n' % (pitchPos, yawPos)
+        
+        yield (data)
+        
+        # only stream ever 100ms
+        time.sleep(100/1000)
+
 
 @app.route('/')
 def index():
@@ -47,6 +62,11 @@ def videoFeed():
     # Video streaming route. Put this in the src attribute of an img tag.
     return Response(getFrame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
+@app.route('/positionFeed')
+def positionFeed():
+    return Response(getPosition(), mimetype='text/plain')
+    
 
 @app.route('/control', methods=['POST'])
 def control():
@@ -143,11 +163,9 @@ def option():
 def feedback():
 
     if request.args.get('position'):
-        yawPos = 0
-        pitchPos = 0
-        #yawPos = turr.getPositionX()
-        #pitchPos = turr.getPositionY()
-        return '{\"yawPos\":\"%s\", \"pitchPos\":\"%s\"}' % (yawPos, pitchPos)
+        pitchPos = serial.motorPitchReadPosition()
+        yawPos = serial.motorYawReadPosition()
+        return '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}' % (pitchPos, yawPos)
 
     return '{}'
 
