@@ -423,8 +423,10 @@
         };
         function positionCallback(response){        
             var responseObj = JSON.parse(response);
-            yawPosFeedback = parseFloat(responseObj.yawPos);
-            pitchPosFeedback = parseFloat(responseObj.pitchPos);
+            pitchPosFeedback = -1*parseFloat(responseObj.pitchPos);
+            yawPosFeedback = -1*parseFloat(responseObj.yawPos);
+            
+            console.log("Feedback Pitch: %s | Yaw: %s", pitchPosFeedback, yawPosFeedback)
         };
         window.setInterval("refreshPosition()", 200); 
 

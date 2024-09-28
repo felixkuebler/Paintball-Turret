@@ -145,14 +145,12 @@ def option():
 @app.route('/feedback', methods=['GET'])
 def feedback():
 
-    return '{}'
-
+    #return '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}' % (0, 0)
+    
     if request.args.get('position'):
-        yawPos = 0
-        pitchPos = 0
-        #yawPos = turr.getPositionX()
-        #pitchPos = turr.getPositionY()
-        return '{\"yawPos\":\"%s\", \"pitchPos\":\"%s\"}' % (yawPos, pitchPos)
+        pitchPos = serial.motorPitchReadPosition()
+        yawPos = serial.motorYawReadPosition()
+        return '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}' % (pitchPos, yawPos)
 
     return '{}'
 
