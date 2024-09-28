@@ -3,7 +3,7 @@ const fontName = "Arial";
 
 const lineWidth = 2;
 
-const maxDegX = 180;
+const maxDegX = 720;
 const maxDegY = 90;
 
 var fontSize = window.screen.height/100*4;
@@ -76,11 +76,14 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     var width = context.canvas.width;
     var height = context.canvas.height;
 
-    var widthDeg = width/maxDegX;
+    var widthDeg = 4*width/maxDegX;
 
     context.fillStyle = color;
     context.globalAlpha = 1;
 
+    // add offset to repeat the number pattern infinite
+    xPos -= maxDegX/2 * Math.trunc((xPos+Math.sign(xPos)*maxDegX/4)/(maxDegX/2));
+    
     for(i=0; i<=maxDegX; i+=5){
 
         var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
@@ -94,7 +97,6 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
             alphaValue = (40/alphaValue);
             if (alphaValue>1) alphaValue = 1;
 
-
             context.globalAlpha = alphaValue;
 
             if ((i-maxDegX/2)%10 == 0){
@@ -102,7 +104,17 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
 
                 context.font = font;
                 context.textAlign = "center";
-                context.fillText(i-maxDegX/2, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+               
+                if (i > 3*maxDegX/4) {
+                    context.fillText(i-maxDegX, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+                }
+                else if (i < maxDegX/4) {
+                    context.fillText(i, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+                }
+                else {
+                    context.fillText(i-maxDegX/2, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+                }
+                                
             } else {
                 context.fillRect(positionShift-lineWidth/2, dashPeddingX, lineWidth, dashLength/3*2);
             }
