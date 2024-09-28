@@ -224,7 +224,7 @@
         thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
-        * Position range input callback (x)
+        * Yaw Position range input callback
         */
         function yawPositionInputChangeCallback(event){
             var postString = "{\"yawPos\":" + event.target.value + "}";
@@ -234,7 +234,7 @@
         yawPositionInput.addEventListener("touchend",yawPositionInputChangeCallback);
 
         /* 
-        * Position range input callback (y)
+        * Pitch Position range input callback
         */
         function pitchPositionInputChangeCallback(event){
             var postString = "{\"pitchPos\":" + event.target.value + "}";
