@@ -946,9 +946,9 @@
     (pad "30" thru_hole oval locked (at 15.24 0 90) (size 1.6 1.6) (drill 1) (layers "*.Cu" "*.Mask")
       (net 25 "unconnected-(A1-VIN-Pad30)") (pinfunction "VIN") (pintype "power_in") (tstamp 878d4df2-c476-45c1-a074-c61582165a0d))
     (model "${KIPRJMOD}/Libraries/3DParts/ArduinoNano.3dshapes/ArduinoNano-Pinheader.step"
-      (offset (xyz 10 3.2 7.5))
+      (offset (xyz 35 9.7 21.5))
       (scale (xyz 1 1 1))
-      (rotate (xyz -90 0 -180))
+      (rotate (xyz -90 0 -90))
     )
   )
 
@@ -1183,8 +1183,8 @@
       (net 14 "yaw-step") (pinfunction "STEP") (pintype "input") (tstamp 6c9fa8b4-7882-412e-9384-a791ed0a18d8))
     (pad "16" thru_hole oval locked (at 12.7 0 270) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 15 "yaw-dir") (pinfunction "DIR") (pintype "input") (tstamp a4f306ce-86d2-4b47-884e-f44d5405d36f))
-    (model "${KIPRJMOD}/Libraries/3DParts/TMC.3dshapes/TMC-Heatsink-Pinheader.step"
-      (offset (xyz 1 -26.15 -17.5))
+    (model "${KIPRJMOD}/Libraries/3DParts/TMC.3dshapes/TMC2208-Pinheader.step"
+      (offset (xyz 2.3 -9.9 3.5))
       (scale (xyz 1 1 1))
       (rotate (xyz -90 0 -90))
     )
@@ -2509,8 +2509,8 @@
       (net 9 "pitch-step") (pinfunction "STEP") (pintype "input") (tstamp 595261cb-0dad-41f5-b93f-580da7ae47dc))
     (pad "16" thru_hole oval locked (at 12.7 0 270) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 10 "pitch-dir") (pinfunction "DIR") (pintype "input") (tstamp 8ec18333-2514-43ff-bb58-873d7e84703a))
-    (model "${KIPRJMOD}/Libraries/3DParts/TMC.3dshapes/TMC-Heatsink-Pinheader.step"
-      (offset (xyz 1 -26.15 -17.5))
+    (model "${KIPRJMOD}/Libraries/3DParts/TMC.3dshapes/TMC2208-Pinheader.step"
+      (offset (xyz 2.3 -9.9 3.5))
       (scale (xyz 1 1 1))
       (rotate (xyz -90 0 -90))
     )
