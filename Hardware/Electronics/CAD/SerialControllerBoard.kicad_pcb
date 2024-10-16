@@ -945,10 +945,10 @@
       (net 4 "GND") (pinfunction "GND") (pintype "power_in") (tstamp 02126699-edcf-4798-a3f4-15edd076c799))
     (pad "30" thru_hole oval locked (at 15.24 0 90) (size 1.6 1.6) (drill 1) (layers "*.Cu" "*.Mask")
       (net 25 "unconnected-(A1-VIN-Pad30)") (pinfunction "VIN") (pintype "power_in") (tstamp 878d4df2-c476-45c1-a074-c61582165a0d))
-    (model "${KICAD6_3DMODEL_DIR}/Module.3dshapes/Arduino_Nano_WithMountingHoles.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/Libraries/3DParts/ArduinoNano.3dshapes/ArduinoNano-Pinheader.step"
+      (offset (xyz 10 3.2 7.5))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 -180))
     )
   )
 
@@ -1101,7 +1101,7 @@
     (property "ki_keywords" "Pololu Breakout Board Stepper Driver A4988")
     (path "/475a5414-c3dd-44c9-8779-9c18a5fd5325")
     (attr through_hole)
-    (fp_text reference locked "A2" (at 2.25 -0.25 -180) (layer "F.SilkS")
+    (fp_text reference locked "A2" (at 2.25 -0.25) (layer "F.SilkS")
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6db138aa-7fba-4a3b-9dc5-3eeff6bf9b08)
     )
@@ -1183,10 +1183,10 @@
       (net 14 "yaw-step") (pinfunction "STEP") (pintype "input") (tstamp 6c9fa8b4-7882-412e-9384-a791ed0a18d8))
     (pad "16" thru_hole oval locked (at 12.7 0 270) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 15 "yaw-dir") (pinfunction "DIR") (pintype "input") (tstamp a4f306ce-86d2-4b47-884e-f44d5405d36f))
-    (model "${KICAD6_3DMODEL_DIR}/Module.3dshapes/Pololu_Breakout-16_15.2x20.3mm.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/Libraries/3DParts/TMC.3dshapes/TMC-Heatsink-Pinheader.step"
+      (offset (xyz 1 -26.15 -17.5))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 -90))
     )
   )
 
@@ -2427,7 +2427,7 @@
     (property "ki_keywords" "Pololu Breakout Board Stepper Driver A4988")
     (path "/96a265a5-4aae-40a0-902a-5a7ea51709c0")
     (attr through_hole)
-    (fp_text reference locked "A3" (at 2.25 -0.25 -180) (layer "F.SilkS")
+    (fp_text reference locked "A3" (at 2.25 -0.25) (layer "F.SilkS")
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 77fd65a8-98be-492b-9834-a9f65b0adca7)
     )
@@ -2509,10 +2509,10 @@
       (net 9 "pitch-step") (pinfunction "STEP") (pintype "input") (tstamp 595261cb-0dad-41f5-b93f-580da7ae47dc))
     (pad "16" thru_hole oval locked (at 12.7 0 270) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask")
       (net 10 "pitch-dir") (pinfunction "DIR") (pintype "input") (tstamp 8ec18333-2514-43ff-bb58-873d7e84703a))
-    (model "${KICAD6_3DMODEL_DIR}/Module.3dshapes/Pololu_Breakout-16_15.2x20.3mm.wrl"
-      (offset (xyz 0 0 0))
+    (model "${KIPRJMOD}/Libraries/3DParts/TMC.3dshapes/TMC-Heatsink-Pinheader.step"
+      (offset (xyz 1 -26.15 -17.5))
       (scale (xyz 1 1 1))
-      (rotate (xyz 0 0 0))
+      (rotate (xyz -90 0 -90))
     )
   )
 
