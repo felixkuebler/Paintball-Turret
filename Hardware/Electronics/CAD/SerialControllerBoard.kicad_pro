@@ -443,8 +443,8 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
-      "vrml": ""
+      "step": "../3DExport/SerialControllerBoard.STEP",
+      "vrml": "../3DExport/SerialControllerBoard.wrl"
     },
     "page_layout_descr_file": ""
   },
