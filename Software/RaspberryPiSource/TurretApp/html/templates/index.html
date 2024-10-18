@@ -414,21 +414,22 @@
         window.setInterval(controlTimeoutCallback, 50); 
 
         /*
-        * Timed Position feedback poll
-        * - get request
+        * Position feedback stream
+        * - get request to activate stream
         * - response callback
         */
-        function refreshPosition(){
-            httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
-        };
-        function positionCallback(response){        
-            var responseObj = JSON.parse(response);
-            pitchPosFeedback = -1*parseFloat(responseObj.pitchPos);
-            yawPosFeedback = -1*parseFloat(responseObj.yawPos);
+        function positionCallback(response){
+            if (response) {
+                var lines = response.split('\n');
+                lastLine = lines.length - 2
             
-            console.log("Feedback Pitch: %s | Yaw: %s", pitchPosFeedback, yawPosFeedback)
+                var responseObj = JSON.parse(lines[lastLine]);
+                pitchPosFeedback = -1*parseFloat(responseObj.pitchPos);
+                yawPosFeedback = -1*parseFloat(responseObj.yawPos);
+                //console.log("Feedback Pitch: %s | Yaw: %s", pitchPosFeedback, yawPosFeedback)
+            }
         };
-        window.setInterval("refreshPosition()", 200); 
+        httpGetAsync("{{ url_for('positionFeed') }}", "", "", positionCallback);
 
 
     </script>
