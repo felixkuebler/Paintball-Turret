@@ -22,66 +22,54 @@
             </div>
         </div>
             
-        <div style="width:90%; height:100%; margin:0 auto;">
+        <div style="width:100%; height:100%; margin:0 auto;">
             
             <h1>Turret Web-UI</h1>
             <h2>Control & Feedback</h2>
             <br>
             
-            <div style="width:100%; height:65%;">
-                
-                <div style="height:100%; aspect-ratio:16/9; position:relative; margin:auto">   
+            <div style="max-height:65%; aspect-ratio:16/9; position:relative; margin:auto">   
 
-                    <div style="width:100%; height:100%; position:absolute;">   
-                        <img src="{{ url_for('videoFeed') }}" style="object-fit: contain; height:100%;">
-                    </div>
+                <img src="{{ url_for('videoFeed') }}" style="display:block; object-fit: contain; height:100%;">
+                
+                <div style="width:100%; height:5%; position:absolute; bottom:0; background: rgba(0, 0, 0, .5); padding:0.5% 0 0.5% 0;">
                     
-                    <div style="width:100%; height:5%; position:absolute; bottom:0; background: rgba(0, 0, 0, .5); padding:0.5% 0 0.5% 0;">
-                        
-                        <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; display:inline-block;">
-                            <option value="rgb" selected="selected">RGB</option>
-                            <option value="thermalAbs">Thermal (Absolut)</option>
-                            <option value="thermalNorm">Thermal (Normalized)</option>
-                            <option value="hybrid">Hybrid</option>
-                        </select>
-                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left:3%; vertical-align:middle;" />        
-                        <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; display: inline-block;">
-                            <option value="grey" selected="selected">Grey</option>
-                            <option value="autumn">Autumn</option>
-                            <option value="bone">Bone</option>
-                            <option value="jet">Jet</option>
-                            <option value="winter">Winter</option>
-                            <option value="rainbow">Rainbow</option>
-                            <option value="ocean">Ocean</option>
-                            <option value="summer">Summer</option>
-                            <option value="spring">Spring</option>
-                            <option value="cool">Cool</option>
-                            <option value="hsv">HSV</option>
-                            <option value="pink">Pink</option>
-                            <option value="hot">Hot</option>
-                            <option value="parula">Parula</option>
-                        </select>
-                        
-                        <div id="gamepadConnectedInfoButton" style="height:100%; margin-left:10%; display: inline-block;">
-                            <img  src="/img/gamepadNotConnectedLight.png" style="height:100%; vertical-align:middle;">
-                        </div>
-                        <div id="gamepadInfoButton" style="height:100%; margin-left:10%; display: none;">
-                            <img  src="/img/gamepadInfoLight.png" style="height:100%; vertical-align:middle;">
-                        </div>
+                    <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; width:30%; display:inline-block;">
+                        <option value="rgb" selected="selected">RGB</option>
+                        <option value="thermalAbs">Thermal (Absolut)</option>
+                        <option value="thermalNorm">Thermal (Normalized)</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                    <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left:3%; vertical-align:middle;" />        
+                    <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; width:20%; display:inline-block;">
+                        <option value="grey" selected="selected">Grey</option>
+                        <option value="autumn">Autumn</option>
+                        <option value="bone">Bone</option>
+                        <option value="jet">Jet</option>
+                        <option value="winter">Winter</option>
+                        <option value="rainbow">Rainbow</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="summer">Summer</option>
+                        <option value="spring">Spring</option>
+                        <option value="cool">Cool</option>
+                        <option value="hsv">HSV</option>
+                        <option value="pink">Pink</option>
+                        <option value="hot">Hot</option>
+                        <option value="parula">Parula</option>
+                    </select>
                     
-                        <div id="fullscreenButton" style="height:100%; margin-left:2%; display: inline-block;">
-                            <img  src="/img/fullscreenLight.png" style="height:100%; vertical-align:middle;">
-                        </div>
-                    </div>
-                    
-                    
-                    
+                    <img id="gamepadConnectedInfoButton" src="/img/gamepadNotConnectedLight.png" style="height:100%; margin-left:10%; vertical-align:middle; isplay:dinline-block;">
+
+                    <img id="gamepadInfoButton" src="/img/gamepadInfoLight.png" style="height:100%; margin-left:10%; vertical-align:middle; display:none;">
+
+                    <img id="fullscreenButton" src="/img/fullscreenLight.png" style="height:100%; margin-left:2%; vertical-align:middle; display:inline-block;">
                 </div>
+                
             </div>
 
-            <div style="width:100%; height:auto; margin-top:2%;">
+            <div style="width:100%; margin-top:2%;">
                 
-                <div style="margin-left: 10%; margin-right:10%; width:80%;">
+                <div style="margin-left: 5%; margin-right:5%; width:90%;">
                     Pitch
                     <input type="range" id="pitchPositionInput" min="-50" max="50">
                     <div id="tickmarks">
