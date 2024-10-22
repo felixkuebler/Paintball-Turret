@@ -163,13 +163,6 @@ def option():
 @app.route('/feedback', methods=['GET'])
 def feedback():
 
-    #return '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}' % (0, 0)
-    
-    if request.args.get('position'):
-        pitchPos = serial.motorPitchReadPosition()
-        yawPos = serial.motorYawReadPosition()
-        return '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}' % (pitchPos, yawPos)
-
     return '{}'
 
 
