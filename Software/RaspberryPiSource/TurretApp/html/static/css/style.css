@@ -8,7 +8,7 @@ body {
     height:100%;
     width:100%;
     
-    font-size: normal;
+    font-size: min(2.5vh, 20px);
     font-family: Arial;
     background: #d6d6d6;
     text-align: center;
@@ -28,20 +28,36 @@ div {
 
 
 h1 {
+    font-size: min(3.5vh, 30px);
+    padding: 0;
     margin: 0;
     text-align: center;
 }
 
 
 h2 {
+    font-size: min(2.7vh, 22px);
+    padding: 0;
     margin: 0;
     text-align: center;
 }
 
 
 h3 {
+    font-size: min(1.9vh, 17px);
     margin: 0;
     text-align: left;
+}
+
+h4 {
+    font-size: min(1.5vh, 15px);
+    margin: 0;
+    text-align: left;
+}
+
+p {
+    padding: 0;
+    margin: 0;
 }
 
 
@@ -62,11 +78,11 @@ input[type=range] {
     -webkit-appearance: none;
     --range: calc(var(--max) - var(--min));
     --ratio: calc((var(--val) - var(--min))/var(--range));
-    --sx: calc(.5*1.5em + var(--ratio)*(100% - 1.5em));
+    --sx: calc(.5*1.5px + var(--ratio)*(100% - 1.5px));
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 1.5em;
+    height: 5px;
     background: transparent;
     border: none;
 }
@@ -77,59 +93,34 @@ input[type=range], input[type=range]::-webkit-slider-thumb {
 }
 
 
-input[type=range]::-webkit-slider-runnable-track {
-    box-sizing: border-box;
-    border: 1px inset;
-    width: 12.5em;
-    height: 0.4em;
-    background: #ccc;
-    box-shadow: 0px 0px 2px #000000;
-}
-
-
 input[type=range]::-webkit-slider-thumb {
-    margin-top: -0.8em;
+    margin-top: -min(0.7em, 6px);
     box-sizing: border-box;
-    width: 3em;
-    height: 1.5em;
+    width: min(3em, 50px);
+    height: min(1.5em, 25px);
 
-    border: 5px;
+    border: 2px;
     border-radius: 5px;
 
     background-image: -webkit-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
     -webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 
-    background-size:3em;
+    background-size: 100%;
     background-repeat: no-repeat;
     background-position: 50%;
     
-    font-size: normal;
-}
-
-
-input[type=range]::-moz-range-track {
-    box-sizing: border-box;
-    border: 1px #2e2e2e inset;
-    height: 0.4em;
-    background: #000000;
-    box-shadow: 0px 0px 2px #000000;
-}
-
-
-input[type=range]::-moz-range-progress {
-    height: 0.4em;
-    background: none;
+    font-size: min(1.9vh, 17px);
 }
 
 
 input[type=range]::-moz-range-thumb {
-    margin-top: -10em;
+    margin-top: -min(0.7em, 6px);
     box-sizing: border-box;
-    width: 3em;
-    height: 1.5em;
+    width: min(3em, 50px);
+    height: min(1.5em, 25px);
 
-    border: 5px;
+    border: 2px;
     border-radius: 5px;
     -moz-border-radius: 5px;
 
@@ -137,16 +128,41 @@ input[type=range]::-moz-range-thumb {
     -moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
 
-    background-size:3em;
+    background-size: 100%;
     background-repeat: no-repeat;
     background-position: 50%;
+    
+    font-size: min(1.9vh, 17px);
+}
+
+
+input[type=range]::-webkit-slider-runnable-track {
+    box-sizing: border-box;
+    border: 1px inset;
+    height: 2px;
+    background: #ccc;
+    box-shadow: 0px 0px 2px #000000;
+}
+
+
+input[type=range]::-moz-range-track {
+    box-sizing: border-box;
+    border: 1px #2e2e2e inset;
+    height: 2px;
+    background: #000000;
+    box-shadow: 0px 0px 2px #000000;
+}
+
+
+input[type=range]::-moz-range-progress {
+    height: 2px;
+    background: none;
 }
 
 
 #tickmarks {
     display: flex;
     justify-content: space-between;
-    padding: 0 1.3em;
 }
 
 
@@ -154,13 +170,13 @@ input[type=range]::-moz-range-thumb {
     position: relative;
     display: flex;
     justify-content: center;
-    font-size: small;
+    font-size: min(1.9vh, 17px);
     text-align: center;
     width: 1px;
     background: #7e7e7e;
-    height: 10px;
-    line-height: 40px;
-    margin: 0 0 10px 0;
+    height: 5px;
+    line-height: 30px;
+    margin: 0 0 2px 0;
 }
 
 
@@ -169,7 +185,7 @@ input[type=range]::-moz-range-thumb {
 
     display: inline-block;
     text-decoration: none;
-    font-size: normal;
+    font-size: min(1.9vh, 17px);
     padding: 5px 15px;
 
     background-image: -moz-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
@@ -203,7 +219,7 @@ select {
     color: #d6d6d6;
 
     text-decoration: none;
-    padding: 5px 15px;
+    padding-left: 3px;
 
     background-image: -moz-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
     background-image: -webkit-linear-gradient(bottom, #2e2e2e 0%, #000000 100%);
@@ -214,7 +230,7 @@ select {
 
     border-style: none;
     
-    font-size: normal;
+    font-size: min(1.9vh, 17px);
 
     #-webkit-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
     #-moz-box-shadow: 0px 4px 0px #000000, 0px 2px 6px rgba(0,0,0,.4), inset 0px 1px 0px rgba(255,255,255,.3), inset 0px 0px 3px rgba(255,255,255,.5);
@@ -222,7 +238,7 @@ select {
 }
 
 .description {
-    font-size: normal;
+    font-size: min(1.9vh, 17px);
     padding: 0;
 }
 

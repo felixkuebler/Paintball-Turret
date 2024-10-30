@@ -6,22 +6,13 @@ const lineWidth = 2;
 const maxDegYaw = 720;
 const maxDegPitch = 90;
 
-var fontSize = window.screen.height/100*4;
-var font = fontSize + "px " + fontName;
-
-var dashLength = window.screen.height/100*4;
-
-var dashPeddingX= window.screen.height/100*2;
-var dashPeddingY= window.screen.width/100*1;
-
-var numberPeddingX = window.screen.height/100*4;
-var numberPeddingY = window.screen.width/100*2;
-
-
 function drawInfo(context, info){
 
     var width = context.canvas.width;
     var height = context.canvas.height;
+    
+    var fontSize = height/100*4;
+    var font = fontSize + "px " + fontName;
     
     var infoPedding = 25;
 
@@ -75,6 +66,17 @@ function drawPositionFeedbackFullScreen(context, yawAngle, pitchAngle){
 
     var width = context.canvas.width;
     var height = context.canvas.height;
+
+    var fontSize = height/100*4;
+    var font = fontSize + "px " + fontName;
+
+    var dashLength = height/100*4;
+
+    var dashPeddingX= height/100*2;
+    var dashPeddingY= width/100*1;
+
+    var numberPeddingX = height/100*4;
+    var numberPeddingY = width/100*2;
 
     var widthDeg = 4*width/maxDegYaw;
 
