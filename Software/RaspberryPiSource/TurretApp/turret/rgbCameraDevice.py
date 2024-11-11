@@ -22,10 +22,18 @@ class RgbCamera():
     def read(self, zoomEnabled=False):
         ret, frame = self.readRaw()
         
+        width  = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        
+        offsetX = -10
+        offsetY = 40
+            
+        frame = frame[int(offsetY if offsetY > 0 else 0):int(height+offsetY if offsetY <= 0 else height), int(offsetX if offsetX > 0 else 0):int(width+offsetX if offsetX <= 0 else width)]
+        
+        width = width-abs(offsetX)
+        height = height-abs(offsetY)
+        
         if (zoomEnabled):
-
-            width  = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
-            height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
         
             frame = frame[int(height/4):int(height*3/4), int(width/4):int(width*3/4)]
             
