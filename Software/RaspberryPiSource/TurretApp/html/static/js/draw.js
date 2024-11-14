@@ -36,6 +36,8 @@ function drawCrosshair(context){
     var horizontalCrosshairLinelength = verticalCrosshairLineLength;
 
     context.fillStyle = color;
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
     context.globalAlpha = 1;
 
     //outer frame horizontal lines
@@ -57,6 +59,17 @@ function drawCrosshair(context){
     //inner frame vertical lines
     context.fillRect(width/2-lineWidth/2, height/2-verticalCrosshairLineLength-verticalCrosshairLineLength/4, lineWidth, verticalCrosshairLineLength);
     context.fillRect(width/2-lineWidth/2, height/2+verticalCrosshairLineLength/4, lineWidth, verticalCrosshairLineLength);
+
+
+    startX = width/5;
+    starty = height/2+100;
+
+    endX = width/2-horizontalCrosshairLinelength/4;
+    endY = height/2+verticalCrosshairLineLength/4;
+
+    context.moveTo(startX, starty);
+    context.bezierCurveTo(startX, starty, endX/2, starty, endX, endY);
+
 
     context.stroke();
 }
