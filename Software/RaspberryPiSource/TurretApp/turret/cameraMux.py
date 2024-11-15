@@ -54,6 +54,9 @@ class CameraMux():
 			retThermal, frameThermal = self.thermalCam.readAbsolut()
 			retRgb, frameRgb = self.rgbCam.read()
 			
+			if not (retThermal and retRgb):
+				return False, None
+				
 			xOffset = 20
 			yOffset = 0
 			height, width, channels = frameRgb.shape
