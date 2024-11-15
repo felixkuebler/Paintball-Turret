@@ -1,3 +1,5 @@
+#https://github.com/stonecontagion/v4l2-python-example/blob/master/cam.py
+
 #sudo apt-get install libv4l-dev
 #pip3 install v4l2-python3
 
