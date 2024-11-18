@@ -154,7 +154,8 @@ class ThermalCamera:
 		return True
 			
 		
-	def readRaw(self):
+	def readRaw(self, dtype=np.uint16):
+		
 		# check if last driver access is longer then 1 second	
 		currentReadTime = time.time()
 		if currentReadTime - self.lastReadTime > 1:
@@ -185,7 +186,19 @@ class ThermalCamera:
 		if len(frameData) == 0:
 			self.faultDetected = True
 		else:
-			self.rawFrame = np.fromstring(frameData, dtype=np.uint16, count=self.width*self.height).reshape((self.height,self.width))
+			
+			if dtype == np.uint16:
+				self.rawFrame = np.fromstring(frameData, dtype=np.uint16, count=self.width*self.height).reshape((self.height,self.width))
+
+			elif dtype == np.uint8:
+				offset = (self.width*self.height*2)+(self.width*8)
+				subframeData = frameData[offset:-1]
+		
+				self.rawFrame = np.fromstring(subframeData, dtype=np.uint8, count=self.height*self.width).reshape(self.height,self.width)
+			
+			else:
+				self.rawFrame = None
+				
 			frameBuffer.seek(0)
 			ioctl(self.fd, v4l2.VIDIOC_QBUF, buf)
 			
