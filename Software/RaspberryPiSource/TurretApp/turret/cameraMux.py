@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 from rgbCameraDevice import RgbCamera
 from thermalCameraDevice import ThermalCamera
@@ -57,23 +58,25 @@ class CameraMux():
 			if not (retThermal and retRgb):
 				return False, None
 				
-			xOffset = 20
-			yOffset = 0
+			# TODO configurable offsets
+			xOffset = 10
+			yOffset = -30
 			height, width, channels = frameRgb.shape
 			frameRgb = frameRgb[int(height/3)+yOffset:int(height*2/3)+yOffset, int(width/3)+xOffset:int(width*2/3)+xOffset]
 			frameRgb = cv2.resize(frameRgb, (854, 480))
 			
 			# create mask from thermal image
 			# TODO make threshold adjustable 
-			#_, mask = cv2.threshold(frameThermal, 170 ,255, cv2.THRESH_BINARY)
-			
+			_, mask = cv2.threshold(frameThermal, 80 ,255, cv2.THRESH_TOZERO)
+			mask = cv2.split(mask)[0]
+
 			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
 				frameThermal = cv2.applyColorMap(frameThermal, self.thermalColorMap)
 			
-			#masked = cv2.bitwise_and(frameThermal, frameThermal, mask=mask)
+			maskedFrameThermal = cv2.bitwise_and(frameThermal, frameThermal, mask=mask.astype('uint8'))
 			
 			alpha = 0.5
-			dst = cv2.addWeighted(frameThermal, alpha , frameRgb, 1-alpha, 0)
+			dst = cv2.addWeighted(maskedFrameThermal, 1 , frameRgb, 1, 0)
 			
 			return (retThermal and retRgb), cv2.imencode('.jpg', dst)[1].tobytes()
 
