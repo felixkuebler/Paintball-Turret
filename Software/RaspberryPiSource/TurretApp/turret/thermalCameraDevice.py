@@ -1,4 +1,5 @@
 import os
+import time
 from time import sleep
 
 import cv2 
@@ -29,6 +30,7 @@ class ThermalCamera:
 		
 		self.faultDetected = False
 		self.numConsecutiveFaults = 0
+		self.lastReadTime = time.time()
 		
 		# initialize camera device
 		self.initDevice()
@@ -153,7 +155,14 @@ class ThermalCamera:
 			
 		
 	def readRaw(self):
+		# check if last driver access is longer then 1 second	
+		currentReadTime = time.time()
+		if currentReadTime - self.lastReadTime > 1:
+			self.faultDetected = True
+				
+		self.lastReadTime = currentReadTime
 		
+		# try to recover a driver fault
 		if self.faultRecovery() == False:		
 			
 			self.numConsecutiveFaults += 1
