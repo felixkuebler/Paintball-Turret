@@ -25,6 +25,8 @@ class RgbCamera():
         width  = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
         
+        # TODO configurable offsets
+        
         offsetX = -10
         offsetY = 40
             

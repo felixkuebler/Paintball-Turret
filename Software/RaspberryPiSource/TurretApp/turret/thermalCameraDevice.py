@@ -173,7 +173,7 @@ class ThermalCamera:
 				
 			return (self.rawFrame is not None), self.rawFrame
 			
-			
+		# fetch buffer from driver
 		buf = self.buffers[self.currBuffer % self.numBuffers]
 		self.currBuffer += 1
 		
