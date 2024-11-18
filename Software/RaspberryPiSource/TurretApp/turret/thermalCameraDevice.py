@@ -233,11 +233,15 @@ class ThermalCamera:
 		if not ret:
 			return ret, None
 
-		bodyTemp = HikMicro.temperatureBody
-		bodyTemp = np.interp(bodyTemp, (HikMicro.temperatureMin, HikMicro.temperatureMax), (0, np.iinfo(np.uint16).max))
+		#bodyTemp = HikMicro.temperatureBody
+		#bodyTemp = np.interp(bodyTemp, (HikMicro.temperatureMin, HikMicro.temperatureMax), (0, np.iinfo(np.uint16).max))
 		
-		rawFrame[:][:] = np.interp(rawFrame[:][:], (bodyTemp/2, bodyTemp*2), (0, np.iinfo(np.uint16).max))
+		# TODO configurable threshold
+		bodyTemp = 5300
+		rawFrame[:][:] = np.interp(rawFrame[:][:], (bodyTemp-500, bodyTemp+50), (0, np.iinfo(np.uint16).max))
 
+		#print("Average: " + str(np.average(rawFrame)), flush=True)
+		
 		# create 3 channel bgr image
 		rgbFrame = cv2.merge([rawFrame, rawFrame, rawFrame]) 
 
