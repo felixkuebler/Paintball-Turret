@@ -34,60 +34,102 @@ class CameraMux():
 
 
 	def getFrame(self):
-			
-		if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM or self.cameraSelector == self.CAMERA_FEED_THERMAL_ABS:
+				
+		retMux = False
+		frameMux = None		
+		
 		# grep rgb frame
 		retRgb, frameRgb = self.rgbCam.read()
 		
 		if not retRgb:
 			return False, None
 
+		# TODO configurable offsets
+		offsetRgbX = 40
+		offsetRgbY = 0
+	   
+		# shift the frame by aim offset
+		frameRgb = self.shiftFrame(frameRgb, offsetRgbX, offsetRgbY)
+
+		if self.cameraSelector != self.CAMERA_FEED_RGB:
+
+			# select type of thermal frame
 			if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM:
-				ret, frame = self.thermalCam.readNormalized()
+				retThermal, frameThermal = self.thermalCam.readNormalized()
+			elif self.cameraSelector == self.CAMERA_FEED_THERMAL_ABS:
+				retThermal, frameThermal = self.thermalCam.readAbsolut()
 			else:
-				ret, frame = self.thermalCam.readAbsolut()
+				retThermal, frameThermal = self.thermalCam.readAbsolut()
 
-			if not ret:
+			if not retThermal:
 				return False, None
 
-			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
-				frame = cv2.applyColorMap(frame, self.thermalColorMap)
+			# TODO configurable scale
+			# create an thermal image overlay
+			scaleThermal = 1.9
+			newSizeThermal = (int(frameThermal.shape[1]*scaleThermal), int(frameThermal.shape[0]*scaleThermal))
+			frameThermal = cv2.resize(frameThermal, newSizeThermal)
 
-			# encode as a jpeg image and return it
-			return True, cv2.imencode('.jpg', frame)[1].tobytes()
-
-		elif self.cameraSelector == self.CAMERA_FEED_HYBRID:
-			retThermal, frameThermal = self.thermalCam.readAbsolut()
-			retRgb, frameRgb = self.rgbCam.read()
-			
-			if not (retThermal and retRgb):
-				return False, None
+			frameThermalOverlay = np.zeros((frameRgb.shape[0],frameRgb.shape[1],3), dtype=np.uint8)
+		
+			# place thermal frame at the center of the adapted rgb frame
+			offsetThermalX = int(frameThermalOverlay.shape[1]/2-frameThermal.shape[1]/2)
+			offsetThermalY = int(frameThermalOverlay.shape[0]/2-frameThermal.shape[0]/2)
+			frameThermalOverlay[offsetThermalY:offsetThermalY+frameThermal.shape[0], offsetThermalX:offsetThermalX+frameThermal.shape[1]] = frameThermal
 				
-			# TODO configurable offsets
-			xOffset = 10
-			yOffset = -30
-			height, width, channels = frameRgb.shape
-			frameRgb = frameRgb[int(height/3)+yOffset:int(height*2/3)+yOffset, int(width/3)+xOffset:int(width*2/3)+xOffset]
-			frameRgb = cv2.resize(frameRgb, (854, 480))
+			# simple overlay for normaized an absolute
+			if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM or self.cameraSelector == self.CAMERA_FEED_THERMAL_ABS:
 			
-			# create mask from thermal image
-			# TODO make threshold adjustable 
-			_, mask = cv2.threshold(frameThermal, 80 ,255, cv2.THRESH_TOZERO)
-			mask = cv2.split(mask)[0]
+				# apply color map
+				if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
+					frameThermalOverlay = cv2.applyColorMap(frameThermalOverlay, self.thermalColorMap)
+				
+				# TODO configurable alpha
+				# blend rgb and thermal
+				alpha = 0.9
+				blend = cv2.addWeighted(frameThermalOverlay, alpha , frameRgb, 1-alpha, 0)
 
-			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
-				frameThermal = cv2.applyColorMap(frameThermal, self.thermalColorMap)
-			
-			maskedFrameThermal = cv2.bitwise_and(frameThermal, frameThermal, mask=mask.astype('uint8'))
-			
-			alpha = 0.5
-			dst = cv2.addWeighted(maskedFrameThermal, 1 , frameRgb, 1, 0)
-			
-			return (retThermal and retRgb), cv2.imencode('.jpg', dst)[1].tobytes()
+				# place thermal frame at the center of the adapted rgb frame
+				offsetThermalX = int(frameRgb.shape[1]/2-frameThermal.shape[1]/2)
+				offsetThermalY = int(frameRgb.shape[0]/2-frameThermal.shape[0]/2)
+				frameRgb[offsetThermalY:offsetThermalY+frameThermal.shape[0], offsetThermalX:offsetThermalX+frameThermal.shape[1]] = blend[offsetThermalY:offsetThermalY+frameThermal.shape[0], offsetThermalX:offsetThermalX+frameThermal.shape[1]]
+				
+				# set result values
+				retMux = True
+				frameMux = frameRgb
+				
+			elif self.cameraSelector == self.CAMERA_FEED_HYBRID:
+				
+				# create mask to hide all low temp values
+				_, mask = cv2.threshold(frameThermalOverlay, 80 ,255, cv2.THRESH_TOZERO)
+				mask = cv2.split(mask)[0]
 
+				# apply color map
+				if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
+					frameThermalOverlay = cv2.applyColorMap(frameThermalOverlay, self.thermalColorMap)
+				
+				# apply mask
+				maskedFrameThermal = cv2.bitwise_and(frameThermalOverlay, frameThermalOverlay, mask=mask.astype('uint8'))
+				
+				# TODO configurable alpha
+				# blend rgb and thermal
+				alpha = 0.5
+				blend = cv2.addWeighted(maskedFrameThermal, 1 , frameRgb, 1, 0)
+				
+				# set result values
+				retMux = True
+				frameMux = blend
+			
 		else:
 			
-			return retRgb, cv2.imencode('.jpg', frameRgb)[1].tobytes()
+			# set result values
+			retMux = retRgb
+			frameMux = frameRgb
+
+		#check if a frame was generated
+		if retMux == False:
+			return retMux, None
+
 		# TODO configurable aim offsets
 		offsetMuxX = -40
 		offsetMuxY = 120
@@ -101,6 +143,9 @@ class CameraMux():
 			frameMux = cv2.resize(frameMux, (frameMux.shape[1], frameMux.shape[0]))
 
 		frameMux = cv2.resize(frameMux, (854, 480))
+		
+		return retMux, cv2.imencode('.jpg', frameMux)[1].tobytes()
+
 
 	def shiftFrame(self, frame, offsetX, offsetY):
 		
