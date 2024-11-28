@@ -36,6 +36,11 @@ class CameraMux():
 	def getFrame(self):
 			
 		if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM or self.cameraSelector == self.CAMERA_FEED_THERMAL_ABS:
+		# grep rgb frame
+		retRgb, frameRgb = self.rgbCam.read()
+		
+		if not retRgb:
+			return False, None
 
 			if self.cameraSelector == self.CAMERA_FEED_THERMAL_NORM:
 				ret, frame = self.thermalCam.readNormalized()
@@ -82,8 +87,6 @@ class CameraMux():
 
 		else:
 			
-			retRgb, frameRgb = self.rgbCam.read(self.zoomEnabled)
-			
 			return retRgb, cv2.imencode('.jpg', frameRgb)[1].tobytes()
 		# TODO configurable aim offsets
 		offsetMuxX = -40
@@ -91,6 +94,13 @@ class CameraMux():
 		
 		# shift the frame by aim offset
 		frameMux = self.shiftFrame(frameMux, offsetMuxX, offsetMuxY)
+		
+		# apply zoom to all camera modes
+		if self.zoomEnabled:
+			frameMux = frameMux[int(frameMux.shape[0]/3):int(frameMux.shape[0]*2/3), int(frameMux.shape[1]/3):int(frameMux.shape[1]*2/3)]
+			frameMux = cv2.resize(frameMux, (frameMux.shape[1], frameMux.shape[0]))
+
+		frameMux = cv2.resize(frameMux, (854, 480))
 
 	def shiftFrame(self, frame, offsetX, offsetY):
 		

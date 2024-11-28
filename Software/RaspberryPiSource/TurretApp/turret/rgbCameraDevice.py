@@ -19,11 +19,8 @@ class RgbCamera():
         return self.capture.read()
         
 
-    def read(self, zoomEnabled=False):
+    def read(self):
         ret, frame = self.readRaw()
-        if (zoomEnabled):
-        
-            frame = frame[int(height/4):int(height*3/4), int(width/4):int(width*3/4)]
                 
         return ret, frame
         
