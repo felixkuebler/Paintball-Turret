@@ -85,5 +85,29 @@ class CameraMux():
 			retRgb, frameRgb = self.rgbCam.read(self.zoomEnabled)
 			
 			return retRgb, cv2.imencode('.jpg', frameRgb)[1].tobytes()
+		# TODO configurable aim offsets
+		offsetMuxX = -40
+		offsetMuxY = 120
+		
+		# shift the frame by aim offset
+		frameMux = self.shiftFrame(frameMux, offsetMuxX, offsetMuxY)
 
+	def shiftFrame(self, frame, offsetX, offsetY):
+		
+		width  = frame.shape[1]
+		height = frame.shape[0]
+		
+		# calculate the scales required for the additional offset
+		scaleX = (width+abs(offsetX))/width
+		scaleY = (height+abs(offsetY))/height
+		
+		# select the greater scale factor
+		scale = scaleX if scaleX > scaleY else scaleY
+		offsetX = offsetX if scaleX > scaleY else (offsetX + ((scale*width)-width)/2)
+		offsetY = offsetY if scaleY > scaleX else (offsetY + ((scale*height)-height)/2)
 				
+		# shift image to the offset
+		frame = cv2.resize(frame, (int(width*scale), int(height*scale)))
+		frame = frame[int(offsetY if offsetY > 0 else 0):int(height+offsetY if offsetY > 0 else height), int(offsetX if offsetX > 0 else 0):int(width+offsetX if offsetX > 0 else width)]
+		
+		return frame
