@@ -3,7 +3,10 @@ import cv2
 class RgbCamera():
 
     def __init__(self, device=0):
-        self.capture=cv2.VideoCapture(device)
+        self.capture = cv2.VideoCapture(device)
+        
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 
     def __del__(self):
