@@ -28,4 +28,6 @@ namespace SerialCommands {
     static constexpr uint8_t WriteSpeed = 32;
     static constexpr uint8_t ReadPosition = 33;
   }
+
+  static constexpr uint8_t EnableStream = 40;
 }

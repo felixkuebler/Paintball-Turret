@@ -18,14 +18,14 @@ namespace TiggerConfig {
   }
 }
 
-bool streamEnabled = true;
-uint8_t streamSource = SerialCommands::Motor::Pitch::ReadPosition;
-
 SoftwareSerial serialPitch(11, 12);
 Servo42CDriver motorPitch(serialPitch);
 
 SoftwareSerial serialYaw(6, 7);
 Servo42CDriver motorYaw(serialYaw);
+
+bool streamEnabled = false;
+uint8_t streamSource = SerialCommands::Motor::Pitch::ReadPosition;
 
 uint8_t serialBuffer[255];
 uint8_t buffPointer=0;
@@ -208,6 +208,12 @@ void loop() {
   
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
+    }
+    else if(serialBuffer[0] == SerialCommands::EnableStream){
+      // Enable/disable the streaming of data
+      // serialBuffer = [uint8_t] 
+      // serialBuffer = [SerialCommands::EnableStream]
+      streamEnabled = (bool)serialBuffer[1] ;
     }
     
     // clear buffer
