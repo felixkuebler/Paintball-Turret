@@ -209,10 +209,10 @@ void loop() {
 
       motorYaw.moveSpeed(rpmYaw); 
     }
-    else if(serialBuffer[0] == SerialCommands::EnableStream){
+    else if(serialBuffer[0] == SerialCommands::EnableDataStream){
       // Enable/disable the streaming of data
       // serialBuffer = [uint8_t] 
-      // serialBuffer = [SerialCommands::EnableStream]
+      // serialBuffer = [SerialCommands::EnableDataStream]
       streamEnabled = (bool)serialBuffer[1] ;
     }
     
