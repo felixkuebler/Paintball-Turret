@@ -62,9 +62,9 @@ void loop() {
     buffPointer=0;
 
     if(serialBuffer[0] == SerialCommands::Trigger::Primary) {
-      // Toggle digital write
-      // buff = [JOB_DIGITAL_WRITE, VALUE]
-      // buff = [uint8_t, uint8_t] 
+      // Toggle primary trigger
+      // serialBuffer = [uint8_t, uint8_t] 
+      // serialBuffer = [SerialCommands::Trigger::Primary, Value]
       if (serialBuffer[1]>0) {
         digitalWrite(TiggerConfig::Primary::Pins::Enable, HIGH);
       }
@@ -73,14 +73,14 @@ void loop() {
       }
     }
     else if(serialBuffer[0] == SerialCommands::Trigger::Secondary) {
-      // Toggle digital read
-      // buff = [JOB_DIGITAL_READ, PIN_NUM]
-      // buff = [uint8_t, uint8_t] 
+      // Toggle secondary trigger
+      // serialBuffer = [uint8_t, uint8_t] 
+      // serialBuffer = [SerialCommands::Trigger::Secondary, Value]
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionAbsolute) {
-      // Set motor position or speed
-      // buff = [WritePositionAbsolute, Degree]
-      // buff = [uint8_t, int32_t]
+      // Set motor pitch position absolute in relation to a given reference position
+      // serialBuffer = [uint8_t, int32_t]
+      // serialBuffer = [SerialCommands::Motor::Pitch::WritePositionAbsolute, Degree]
       int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
       
       if (degree >= 360 || degree <= -360) {
@@ -91,33 +91,33 @@ void loop() {
       motorPitch.moveAngleAbsolut(degree * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::Rpm * MotorConfig::Pitch::GearRatio, true); 
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WritePositionAbsolute) {
-      // Set motor position or speed
-      // buff = [WritePositionAbsolute, Degree]
-      // buff = [uint8_t, int32_t]
+      // Set motor yaw position absolute in relation to a given reference position
+      // serialBuffer = [uint8_t, int32_t]
+      // serialBuffer = [SerialCommands::Motor::Yaw::WritePositionAbsolute, Degree]
       int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
 
       motorYaw.moveAngleAbsolut(degree * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::Rpm * MotorConfig::Yaw::GearRatio, true); 
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WritePositionRelative) {
-      // Set motor position or speed
-      // buff = [WritePositionRelative, Degree]
-      // buff = [uint8_t, int32_t]
+      // Set motor pitch position relative to the current position
+      // serialBuffer = [uint8_t, int32_t]
+      // serialBuffer = [SerialCommands::Motor::Pitch::WritePositionRelative, Degree]
       int16_t degree = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1)) | ((int16_t) serialBuffer[3] <<  (8*2)) | ((int16_t) serialBuffer[4] <<  (8*3));
 
       motorPitch.moveAngleRelative(degree * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::Rpm * MotorConfig::Pitch::GearRatio, true); 
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WritePositionRelative) {
-      // Set motor position or speed
-      // buff = [WritePositionRelative, Degree]
-      // buff = [uint8_t, int32_t]
+      // Set motor yaw position relative to the current position
+      // serialBuffer = [uint8_t, int32_t]
+      // serialBuffer = [SerialCommands::Motor::Yaw::WritePositionRelative, Degree]
       int32_t degree = ((int32_t) serialBuffer[1] << (8*0)) | ((int32_t) serialBuffer[2] <<  (8*1)) | ((int32_t) serialBuffer[3] <<  (8*2)) | ((int32_t) serialBuffer[4] <<  (8*3));
 
       motorYaw.moveAngleRelative(degree * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::Rpm * MotorConfig::Yaw::GearRatio, true); 
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::WriteSpeed) {
-      // Set motor position or speed
-      // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
-      // buff = [uint8_t, int16_t] 
+      // Set motor pitch speed
+      // serialBuffer = [uint8_t, int16_t] 
+      // serialBuffer = [SerialCommands::Motor::Pitch::WriteSpeed, Speed]
       int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1));
 
       speed = speed > 100 ? speed = 100 : speed;
@@ -129,9 +129,9 @@ void loop() {
       motorPitch.moveSpeed(rpm); 
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WriteSpeed) {
-      // Set motor position or speed
-      // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
-      // buff = [uint8_t, int16_t] 
+      // Set motor yaw speed
+      // serialBuffer = [uint8_t, int16_t] 
+      // serialBuffer = [SerialCommands::Motor::Yaw::WriteSpeed, Speed]
       int16_t speed = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1));
       
       speed = speed > 100 ? speed = 100 : speed;
@@ -142,10 +142,54 @@ void loop() {
 
       motorYaw.moveSpeed(rpm); 
     }
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::ReadPosition) {
+      // Read motor pitch position
+      // serialBuffer = [uint8_t] 
+      // serialBuffer = [SerialCommands::Motor::Pitch::ReadPosition]
+      // outputBuffer = [uint32_t]
+      // outputBuffer = [Degree]
+      double angle = 0;
+      bool ret = motorPitch.readAngle(angle, 50);
+
+      int32_t angleInt = angle / MotorConfig::Pitch::GearRatio;
+      
+      uint8_t outputBuffer[6];
+      outputBuffer[0] = SerialCommands::SyncWord;
+      outputBuffer[1] = ret;
+      outputBuffer[2] = (angleInt >> (8*0)) & 0xff;
+      outputBuffer[3] = (angleInt >> (8*1)) & 0xff;
+      outputBuffer[4] = (angleInt >> (8*2)) & 0xff;
+      outputBuffer[5] = (angleInt >> (8*3)) & 0xff;
+  
+      // send message
+      Serial.write((char*)outputBuffer, sizeof(outputBuffer));
+    }
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::ReadPosition){
+      // Read motor yaw position
+      // serialBuffer = [uint8_t] 
+      // serialBuffer = [SerialCommands::Motor::Yaw::ReadPosition]
+      // outputBuffer = [uint32_t]
+      // outputBuffer = [Degree]
+      double angle = 0;
+      bool ret = motorYaw.readAngle(angle, 50);
+
+      int32_t angleInt = angle / MotorConfig::Yaw::GearRatio;
+
+      uint8_t outputBuffer[6];
+      outputBuffer[0] = SerialCommands::SyncWord;
+      outputBuffer[1] = ret;
+      outputBuffer[2] = (angleInt >> (8*0)) & 0xff;
+      outputBuffer[3] = (angleInt >> (8*1)) & 0xff;
+      outputBuffer[4] = (angleInt >> (8*2)) & 0xff;
+      outputBuffer[5] = (angleInt >> (8*3)) & 0xff;
+  
+      // send message
+      Serial.write((char*)outputBuffer, sizeof(outputBuffer));
+    }
     else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed) {
-      // Set motor position or speed for both axis
-      // buff = [JOB_MOTOR_WRITE_POSITION, SPEED]
-      // buff = [uint8_t, int16_t] 
+      // Set motor speed for both axis
+      // serialBuffer = [uint8_t, int16_t, int16_t] 
+      // serialBuffer = [SerialCommands::Motor::WriteSpeed, SpeedPitch, SpeedYaw]
       int16_t speedPitch = ((int16_t) serialBuffer[1] << (8*0)) | ((int16_t) serialBuffer[2] <<  (8*1));
       int16_t speedYaw = ((int16_t) serialBuffer[3] << (8*0)) | ((int16_t) serialBuffer[4] <<  (8*1));
 
@@ -164,50 +208,6 @@ void loop() {
       int16_t rpmYaw = map(speedYaw, -100, 100, -1 * MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio);
 
       motorYaw.moveSpeed(rpmYaw); 
-    }
-    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::ReadPosition) {
-      // Read motor position
-      // buff = [JOB_MOTOR_READ_POSITION]
-      // buff = [uint8_t] 
-      // return = int32_t
-
-      double angle = 0;
-      bool ret = motorPitch.readAngle(angle, 50);
-
-      int32_t angleInt = angle / MotorConfig::Pitch::GearRatio;
-      
-      uint8_t outputBuffer[6];
-      outputBuffer[0] = SerialCommands::SyncWord;
-      outputBuffer[1] = ret;
-      outputBuffer[2] = (angleInt >> (8*0)) & 0xff;
-      outputBuffer[3] = (angleInt >> (8*1)) & 0xff;
-      outputBuffer[4] = (angleInt >> (8*2)) & 0xff;
-      outputBuffer[5] = (angleInt >> (8*3)) & 0xff;
-  
-      // send message
-      Serial.write((char*)outputBuffer, sizeof(outputBuffer));
-    }
-    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::ReadPosition){
-      // Read motor position
-      // buff = [JOB_MOTOR_READ_POSITION]
-      // buff = [uint8_t] 
-      // return = int32_t
-
-      double angle = 0;
-      bool ret = motorYaw.readAngle(angle, 50);
-
-      int32_t angleInt = angle / MotorConfig::Yaw::GearRatio;
-
-      uint8_t outputBuffer[6];
-      outputBuffer[0] = SerialCommands::SyncWord;
-      outputBuffer[1] = ret;
-      outputBuffer[2] = (angleInt >> (8*0)) & 0xff;
-      outputBuffer[3] = (angleInt >> (8*1)) & 0xff;
-      outputBuffer[4] = (angleInt >> (8*2)) & 0xff;
-      outputBuffer[5] = (angleInt >> (8*3)) & 0xff;
-  
-      // send message
-      Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
     else if(serialBuffer[0] == SerialCommands::EnableStream){
       // Enable/disable the streaming of data
