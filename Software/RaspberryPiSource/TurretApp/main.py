@@ -11,6 +11,8 @@ from flask import Flask, request, render_template, Response, send_from_directory
 
 import time
 
+import threading
+
 sys.path.append('./turret')
 
 from arduinoSerialDevice import ArduinoSerialDevice
@@ -22,6 +24,9 @@ app = Flask(__name__, template_folder='html/templates', static_folder='html/stat
 serial = ArduinoSerialDevice()
 cam = CameraMux()
 
+yawPos = 0
+pitchPos = 0
+positionUpdate = False
 
 def getFrame():
     # Video streaming generator function.
@@ -37,16 +42,23 @@ def getFrame():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+
 def getPosition():
     # Position streaming generator function.
+    
+    global pitchPos
+    global yawPos
+    global positionUpdate
+        
     while True:
 
-        pitchPos = serial.motorPitchReadPosition()
-        yawPos = serial.motorYawReadPosition()
-        data = '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}\n' % (pitchPos, yawPos)
-        
-        yield (data)
-        
+        if positionUpdate:
+            positionUpdate = False
+            data = '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}\n' % (pitchPos, yawPos)
+            yield (data)
+        else:
+            yield()
+            
         # only stream ever 100ms
         time.sleep(100/1000)
 
@@ -162,9 +174,33 @@ def option():
 
 @app.route('/feedback', methods=['GET'])
 def feedback():
-
+    
     return '{}'
 
 
+def readPositionStream():
+    
+    global pitchPos
+    global yawPos
+    global positionUpdate
+    
+    serial.enableDataStream()
+    
+    while True:
+        source, position = serial.readDataStream()
+        
+        if (source == serial.CMD_MOTOR_PITCH_READ_POSITION.value):
+            pitchPos = position
+            positionUpdate = True
+        elif (source == serial.CMD_MOTOR_YAW_READ_POSITION.value):
+            yawPos = position
+            positionUpdate = True
+            
+            
 if __name__ == '__main__':
+    # create a dedicated thread to poll data from ArduinoSerialDevice
+    # this is important to prevent html request blocking
+    readPositionThread = threading.Thread(target = readPositionStream)
+    readPositionThread.start()
+    
     app.run(host='0.0.0.0', threaded=True)

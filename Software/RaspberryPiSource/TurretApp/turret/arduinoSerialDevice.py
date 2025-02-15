@@ -22,7 +22,8 @@ class ArduinoSerialDevice():
 	CMD_MOTOR_WRITE_SPEED = ctypes.c_ubyte(32)
 	CMD_MOTOR_READ_POSITION = ctypes.c_ubyte(33)
 
-	CMD_TERMINATOR = ('#').encode()
+	CMD_ENABLE_DATA_STREAM = ctypes.c_ubyte(40)
+	CMD_SYNC_WORD = ('#').encode()
 
 
 	arduinoDev = 0
@@ -52,7 +53,7 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_TRIGGER_PRIMARY)
 		self.arduinoDev.write(ctypes.c_ubyte(value))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
@@ -60,7 +61,7 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_POSITION_ABSOLUTE)
 		self.arduinoDev.write(ctypes.c_int32(position))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
@@ -68,7 +69,7 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_POSITION_RELATIVE)
 		self.arduinoDev.write(ctypes.c_int32(position))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
@@ -76,35 +77,31 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_PITCH_WRITE_SPEED)
 		self.arduinoDev.write(ctypes.c_int16(speed))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
-		self.unlockDevice()
-
-
-	def motorWriteSpeed(self, speedPitch, speedYaw):
-		self.lockDevice()
-		self.arduinoDev.write(self.CMD_MOTOR_WRITE_SPEED)
-		self.arduinoDev.write(ctypes.c_int16(speedPitch))
-		self.arduinoDev.write(ctypes.c_int16(speedYaw))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
 	def motorPitchReadPosition(self):
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_PITCH_READ_POSITION)
-		self.arduinoDev.write(self.CMD_TERMINATOR)
-
-		byteStream = self.arduinoDev.read(4)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
+		
+		#wait on valid reception introduced by sync word
+		while self.arduinoDev.read(1) != self.CMD_SYNC_WORD:
+			pass
+			
+		retStatus = self.arduinoDev.read(1)
+		byteStream = self.arduinoDev.read(4)
 
-		return ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
+		return bool(retStatus), ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
 
 
 	def motorYawWritePositionAbsolute(self, position):
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_YAW_WRITE_POSITION_ABSOLUTE)
 		self.arduinoDev.write(ctypes.c_int32(position))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
@@ -112,7 +109,7 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_YAW_WRITE_POSITION_RELATIVE)
 		self.arduinoDev.write(ctypes.c_int32(position))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
@@ -120,16 +117,48 @@ class ArduinoSerialDevice():
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_YAW_WRITE_SPEED)
 		self.arduinoDev.write(ctypes.c_int16(speed))
-		self.arduinoDev.write(self.CMD_TERMINATOR)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
 
 
 	def motorYawReadPosition(self):
 		self.lockDevice()
 		self.arduinoDev.write(self.CMD_MOTOR_YAW_READ_POSITION)
-		self.arduinoDev.write(self.CMD_TERMINATOR)
-
-		byteStream = self.arduinoDev.read(4)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
 		self.unlockDevice()
+		
+		#wait on valid reception introduced by sync word
+		while self.arduinoDev.read(1) != self.CMD_SYNC_WORD:
+			pass
+			
+		retStatus = self.arduinoDev.read(1)
+		byteStream = self.arduinoDev.read(4)
 
-		return ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
+		return bool(retStatus), ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
+
+
+	def motorWriteSpeed(self, speedPitch, speedYaw):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_WRITE_SPEED)
+		self.arduinoDev.write(ctypes.c_int16(speedPitch))
+		self.arduinoDev.write(ctypes.c_int16(speedYaw))
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
+		self.unlockDevice()
+		
+		
+	def enableDataStream(self):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_ENABLE_DATA_STREAM)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
+		self.unlockDevice()
+		
+		
+	def readDataStream(self):
+		#wait on valid reception introduced by sync word
+		while self.arduinoDev.read(1) != self.CMD_SYNC_WORD:
+			pass
+			
+		source = self.arduinoDev.read(1)
+		byteStream = self.arduinoDev.read(4)
+		return ctypes.c_ubyte(int.from_bytes(source, 'little')).value, ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
+
