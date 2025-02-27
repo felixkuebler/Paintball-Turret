@@ -18,10 +18,10 @@ namespace TiggerConfig {
   }
 }
 
-SoftwareSerial serialPitch(11, 12);
+SoftwareSerial serialPitch(MotorConfig::Pitch::Pins::Rx, MotorConfig::Pitch::Pins::Tx);
 Servo42CDriver motorPitch(serialPitch);
 
-SoftwareSerial serialYaw(6, 7);
+SoftwareSerial serialYaw(MotorConfig::Yaw::Pins::Rx, MotorConfig::Yaw::Pins::Tx);
 Servo42CDriver motorYaw(serialYaw);
 
 bool streamEnabled = false;
