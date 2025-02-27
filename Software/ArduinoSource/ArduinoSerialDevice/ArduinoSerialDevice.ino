@@ -26,6 +26,8 @@ Servo42CDriver motorPitch(serialPitch);
 SoftwareSerial serialYaw(MotorConfig::Yaw::Pins::Rx, MotorConfig::Yaw::Pins::Tx);
 Servo42CDriver motorYaw(serialYaw);
 
+Endstop endstopPitch(MotorConfig::Pitch::Pins::Endstop);
+
 bool streamEnabled = false;
 uint8_t streamSource = SerialCommands::Motor::Pitch::ReadPosition;
 
@@ -128,7 +130,17 @@ void loop() {
       // map to max range of speed
       int16_t rpm = map(speed, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
 
-      motorPitch.moveSpeed(rpm); 
+
+      // check if an endstop was triggered
+      // the rpm is invers to the angle -> angle > 0 & rmp > 0
+      if (  !endstopPitch.isTriggered() ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpm > 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpm < 0) ) {
+        motorPitch.moveSpeed(rpm); 
+      }
+      else {
+        motorPitch.stop(); 
+      }
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WriteSpeed) {
       // Set motor yaw speed
@@ -201,8 +213,17 @@ void loop() {
       // map to max range of speed
       int16_t rpmPitch = map(speedPitch, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
 
-      motorPitch.moveSpeed(rpmPitch); 
-
+      // check if an endstop was triggered
+      // the rpm is invers to the angle -> angle > 0 & rmp > 0
+      if (  !endstopPitch.isTriggered() ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpmPitch > 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpmPitch < 0) ) {
+        motorPitch.moveSpeed(rpmPitch); 
+      }
+      else {
+        motorPitch.stop(); 
+      }
+      
       speedYaw = speedYaw > 100 ? speedYaw = 100 : speedYaw;
       speedYaw = speedYaw < -100 ? speedYaw = -100 : speedYaw;
       
@@ -260,5 +281,10 @@ void loop() {
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
+  }
+
+  endstopPitch.read();
+  if (endstopPitch.isStateChange() && endstopPitch.isTriggered()) {
+    motorPitch.stop(); 
   }
 }
