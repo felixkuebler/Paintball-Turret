@@ -13,9 +13,8 @@ namespace MotorConfig {
       static constexpr float GearRatio = static_cast<float>(GearTeeth2)/static_cast<float>(GearTeeth1);
       
       namespace Pins {
-        static constexpr uint8_t Enable = 13;
-        static constexpr uint8_t Dir = 12;
-        static constexpr uint8_t Step = 11;
+        static constexpr uint8_t Rx = 11;
+        static constexpr uint8_t Tx = 12;
       }
     }
 
@@ -32,9 +31,8 @@ namespace MotorConfig {
       static constexpr float GearRatio = static_cast<float>(GearTeeth2)/static_cast<float>(GearTeeth1);
       
       namespace Pins {
-        static constexpr uint8_t Enable = 8;
-        static constexpr uint8_t Dir = 7;
-        static constexpr uint8_t Step = 6;
+        static constexpr uint8_t Rx = 6;
+        static constexpr uint8_t Tx = 7;
       }
     }
 }
