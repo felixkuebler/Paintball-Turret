@@ -8,6 +8,8 @@
 #include "SerialCommands.hpp"
 #include "MotorConfig.hpp"
 
+#include "Endstop.hpp"
+
 
 namespace TiggerConfig {
 
