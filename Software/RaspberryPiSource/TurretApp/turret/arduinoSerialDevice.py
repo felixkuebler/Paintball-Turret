@@ -11,6 +11,7 @@ class ArduinoSerialDevice():
 	CMD_MOTOR_PITCH_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(11)
 	CMD_MOTOR_PITCH_WRITE_SPEED = ctypes.c_ubyte(12)
 	CMD_MOTOR_PITCH_READ_POSITION = ctypes.c_ubyte(13)
+	CMD_MOTOR_PITCH_CALIBRATE = ctypes.c_ubyte(19)
 
 	CMD_MOTOR_YAW_WRITE_POSITION_ABSOLUTE = ctypes.c_ubyte(20)
 	CMD_MOTOR_YAW_WRITE_POSITION_RELATIVE = ctypes.c_ubyte(21)
@@ -95,6 +96,13 @@ class ArduinoSerialDevice():
 		byteStream = self.arduinoDev.read(4)
 
 		return bool(retStatus), ctypes.c_int32(int.from_bytes(byteStream, 'little')).value
+
+
+	def motorPitchCalibrate(self):
+		self.lockDevice()
+		self.arduinoDev.write(self.CMD_MOTOR_PITCH_CALIBRATE)
+		self.arduinoDev.write(self.CMD_SYNC_WORD)
+		self.unlockDevice()
 
 
 	def motorYawWritePositionAbsolute(self, position):

@@ -159,16 +159,9 @@ def option():
         else:
             cam.setThermalColorMap(CameraMux.THERMAL_COLOR_MAP_DEFAULT)
             
-    return Response("reset_response", status=200, mimetype='text/html')
-
-    if 'resetPosX' in data:
-        pass
-        #turr.resetPostionX()
-
-    if 'resetPosY' in data:
-        pass
-        #turr.resetPostionY()
-
+    if 'calibrateMotorPitch' in data:
+        serial.motorPitchCalibrate()
+        
     return Response("reset_response", status=200, mimetype='text/html')
 
 
