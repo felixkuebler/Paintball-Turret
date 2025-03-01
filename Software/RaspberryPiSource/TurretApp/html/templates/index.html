@@ -16,9 +16,15 @@
 
         </div>
         
-        <div id="popup" class="hoverPopupBackground">
+        <div id="popupControllerInfo" class="hoverPopupBackground">
             <div class="popup">
                 <img  src="/img/gamepadOverview.png" style="width:100%; margin:0 auto;">
+            </div>
+        </div>
+        
+        <div id="popupOptions" class="hoverPopupBackground">
+            <div class="popup">
+                <div id="pitchCalibrateBtn" class="button">Calibrate Pitch</div> 
             </div>
         </div>
             
@@ -62,6 +68,9 @@
                     <img id="gamepadInfoButton" src="/img/gamepadInfoLight.png" style="height:100%; margin-left:10%; vertical-align:middle; display:none;">
 
                     <img id="fullscreenButton" src="/img/fullscreenLight.png" style="height:100%; margin-left:2%; vertical-align:middle; display:inline-block;">
+                    
+                    <img id="optionsButton" src="/img/gamepadInfoLight.png" style="height:100%; margin-left:0%; vertical-align:middle; display:inline-block;">
+
                 </div>
                 
             </div>
@@ -92,20 +101,6 @@
         </div>
     <script >
 
-        /*
-        <div class="container-parent" style="width:100%; height:30%;">
-            <h2>Control</h2>
-            <div>
-                <div id="resetButtonX" class="button">Reset X</div> 
-                <div id="resetButtonY" class="button">Reset Y</div> 
-                <p class="description">
-                    Reset X or Y axis position to 0.<br>
-                    This is used for rehomeing the device.
-                </p>
-            </div>
-        </div>
-        */
-        
         // html objects        
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
         
@@ -124,8 +119,12 @@
         const gamepadConnectedInfoButton = document.getElementById("gamepadConnectedInfoButton");
         const gamepadInfoButton = document.getElementById("gamepadInfoButton");
 
-        const popup = document.getElementById("popup");
-        const popupCloseButton = document.getElementById("popupCloseButton");
+        const optionsButton = document.getElementById("optionsButton");
+
+        const popupControllerInfo = document.getElementById("popupControllerInfo");
+        const popupOptions = document.getElementById("popupOptions");
+        
+        const pitchCalibrateBtn = document.getElementById("pitchCalibrateBtn");
 
 
         const positionCanvasX = document.getElementById("positionCanvasX");
@@ -229,6 +228,16 @@
         pitchPositionInput.addEventListener("mouseup",pitchPositionInputChangeCallback);
         pitchPositionInput.addEventListener("touchend",pitchPositionInputChangeCallback);
 
+        /* 
+        * Pitch Calibration button press callback
+        */
+        function pitchCalibrateBtnPushCallback(event){
+            var postString = "{\"calibrateMotorPitch\":1}";
+            httpPostAsync("{{ url_for('option') }}", postString);
+        }
+        pitchCalibrateBtn.addEventListener("mouseup",pitchCalibrateBtnPushCallback);
+        pitchCalibrateBtn.addEventListener("touchend",pitchCalibrateBtnPushCallback);
+        
         /*
         * Gamepad connect callback
         */
@@ -248,22 +257,41 @@
         window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
 
         /*
-        * Popup open callback
+        * Popup Controller Info open callback
         */
-        function openPopupCallback(event){
-            popup.style.display = "block";
+        function openPopupControllerInfoCallback(event){
+            popupControllerInfo.style.display = "block";
         }
-        gamepadInfoButton.addEventListener("mouseup",openPopupCallback);
-        gamepadInfoButton.addEventListener("touchend",openPopupCallback);
+        gamepadInfoButton.addEventListener("mouseup",openPopupControllerInfoCallback);
+        gamepadInfoButton.addEventListener("touchend",openPopupControllerInfoCallback);
 
         /*
-        * Popup close callback
+        * Popup Controller Info close callback
         */
-        function closePopupCallback(event){
-            popup.style.display = "none";
+        function closePopupControllerInfoCallback(event){
+            popupControllerInfo.style.display = "none";
         }
-        popup.addEventListener("mouseup",closePopupCallback);
-        popup.addEventListener("touchend",closePopupCallback);
+        popupControllerInfo.addEventListener("mouseup",closePopupControllerInfoCallback);
+        popupControllerInfo.addEventListener("touchend",closePopupControllerInfoCallback);
+        
+        /*
+        * Popup options open callback
+        */
+        function openPopupOptionsCallback(event){
+            popupOptions.style.display = "block";
+        }
+        optionsButton.addEventListener("mouseup",openPopupOptionsCallback);
+        optionsButton.addEventListener("touchend",openPopupOptionsCallback);
+
+        /*
+        * Popup Controller Info close callback
+        */
+        function closePopupOptionsCallback(event){
+            popupOptions.style.display = "none";
+        }
+        popupOptions.addEventListener("mouseup",closePopupOptionsCallback);
+        popupOptions.addEventListener("touchend",closePopupOptionsCallback);
+        
 
         /*
         * Fullscreen enable button callback
