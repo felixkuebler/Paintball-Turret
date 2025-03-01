@@ -200,6 +200,13 @@ void loop() {
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::Calibrate){
+      // Enable/disable the streaming of data
+      // serialBuffer = [uint8_t] 
+      // serialBuffer = [SerialCommands::EnableDataStream]
+
+      calibratePitch();
+    }
     else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed) {
       // Set motor speed for both axis
       // serialBuffer = [uint8_t, int16_t, int16_t] 
@@ -287,4 +294,75 @@ void loop() {
   if (endstopPitch.isStateChange() && endstopPitch.isTriggered()) {
     motorPitch.stop(); 
   }
+}
+
+void calibratePitch() {
+
+  const int16_t calibrationSpeed = 50;
+  double angleMin = 0;
+  double angleMax = 0;
+
+  bool readSuccess = true;
+  
+  // map to max range of speed
+  int16_t rpm = map(calibrationSpeed, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
+
+  // start moving int max direction
+  motorPitch.moveSpeed(rpm);
+
+  // read endstop until it is triggered
+  // this requires the turret to be in a neutral position at start
+  endstopPitch.read();
+  while(!endstopPitch.isTriggered()) {
+    endstopPitch.read();
+  }
+
+  // stop the motion as soon as max endstop was triggered
+  motorPitch.stop();
+
+  // delay is required before the read command
+  // otherwise the read will fail because the motor controller is still buisy with stopping
+  delay(500);
+
+  // read the max endstop position
+  readSuccess &= motorPitch.readAngle(angleMax, 500);
+  angleMax /=  MotorConfig::Pitch::GearRatio;
+
+  // start moving into min direction
+  motorPitch.moveSpeed(-rpm);
+
+  // read endstop until it is not triggered anymore
+  endstopPitch.read();
+  while(endstopPitch.isTriggered()) {
+    endstopPitch.read();
+  }
+  // read endstop until its triggered
+  while(!endstopPitch.isTriggered()) {
+    endstopPitch.read();
+  }
+
+  // stop the motion as soon as minmax endstop was triggered
+  motorPitch.stop();
+
+  // delay is required before the read command
+  // otherwise the read will fail because the motor controller is still buisy with stopping
+  delay(500);
+
+  // read min endstop position
+  readSuccess &= motorPitch.readAngle(angleMin, 500);
+  angleMin /=  MotorConfig::Pitch::GearRatio;
+
+  // calculate center from both endstop positions
+  double center = (angleMax-angleMin)/2;
+
+  // only set new zero position if the calculation of the position wasnt currupted by faulty readouts
+  if (readSuccess) {
+    // moce the pitch axis to the center
+    // this requires the pitch axis to behave symmetrically
+    motorPitch.moveAngleRelative(center * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::Rpm * MotorConfig::Pitch::GearRatio, 500); 
+    
+    // set zero position to this location
+    motorPitch.setZero(500);
+  }
+  
 }

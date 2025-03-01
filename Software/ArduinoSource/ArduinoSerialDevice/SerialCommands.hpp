@@ -12,6 +12,7 @@ namespace SerialCommands {
        static constexpr uint8_t WritePositionRelative = 11;
        static constexpr uint8_t WriteSpeed = 12;
        static constexpr uint8_t ReadPosition = 13;
+       static constexpr uint8_t Calibrate = 19;
     }
 
     namespace Yaw {
