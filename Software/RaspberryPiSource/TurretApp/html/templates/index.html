@@ -25,6 +25,7 @@
         <div id="popupOptions" class="hoverPopupBackground">
             <div class="popup">
                 <div id="pitchCalibrateBtn" class="button">Calibrate Pitch</div> 
+                <div id="yawCalibrateBtn" class="button">Calibrate Yaw</div> 
             </div>
         </div>
             
@@ -125,7 +126,7 @@
         const popupOptions = document.getElementById("popupOptions");
         
         const pitchCalibrateBtn = document.getElementById("pitchCalibrateBtn");
-
+        const yawCalibrateBtn = document.getElementById("yawCalibrateBtn");
 
         const positionCanvasX = document.getElementById("positionCanvasX");
         const positionCanvasY = document.getElementById("positionCanvasY");
@@ -237,6 +238,16 @@
         }
         pitchCalibrateBtn.addEventListener("mouseup",pitchCalibrateBtnPushCallback);
         pitchCalibrateBtn.addEventListener("touchend",pitchCalibrateBtnPushCallback);
+        
+        /* 
+        * Yaw Calibration button press callback
+        */
+        function yawCalibrateBtnPushCallback(event){
+            var postString = "{\"calibrateMotorYaw\":1}";
+            httpPostAsync("{{ url_for('option') }}", postString);
+        }
+        yawCalibrateBtn.addEventListener("mouseup",yawCalibrateBtnPushCallback);
+        yawCalibrateBtn.addEventListener("touchend",yawCalibrateBtnPushCallback);
         
         /*
         * Gamepad connect callback
