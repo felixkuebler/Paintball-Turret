@@ -159,6 +159,9 @@ def option():
     if 'calibrateMotorPitch' in data:
         serial.motorPitchCalibrate()
         
+    if 'calibrateMotorYaw' in data:
+        serial.motorYawCalibrate()
+        
     return Response("reset_response", status=200, mimetype='text/html')
 
 
