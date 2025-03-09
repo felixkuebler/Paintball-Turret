@@ -56,8 +56,6 @@ def getPosition():
             positionUpdate = False
             data = '{\"pitchPos\":\"%s\", \"yawPos\":\"%s\"}\n' % (pitchPos, yawPos)
             yield (data)
-        else:
-            yield()
             
         # only stream ever 100ms
         time.sleep(100/1000)
