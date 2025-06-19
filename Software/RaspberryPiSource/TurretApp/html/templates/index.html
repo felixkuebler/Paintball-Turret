@@ -168,7 +168,7 @@
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                drawPositionFeedbackFullScreen(ctx, yawPosFeedback, -pitchPosFeedback);
+                drawPositionFeedbackFullScreen(ctx, yawPosFeedback, pitchPosFeedback);
                 drawCrosshair(ctx);
 
                 if (triggered) {
@@ -343,7 +343,9 @@
 
                 var pitchSpeed = gamepad.axes[axisIdPitch] * 100;
                 pitchSpeed = Math.abs(pitchSpeed) < 5 ? 5 : pitchSpeed; // broken stick
-                pitchSpeed = parseInt(Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
+                pitchSpeed = parseInt(-1*Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
+                
+                //console.log("Speed Pitch: %s | Yaw: %s", pitchSpeed, yawSpeed);
 
                 if (yawSpeed != lastYawSpeed && pitchSpeed != lastPitchSpeed) {
                     lastYawSpeed = yawSpeed;
@@ -449,8 +451,8 @@
                 lastLine = lines.length - 2
             
                 var responseObj = JSON.parse(lines[lastLine]);
-                pitchPosFeedback = -1*parseFloat(responseObj.pitchPos);
-                yawPosFeedback = 1*parseFloat(responseObj.yawPos);
+                pitchPosFeedback = parseFloat(responseObj.pitchPos);
+                yawPosFeedback = parseFloat(responseObj.yawPos);
                 //console.log("Feedback Pitch: %s | Yaw: %s", pitchPosFeedback, yawPosFeedback)
             }
         };

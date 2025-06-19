@@ -82,14 +82,16 @@ def control():
     # Mouse movement handling routine
     data = json.loads(request.data)
 
+    # NOTE: Pitch Axis is inverted -> -1 added to all pitch data
+    
     if 'yawPos' in data:
-        serial.motorYawWritePositionAbsolute(-int(data['yawPos']))
+        serial.motorYawWritePositionAbsolute(int(data['yawPos']))
 
     if 'pitchPos' in data:
         serial.motorPitchWritePositionAbsolute(-int(data['pitchPos']))
 
     if ('pitchSpeed' in data) and ('yawSpeed' in data):
-        serial.motorWriteSpeed(-int(data['pitchSpeed']), -int(data['yawSpeed']))
+        serial.motorWriteSpeed(-int(data['pitchSpeed']), int(data['yawSpeed']))
         
     else:
         
@@ -97,7 +99,7 @@ def control():
             serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
             
         if 'yawSpeed' in data:
-            serial.motorYawWriteSpeed(-int(data['yawSpeed']))
+            serial.motorYawWriteSpeed(int(data['yawSpeed']))
 
     if 'trigger' in data:
         serial.triggerPrimary(int(data['trigger']))
@@ -184,7 +186,7 @@ def readPositionStream():
         source, position = serial.readDataStream()
         
         if (source == serial.CMD_MOTOR_PITCH_READ_POSITION.value):
-            pitchPos = position
+            pitchPos = -position
             positionUpdate = True
         elif (source == serial.CMD_MOTOR_YAW_READ_POSITION.value):
             yawPos = position

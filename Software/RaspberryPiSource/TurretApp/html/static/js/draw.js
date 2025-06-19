@@ -144,7 +144,9 @@ function drawPositionFeedbackFullScreen(context, yawAngle, pitchAngle){
     path.lineTo((width/2)-widthDeg,dashPeddingX+dashLength+numberPeddingX+numberPeddingX);
     context.fill(path);
 
-
+    // the representation is inverted -> invert pitchAngle
+    pitchAngle *= -1;
+    
     for(i=0; i<=maxDegPitch; i+=5){
 
         var positionShift = height/2+((i-(pitchAngle+maxDegPitch/2))*widthDeg);
