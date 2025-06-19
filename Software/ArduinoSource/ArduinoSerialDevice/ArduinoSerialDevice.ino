@@ -131,7 +131,6 @@ void loop() {
       // map to max range of speed
       int16_t rpm = map(speed, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
 
-
       // check if an endstop was triggered
       // the rpm is invers to the angle -> angle > 0 & rmp > 0
       if (  !endstopPitch.isTriggered() ||
@@ -202,10 +201,7 @@ void loop() {
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Pitch::Calibrate){
-      // Enable/disable the streaming of data
-      // serialBuffer = [uint8_t] 
-      // serialBuffer = [SerialCommands::EnableDataStream]
-
+      // Trigger pitch calibration
       calibratePitch();
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::Calibrate){
