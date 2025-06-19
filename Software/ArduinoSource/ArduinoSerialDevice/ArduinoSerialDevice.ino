@@ -27,6 +27,7 @@ SoftwareSerial serialYaw(MotorConfig::Yaw::Pins::Rx, MotorConfig::Yaw::Pins::Tx)
 Servo42CDriver motorYaw(serialYaw);
 
 Endstop endstopPitch(MotorConfig::Pitch::Pins::Endstop);
+Endstop endstopYaw(MotorConfig::Yaw::Pins::Endstop, true);
 
 bool streamEnabled = false;
 uint8_t streamSource = SerialCommands::Motor::Pitch::ReadPosition;
@@ -207,6 +208,10 @@ void loop() {
 
       calibratePitch();
     }
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::Calibrate){
+      // Trigger yaw calibration
+      calibrateYaw();
+    }
     else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed) {
       // Set motor speed for both axis
       // serialBuffer = [uint8_t, int16_t, int16_t] 
@@ -365,4 +370,38 @@ void calibratePitch() {
     motorPitch.setZero(500);
   }
   
+}
+
+void calibrateYaw() {
+  
+  const int16_t calibrationSpeed = 50;
+
+  bool readSuccess = true;
+  
+  // map to max range of speed
+  int16_t rpm = map(calibrationSpeed, -100, 100, -1 * MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio);
+
+  // start moving int max direction
+  motorYaw.moveSpeed(rpm);
+
+  // read endstop until it is triggered
+  // this requires the turret to be in a neutral position at start
+  endstopYaw.read();
+  while(!endstopYaw.isTriggered()) {
+    endstopYaw.read();
+  }
+
+  // stop the motion as soon as endstop was triggered
+  motorYaw.stop();
+
+  // delay is required before the read command
+  // otherwise the read will fail because the motor controller is still buisy with stopping
+  delay(500);
+
+    // only set new zero position if the calculation of the position wasnt currupted by faulty readouts
+  if (readSuccess) {
+
+    // set zero position to this location
+    motorYaw.setZero(500);
+  }
 }
