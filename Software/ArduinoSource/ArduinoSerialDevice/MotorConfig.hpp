@@ -34,6 +34,7 @@ namespace MotorConfig {
       namespace Pins {
         static constexpr uint8_t Rx = 6;
         static constexpr uint8_t Tx = 7;
+        static constexpr uint8_t Endstop = A2;
       }
     }
 }
