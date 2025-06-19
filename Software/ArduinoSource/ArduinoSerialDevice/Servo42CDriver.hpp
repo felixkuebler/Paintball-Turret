@@ -309,7 +309,7 @@ protected:
 
     uint32_t speed = (int32_t)abs(rpm)*this->microStep*this->stepsPerRevolution/30000;
     speed &= 0b01111111;
-    speed = rpm<0 ? (speed | 0b10000000) : speed;
+    speed = rpm>0 ? (speed | 0b10000000) : speed;
 
     uint8_t cmdLen = 2;
     uint8_t cmd[cmdLen] = {this->UartCommands::MoveSpeed, (uint8_t)speed};
