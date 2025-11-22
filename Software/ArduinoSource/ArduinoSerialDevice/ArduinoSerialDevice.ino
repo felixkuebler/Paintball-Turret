@@ -134,8 +134,8 @@ void loop() {
       // check if an endstop was triggered
       // the rpm is invers to the angle -> angle > 0 & rmp > 0
       if (  !endstopPitch.isTriggered() ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpm > 0) ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpm < 0) ) {
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpm < 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpm > 0) ) {
         motorPitch.moveSpeed(rpm); 
       }
       else {
@@ -224,8 +224,8 @@ void loop() {
       // check if an endstop was triggered
       // the rpm is invers to the angle -> angle > 0 & rmp > 0
       if (  !endstopPitch.isTriggered() ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpmPitch > 0) ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpmPitch < 0) ) {
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpmPitch < 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpmPitch > 0) ) {
         motorPitch.moveSpeed(rpmPitch); 
       }
       else {
