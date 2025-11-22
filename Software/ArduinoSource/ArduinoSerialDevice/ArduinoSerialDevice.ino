@@ -377,12 +377,17 @@ void calibrateYaw() {
   // map to max range of speed
   int16_t rpm = map(calibrationSpeed, -100, 100, -1 * MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio);
 
-  // start moving int max direction
-  motorYaw.moveSpeed(rpm);
+  // read endstop until it is triggered
+  endstopYaw.read();
+
+  // only start moving if currently not in endstop position
+  // otherwise the stop function is called too fast and is not executed correctly
+  if (!endstopYaw.isTriggered()) {
+    // start moving in max direction
+     motorYaw.moveSpeed(rpm);
+  }
 
   // read endstop until it is triggered
-  // this requires the turret to be in a neutral position at start
-  endstopYaw.read();
   while(!endstopYaw.isTriggered()) {
     endstopYaw.read();
   }
