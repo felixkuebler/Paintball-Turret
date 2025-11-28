@@ -634,14 +634,26 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S4B-PH-SM4-TB_1x04-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
-				(xyz 0 0 0)
+				(xyz 2 0 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -0 -0 -0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S4B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -1634,6 +1646,17 @@
 			)
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/Libraries/3DParts/ArduinoNanoSoM.3dshapes/ArduinoNanoSoM.step"
+			(offset
+				(xyz -128.8 100.7 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Connector_JST:JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal"
 		(locked yes)
@@ -1990,6 +2013,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -1998,6 +2022,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S3B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -2113,7 +2148,7 @@
 		(property "Reference" "J11"
 			(at 5.35 -4.125 90)
 			(layer "F.SilkS")
-			(uuid "ed8a12dc-78c1-4e6f-93e0-ab19de667f7d")
+			(uuid "703bbcc5-cea2-434c-b878-72f6cb228d95")
 			(effects
 				(font
 					(size 1 1)
@@ -2124,7 +2159,7 @@
 		(property "Value" "Conn_01x04"
 			(at 0 5.8 90)
 			(layer "F.Fab")
-			(uuid "37ebc414-0f70-4157-a067-59dadb5a0f98")
+			(uuid "0596a921-3ea0-455f-96cb-b1c45d0ecb82")
 			(effects
 				(font
 					(size 1 1)
@@ -2136,7 +2171,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "2c29158a-530a-4387-b3c0-4cb2b3f93592")
+			(uuid "05d65d9d-ef6b-4f26-9373-9c78496e681f")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2148,7 +2183,7 @@
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
-			(uuid "c2f57b3c-979d-47ac-91a8-b3b8ccea14df")
+			(uuid "526c5d26-b21b-4a81-b9c1-c9767c19fa51")
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2468,7 +2503,8 @@
 			(uuid "b857feae-8bbb-4daf-9c27-8ca7e9e27c0b")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S4B-PH-SM4-TB_1x04-1MP_P2.00mm_Horizontal.wrl"
+		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal.step"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -2476,7 +2512,18 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -0 -0 -0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S4B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -2825,6 +2872,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -2833,6 +2881,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S2B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -3284,6 +3343,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S2B-PH-SM4-TB_1x02-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -3292,6 +3352,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S2B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -3753,6 +3824,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -3761,6 +3833,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S3B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -3772,7 +3855,7 @@
 		(descr "JST PH series connector, S4B-PH-SM4-TB (http://www.jst-mfg.com/product/pdf/eng/ePH.pdf), generated with kicad-footprint-generator")
 		(tags "connector JST PH horizontal")
 		(property "Reference" "J10"
-			(at 5.350001 -4.125 270)
+			(at 5.350001 -4.125 90)
 			(layer "F.SilkS")
 			(uuid "dade7e51-9414-4d05-bfa1-7dbd484d683c")
 			(effects
@@ -3783,7 +3866,7 @@
 			)
 		)
 		(property "Value" "Conn_01x04"
-			(at 0 5.8 270)
+			(at 0 5.8 90)
 			(layer "F.Fab")
 			(uuid "a5498827-686e-48a8-a2d1-137fba22e279")
 			(effects
@@ -3794,7 +3877,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "ffc3f697-9aa2-471e-82e7-d0711b880b85")
@@ -3806,7 +3889,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x04, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 0 0 270)
+			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
 			(uuid "8c44d8a4-5182-44af-8d6c-ddf566c02ac7")
@@ -4063,7 +4146,7 @@
 			(uuid "8b4b6399-a7ef-45d4-851b-fa7deef720f8")
 		)
 		(fp_text user "${REFERENCE}"
-			(at 0 1.5 270)
+			(at 0 1.5 90)
 			(layer "F.Fab")
 			(uuid "5b59e5bf-dd5a-41b1-ae8e-0beba379a8d7")
 			(effects
@@ -4129,6 +4212,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S4B-PH-SM4-TB_1x04-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -4137,6 +4221,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S4B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -4715,6 +4810,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S4B-PH-SM4-TB_1x04-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -4723,6 +4819,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S4B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -5851,6 +5958,17 @@
 			)
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/Libraries/3DParts/UsbHub.3dshapes/UsbHub.step"
+			(offset
+				(xyz -6.7 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Package_TO_SOT_SMD:TO-252-2"
 		(locked yes)
@@ -6618,6 +6736,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S4B-PH-SM4-TB_1x04-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -6626,6 +6745,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S4B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -7496,10 +7626,11 @@
 			(size 1.8 3.9)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(roundrect_rratio 0.138889)
-			(uuid "1472a630-87e1-4de6-8fc1-a47dbcbcd5c5")
+			(uuid "64e100a1-03a8-47e3-b73f-468c55725e1a")
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_XH_S4B-XH-SM4-TB_1x04-1MP_P2.50mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -7508,6 +7639,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstXh.3dshapes/JST-XH2-SMD.step"
+			(offset
+				(xyz 0 2.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
 			)
 		)
 	)
@@ -7871,6 +8013,7 @@
 		)
 		(embedded_fonts no)
 		(model "${KICAD9_3DMODEL_DIR}/Connector_JST.3dshapes/JST_PH_S3B-PH-SM4-TB_1x03-1MP_P2.00mm_Horizontal.wrl"
+			(hide yes)
 			(offset
 				(xyz 0 0 0)
 			)
@@ -7879,6 +8022,17 @@
 			)
 			(rotate
 				(xyz 0 0 0)
+			)
+		)
+		(model "${KIPRJMOD}/Libraries/3DParts/JstPh.3dshapes/S3B-PH-SM4-TB.stp"
+			(offset
+				(xyz 0 -4.5 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -90 -0 -0)
 			)
 		)
 	)
