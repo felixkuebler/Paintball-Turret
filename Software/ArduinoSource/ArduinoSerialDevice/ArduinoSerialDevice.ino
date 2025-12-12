@@ -8,17 +8,9 @@
 #include "SerialCommands.hpp"
 #include "MotorConfig.hpp"
 
+#include "TriggerConfig.hpp"
+
 #include "Endstop.hpp"
-
-
-namespace TiggerConfig {
-
-  namespace Primary {
-    namespace Pins {
-      static constexpr uint8_t Enable = 3;
-    }
-  }
-}
 
 SoftwareSerial serialPitch(MotorConfig::Pitch::Pins::Rx, MotorConfig::Pitch::Pins::Tx);
 Servo42CDriver motorPitch(serialPitch);
