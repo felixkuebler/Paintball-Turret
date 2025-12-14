@@ -45,11 +45,11 @@ class CameraMux():
 			return False, None
 
 		# TODO configurable offsets
-		offsetRgbX = 40
-		offsetRgbY = 0
+		offsetMuxX = 0
+		offsetMuxY = 0
 	   
-		# shift the frame by aim offset
-		frameRgb = self.shiftFrame(frameRgb, offsetRgbX, offsetRgbY)
+		# shift the frame by rgb/thermal mux offset
+		frameRgb = self.shiftFrame(frameRgb, offsetMuxX, offsetMuxY)
 
 		if self.cameraSelector != self.CAMERA_FEED_RGB:
 
@@ -66,7 +66,7 @@ class CameraMux():
 
 			# TODO configurable scale
 			# create an thermal image overlay
-			scaleThermal = 1.9
+			scaleThermal = 1.5
 			newSizeThermal = (int(frameThermal.shape[1]*scaleThermal), int(frameThermal.shape[0]*scaleThermal))
 			frameThermal = cv2.resize(frameThermal, newSizeThermal)
 
@@ -131,11 +131,11 @@ class CameraMux():
 			return retMux, None
 
 		# TODO configurable aim offsets
-		offsetMuxX = -40
-		offsetMuxY = 120
+		offsetAimX = -40
+		offsetAimY = 120
 		
 		# shift the frame by aim offset
-		frameMux = self.shiftFrame(frameMux, offsetMuxX, offsetMuxY)
+		frameMux = self.shiftFrame(frameMux, offsetAimX, offsetAimY)
 		
 		# apply zoom to all camera modes
 		if self.zoomEnabled:
