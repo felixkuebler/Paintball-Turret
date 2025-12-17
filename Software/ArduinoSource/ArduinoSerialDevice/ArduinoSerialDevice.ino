@@ -64,10 +64,11 @@ void loop() {
       // serialBuffer = [uint8_t, uint8_t] 
       // serialBuffer = [SerialCommands::Trigger::Primary, Value]
       if (serialBuffer[1]>0) {
-        triggerPrimary.set(true);
+        triggerPrimary.setTriggerType(serialBuffer[1]);
+        triggerPrimary.setTrigger(true);
       }
       else {
-        triggerPrimary.set(false);
+        triggerPrimary.setTrigger(false);
       }
     }
     else if(serialBuffer[0] == SerialCommands::Trigger::Secondary) {
