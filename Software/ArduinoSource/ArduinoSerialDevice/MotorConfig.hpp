@@ -8,8 +8,8 @@ namespace MotorConfig {
       static constexpr uint8_t MinRpm = 0;
       static constexpr uint8_t MaxRpm = 20;
 
-      static constexpr uint8_t GearTeeth1 = 16;
-      static constexpr uint8_t GearTeeth2 = 68;
+      static constexpr uint8_t GearTeeth1 = 14;
+      static constexpr uint8_t GearTeeth2 = 72;
       static constexpr float GearRatio = static_cast<float>(GearTeeth2)/static_cast<float>(GearTeeth1);
       
       namespace Pins {
