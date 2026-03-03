@@ -47,7 +47,7 @@
                         <option value="hybrid">Hybrid</option>
                     </select>
                     <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left:3%; vertical-align:middle;" />        
-                    <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; width:20%; display:inline-block;">
+                    <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; width:10%; display:inline-block;">
                         <option value="grey" selected="selected">Grey</option>
                         <!--<option value="autumn">Autumn</option>-->
                         <!--<option value="bone">Bone</option>-->
@@ -62,6 +62,12 @@
                         <!--<option value="pink">Pink</option>-->
                         <!--<option value="hot">Hot</option>-->
                         <!--<option value="parula">Parula</option>-->
+                    </select>
+                    
+                    <select name="triggerModeSelector" id="triggerModeSelector" style = "height:100%; width:10%; display:inline-block;">
+                        <option value="safe" selected="selected">Safe</option>
+                        <option value="semiAuto">Semi-Auto</option>
+                        <option value="fullAuto">Full-Auto</option>
                     </select>
                     
                     <img id="gamepadConnectedInfoButton" src="/img/gamepadNotConnectedLight.png" style="height:100%; margin-left:10%; vertical-align:middle; isplay:dinline-block;">
@@ -108,6 +114,8 @@
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
         const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
+        const triggerModeSelector = document.getElementById("triggerModeSelector");
+
         const yawPositionInput = document.getElementById("yawPositionInput");
         const pitchPositionInput = document.getElementById("pitchPositionInput");
 
@@ -143,9 +151,7 @@
         var lastRightButtonPressed = 0;
         var lastLeftButtonPressed = 0;
         var lastStartButtonPressed = 0;
-
-        var triggered = false;
-
+        
         // readback variables
         var yawPosFeedback = 0;
         var pitchPosFeedback = 0;
@@ -169,12 +175,19 @@
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
                 drawPositionFeedbackFullScreen(ctx, yawPosFeedback, pitchPosFeedback);
+                
                 drawCrosshair(ctx);
+                
+                var cameraFeed = cameraFeedSelector.value
+                        .replace(/([a-z])([A-Z])/g, "$1-$2")
+                        .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+                        .replace(/\b\w/g, c => c.toUpperCase()) + "-" + thermalCameraColorMapSelector.value.replace(/\b\w/g, c => c.toUpperCase());
+                var triggerMode = triggerModeSelector.value
+                        .replace(/([a-z])([A-Z])/g, "$1-$2")
+                        .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+                        .replace(/\b\w/g, c => c.toUpperCase());
 
-                if (triggered) {
-                    drawTriggerToggle(ctx);
-                    triggered = false;
-                }
+                drawCrosshairInfo(ctx, cameraFeed, triggerMode);
             }
             else {
                 hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
@@ -378,7 +391,11 @@
                 if (rbButtonPressed != lastRbButtonPressed) {
                     lastRbButtonPressed = rbButtonPressed;
                     console.log("trigger: %s", rbButtonPressed);
-                    var postString = "{\"trigger\":" + rbButtonPressed + "}";
+
+                    var triggerMode = rbButtonPressed;
+                    if (rbButtonPressed) triggerMode = triggerModeSelector.selectedIndex;
+                    console.log("triggerMode: %s", triggerMode);
+                    var postString = "{\"trigger\":" + triggerMode + "}";
                     httpPostAsync("{{ url_for('control') }}", postString);
                 }
                 
@@ -392,12 +409,13 @@
                 }
                 lastUpButtonPressed = upButtonPressed;
                 
+                // trigger type selection
                 var downButtonPressed = gamepad.buttons[buttonIdDown].value
                 if (downButtonPressed != lastDownButtonPressed && downButtonPressed) {
-                    var idx = document.getElementById("cameraFeedSelector").selectedIndex - 1;
-                    if (idx < 0) idx = document.getElementById("cameraFeedSelector").length-1;
-                    document.getElementById("cameraFeedSelector").selectedIndex = idx;
-                    document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
+                    var idx = triggerModeSelector.selectedIndex + 1;
+                    if (idx >= triggerModeSelector.length) idx = 0;
+                    triggerModeSelector.selectedIndex = idx;
+                    triggerModeSelector.dispatchEvent(new Event('change'));
                 }
                 lastDownButtonPressed = downButtonPressed;
                 
