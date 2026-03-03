@@ -69,8 +69,30 @@ function drawCrosshair(context){
 
     context.moveTo(startX, starty);
     context.bezierCurveTo(startX, starty, endX/2, starty, endX, endY);
+    
+    context.stroke();
+}
 
+function drawCrosshairInfo(context, cameraFeed, triggerMode){
+    
+    var width = context.canvas.width;
+    var height = context.canvas.height;
+    
+    var horizontalLineLength = width/7;
 
+    var fontSize = height/100*3;
+    var font = fontSize + "px " + fontName;
+    
+    context.globalAlpha = 1;
+    context.font = font;
+    context.textAlign = "left";
+    
+    context.textBaseline = "bottom";
+    context.fillText(cameraFeed, width/5, height/5-lineWidth);
+    
+    context.textBaseline = "top";
+    context.fillText(triggerMode, width-width/5-horizontalLineLength, height/5*4+lineWidth);
+    
     context.stroke();
 }
 
