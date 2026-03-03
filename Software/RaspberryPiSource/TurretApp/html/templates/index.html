@@ -402,10 +402,10 @@
                 // camera selection
                 var upButtonPressed = gamepad.buttons[buttonIdUp].value
                 if (upButtonPressed != lastUpButtonPressed && upButtonPressed) {
-                    var idx = document.getElementById("cameraFeedSelector").selectedIndex + 1;
-                    if (idx >= document.getElementById("cameraFeedSelector").length) idx = 0;
-                    document.getElementById("cameraFeedSelector").selectedIndex = idx;
-                    document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
+                    var idx = cameraFeedSelector.selectedIndex + 1;
+                    if (idx >= cameraFeedSelector.length) idx = 0;
+                    cameraFeedSelector.selectedIndex = idx;
+                    cameraFeedSelector.dispatchEvent(new Event('change'));
                 }
                 lastUpButtonPressed = upButtonPressed;
                 
@@ -419,22 +419,20 @@
                 }
                 lastDownButtonPressed = downButtonPressed;
                 
-                // color map selection
+                // TODO unused
                 var rightButtonPressed = gamepad.buttons[buttonIdRight].value
                 if (rightButtonPressed != lastRightButtonPressed && rightButtonPressed) {
-                    var idx = document.getElementById("thermalCameraColorMapSelector").selectedIndex + 1;
-                    if (idx >= document.getElementById("thermalCameraColorMapSelector").length) idx = 0;
-                    document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
-                    document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
+                        // TODO unused
                 }
                 lastRightButtonPressed = rightButtonPressed;
                 
+                // color map selection
                 var leftButtonPressed = gamepad.buttons[buttonIdLeft].value
                 if (leftButtonPressed != lastLeftButtonPressed && leftButtonPressed) {
-                    var idx = document.getElementById("thermalCameraColorMapSelector").selectedIndex - 1;
-                    if (idx < 0) idx = document.getElementById("thermalCameraColorMapSelector").length-1;
-                    document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
-                    document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
+                    var idx = thermalCameraColorMapSelector.selectedIndex + 1;
+                    if (idx >= thermalCameraColorMapSelector.length) idx = 0;
+                    thermalCameraColorMapSelector.selectedIndex = idx;
+                    thermalCameraColorMapSelector.dispatchEvent(new Event('change'));
                 }
                 lastLeftButtonPressed = leftButtonPressed;
                 
