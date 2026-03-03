@@ -41,16 +41,16 @@ function drawCrosshair(context){
     context.globalAlpha = 1;
 
     //outer frame horizontal lines
-    context.fillRect(width/5, height/5-lineWidth/2, horizontalLineLength, lineWidth);
-    context.fillRect(width-width/5-horizontalLineLength, height/5-lineWidth/2, horizontalLineLength, lineWidth);
-    context.fillRect(width/5, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
-    context.fillRect(width-width/5-horizontalLineLength, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
+    context.fillRect(width/5, height/5, horizontalLineLength, lineWidth);
+    context.fillRect(width-width/5-horizontalLineLength, height/5, horizontalLineLength, lineWidth);
+    context.fillRect(width/5, height/5*4, horizontalLineLength, lineWidth);
+    context.fillRect(width-width/5-horizontalLineLength, height/5*4, horizontalLineLength, lineWidth);
 
     //outer frame vertical lines
-    context.fillRect(width/5-lineWidth/2, height/5, lineWidth, verticalLineLength);
-    context.fillRect(width/5-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
-    context.fillRect(width/5*4-lineWidth/2, height/5, lineWidth, verticalLineLength);
-    context.fillRect(width/5*4-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
+    context.fillRect(width/5, height/5, lineWidth, verticalLineLength);
+    context.fillRect(width/5, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
+    context.fillRect(width/5*4-lineWidth, height/5, lineWidth, verticalLineLength);
+    context.fillRect(width/5*4-lineWidth, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
 
     //inner frame horizontal lines
     context.fillRect(width/2-horizontalCrosshairLinelength-horizontalCrosshairLinelength/4, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
