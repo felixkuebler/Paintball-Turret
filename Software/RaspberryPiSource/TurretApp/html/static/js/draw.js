@@ -22,7 +22,6 @@ function drawInfo(context, info){
     context.stroke();
 }
 
-
 function drawCrosshair(context){
 
     var width = context.canvas.width;
@@ -32,7 +31,6 @@ function drawCrosshair(context){
     var verticalLineLength = height/7;
 
     var verticalCrosshairLineLength = verticalLineLength/6*3;
-    //var horizontalCrosshairLinelength = horizontalLineLength/5*3;
     var horizontalCrosshairLinelength = verticalCrosshairLineLength;
 
     context.fillStyle = color;
@@ -95,7 +93,6 @@ function drawCrosshairInfo(context, cameraFeed, triggerMode){
     
     context.stroke();
 }
-
 
 function drawPositionFeedbackFullScreen(context, yawAngle, pitchAngle){
 
