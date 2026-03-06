@@ -18,7 +18,7 @@ var numberPeddingX = window.screen.height/100*5;
 var numberPeddingY = window.screen.width/100*2.5;
 
 
-function accomodateMobileRotation() {
+function accomodateMobileRotation(){
     if (window.screen.height < window.screen.width){
 
         fontSize = window.screen.height/100*5;

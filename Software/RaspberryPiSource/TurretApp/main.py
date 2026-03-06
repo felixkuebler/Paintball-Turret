@@ -53,11 +53,11 @@ def controlle():
     # Mouse movement handling routine
     data = json.loads(request.data)
 
-    if 'xPos' in data:
-        serial.motorYawWritePositionAbsolute(int(data['xPos']))
+    if 'yawPos' in data:
+        serial.motorYawWritePositionAbsolute(int(data['yawPos']))
 
-    if 'yPos' in data:
-        serial.motorPitchWritePositionAbsolute(int(data['yPos']))
+    if 'pitchPos' in data:
+        serial.motorPitchWritePositionAbsolute(int(data['pitchPos']))
 
     if 'trigger' in data:
         pass
@@ -144,11 +144,11 @@ def option():
 def feedback():
 
     if request.args.get('position'):
-        xPos = 0
-        yPos = 0
-        #xPos = turr.getPositionX()
-        #yPos = turr.getPositionY()
-        return '{\"xPos\":\"%s\", \"yPos\":\"%s\"}' % (xPos, yPos)
+        yawPos = 0
+        pitchPos = 0
+        #yawPos = turr.getPositionX()
+        #pitchPos = turr.getPositionY()
+        return '{\"yawPos\":\"%s\", \"pitchPos\":\"%s\"}' % (yawPos, pitchPos)
 
     return '{}'
 
