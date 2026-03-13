@@ -1,6 +1,6 @@
-function displayFullScreenElements(container, image, canvas, deviceType) {
+function displayFullScreenElements(container, image, canvas) {
 
-    if(deviceType == 0 && document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
+    if(document.pointerLockElement !== canvas && document.mozPointerLockElement !== canvas) {
         canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
         canvas.requestPointerLock();
     }
