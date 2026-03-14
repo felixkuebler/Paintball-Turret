@@ -11,14 +11,13 @@ from flask import Flask, request, render_template, Response, send_from_directory
 
 sys.path.append('./turret')
 
-from turret import Turret
+from arduinoSerialDevice import ArduinoSerialDevice
 from cameraMux import CameraMux
 
 
 app = Flask(__name__, template_folder='html/templates', static_folder='html/static', static_url_path='')
 
-#turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
-
+serial = ArduinoSerialDevice()
 cam = CameraMux()
 
 
@@ -55,19 +54,14 @@ def controlle():
     data = json.loads(request.data)
 
     if 'xPos' in data:
-        turr.setPositionX(data['xPos'])
+        serial.motorYawWritePositionAbsolute(int(data['xPos']))
 
     if 'yPos' in data:
-        turr.setPositionY(data['yPos'])
-
-    if 'xSpeed' in data:
-        turr.setSpeedX(data['xSpeed'])
-
-    if 'ySpeed' in data:
-        turr.setSpeedY(data['ySpeed'])
+        serial.motorPitchWritePositionAbsolute(int(data['yPos']))
 
     if 'trigger' in data:
-        turr.trigger()
+        pass
+        #turr.trigger()
 
     return Response("controlle_response", status=200, mimetype='text/html')
 
@@ -136,10 +130,12 @@ def option():
             cam.setThermalColorMap(CameraMux.THERMAL_COLOR_MAP_DEFAULT)
             
     if 'resetPosX' in data:
-        turr.resetPostionX()
+        pass
+        #turr.resetPostionX()
 
     if 'resetPosY' in data:
-        turr.resetPostionY()
+        pass
+        #turr.resetPostionY()
 
     return Response("reset_response", status=200, mimetype='text/html')
 
@@ -148,15 +144,11 @@ def option():
 def feedback():
 
     if request.args.get('position'):
-        xPos = turr.getPositionX()
-        yPos = turr.getPositionY()
+        xPos = 0
+        yPos = 0
+        #xPos = turr.getPositionX()
+        #yPos = turr.getPositionY()
         return '{\"xPos\":\"%s\", \"yPos\":\"%s\"}' % (xPos, yPos)
-
-    if request.args.get('target'):
-        isAtTargetX = turr.isAtTargetX()
-        isAtTargetY = turr.isAtTargetY()
-        return '{\"xTar\":\"%s\", \"yTar\":\"%s\"}' % (isAtTargetX, isAtTargetY)
-
 
     return '{}'
 
