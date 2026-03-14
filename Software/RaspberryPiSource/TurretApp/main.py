@@ -2,23 +2,37 @@
 
 import os
 import sys
+
+import cv2
+
 import json 
 from importlib import import_module
 from flask import Flask, request, render_template, Response, send_from_directory
 
 sys.path.append('./turret')
-from cameraDevice import Camera
+
 from turret import Turret
+from cameraMux import CameraMux
 
 
 app = Flask(__name__, template_folder='html/templates', static_folder='html/static', static_url_path='')
-turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
-cam = Camera()
+
+#turr = Turret('/dev/ttyUSB0','/dev/ttyUSB1')
+
+cam = CameraMux()
+
 
 def getFrame():
     # Video streaming generator function.
     while True:
-        frame = cam.get_frame()
+
+        ret, frame = cam.getFrame()
+
+        # use no signal image if a fault in the selected camera was returend
+        if not ret:
+            frame = cv2.imread('html/static/img/testImage.jpg')
+            frame = cv2.imencode('.jpg', frame)[1].tobytes()
+
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
@@ -62,6 +76,65 @@ def controlle():
 def option():
     data = json.loads(request.data)
 
+    if 'setCameraFeed' in data:
+
+        if data['setCameraFeed'] == 'rgb':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_RGB)
+        elif data['setCameraFeed'] == 'thermalAbs':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL_ABS)
+        elif data['setCameraFeed'] == 'thermalNorm':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_THERMAL_NORM)
+        elif data['setCameraFeed'] == 'hybrid':
+            cam.setCameraFeed(CameraMux.CAMERA_FEED_HYBRID)
+
+    if 'setThermalCameraColorMap' in data:
+        if data['setThermalCameraColorMap'] == 'autumn':
+            cam.setThermalColorMap(cv2.COLORMAP_AUTUMN)
+        elif data['setThermalCameraColorMap'] == 'bone':
+            cam.setThermalColorMap(cv2.COLORMAP_BONE)
+        elif data['setThermalCameraColorMap'] == 'jet':
+            cam.setThermalColorMap(cv2.COLORMAP_JET)
+        elif data['setThermalCameraColorMap'] == 'winter':
+            cam.setThermalColorMap(cv2.COLORMAP_WINTER)
+        elif data['setThermalCameraColorMap'] == 'rainbow':
+            cam.setThermalColorMap(cv2.COLORMAP_RAINBOW)
+        elif data['setThermalCameraColorMap'] == 'ocean':
+            cam.setThermalColorMap(cv2.COLORMAP_OCEAN)
+        elif data['setThermalCameraColorMap'] == 'summer':
+            cam.setThermalColorMap(cv2.COLORMAP_SUMMER)
+        elif data['setThermalCameraColorMap'] == 'spring':
+            cam.setThermalColorMap(cv2.COLORMAP_SPRING)
+        elif data['setThermalCameraColorMap'] == 'cool':
+            cam.setThermalColorMap(cv2.COLORMAP_COOL)
+        elif data['setThermalCameraColorMap'] == 'hsv':
+            cam.setThermalColorMap(cv2.COLORMAP_HSV)
+        elif data['setThermalCameraColorMap'] == 'pink':
+            cam.setThermalColorMap(cv2.COLORMAP_PINK)
+        elif data['setThermalCameraColorMap'] == 'hot':
+            cam.setThermalColorMap(cv2.COLORMAP_HOT)
+        elif data['setThermalCameraColorMap'] == 'parula':
+            cam.setThermalColorMap(cv2.COLORMAP_PARULA)
+        elif data['setThermalCameraColorMap'] == 'magma':
+            cam.setThermalColorMap(cv2.COLORMAP_MAGMA)
+        elif data['setThermalCameraColorMap'] == 'inferno':
+            cam.setThermalColorMap(cv2.COLORMAP_INFERNO)
+        elif data['setThermalCameraColorMap'] == 'plasma':
+            cam.setThermalColorMap(cv2.COLORMAP_PLASMA)
+        elif data['setThermalCameraColorMap'] == 'viridis':
+            cam.setThermalColorMap(cv2.COLORMAP_VIRIDIS)
+        elif data['setThermalCameraColorMap'] == 'cividis':
+            cam.setThermalColorMap(cv2.COLORMAP_CIVIDIS)
+        elif data['setThermalCameraColorMap'] == 'twilight':
+            cam.setThermalColorMap(cv2.COLORMAP_TWILIGHT)
+        elif data['setThermalCameraColorMap'] == 'twilightShifted':
+            cam.setThermalColorMap(cv2.COLORMAP_TWILIGHT_SHIFTED)
+        elif data['setThermalCameraColorMap'] == 'turbo':
+            cam.setThermalColorMap(cv2.COLORMAP_TURBO)
+        elif data['setThermalCameraColorMap'] == 'deepGreen':
+            cam.setThermalColorMap(cv2.COLORMAP_DEEPGREEN)
+        else:
+            cam.setThermalColorMap(CameraMux.THERMAL_COLOR_MAP_DEFAULT)
+            
     if 'resetPosX' in data:
         turr.resetPostionX()
 
