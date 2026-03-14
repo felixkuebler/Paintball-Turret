@@ -103,7 +103,7 @@ uint8_t buffPointer=0;
 bool bufferComplete = false;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   motorPitch.begin(StepperMotorConfig::Pitch::Rpm * StepperMotorConfig::Pitch::GearRatio, StepperMotorConfig::Pitch::MicroSteps);
   motorYaw.begin(StepperMotorConfig::Yaw::Rpm * StepperMotorConfig::Yaw::GearRatio, StepperMotorConfig::Yaw::MicroSteps);
@@ -118,11 +118,13 @@ void setup() {
 void loop() {
 
   while(Serial.available() > 0 && buffPointer<255 && !bufferComplete) {
-    serialBuffer[buffPointer++] = (uint8_t)Serial.read();
+    serialBuffer[buffPointer] = (uint8_t)Serial.read();
       
     if (serialBuffer[buffPointer]=='#' ) {
       bufferComplete=true;
     }
+
+    buffPointer++;
   }
 
   if (bufferComplete) {
