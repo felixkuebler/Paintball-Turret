@@ -46,6 +46,27 @@ class CameraMux():
 			return True, cv2.imencode('.jpg', frame)[1].tobytes()
 
 		elif self.cameraSelector == self.CAMERA_FEED_HYBRID:
-			return self.thermalCam.getFrame()
+			retThermal, frameThermal = self.thermalCam.readAbsolut()
+			retRgb, frameRgb = self.rgbCam.read()
+			
+			xOffset = 20
+			yOffset = 0
+			height, width, channels = frameRgb.shape
+			frameRgb = frameRgb[int(height/3)+yOffset:int(height*2/3)+yOffset, int(width/3)+xOffset:int(width*2/3)+xOffset]
+			frameRgb = cv2.resize(frameRgb, (854, 480))
+			
+			# create mask from thermal image
+			# TODO make threshold adjustable 
+			#_, mask = cv2.threshold(frameThermal, 170 ,255, cv2.THRESH_BINARY)
+			
+			if self.thermalColorMap != self.THERMAL_COLOR_MAP_DEFAULT:
+				frameThermal = cv2.applyColorMap(frameThermal, self.thermalColorMap)
+			
+			#masked = cv2.bitwise_and(frameThermal, frameThermal, mask=mask)
+			
+			alpha = 0.5
+			dst = cv2.addWeighted(frameThermal, alpha , frameRgb, 1-alpha, 0)
+			
+			return (retThermal and retRgb), cv2.imencode('.jpg', dst)[1].tobytes()
 
 		return self.rgbCam.getFrame()
