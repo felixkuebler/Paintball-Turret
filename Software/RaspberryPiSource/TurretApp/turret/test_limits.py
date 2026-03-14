@@ -23,32 +23,32 @@ arduinoBottom.motorSetMaxSpeed(125)
 
 time.sleep(1)
 
-arduinoBottom.motorWrite(9000)
+arduinoBottom.motorWritePosition(9000)
 
 while not arduinoBottom.motorIsAtTarget():
 	time.sleep(0.1)
 
-arduinoBottom.motorWrite(-9000)
+arduinoBottom.motorWritePosition(-9000)
 
 while not arduinoBottom.motorIsAtTarget():
 	time.sleep(0.1)
 
-arduinoBottom.motorWrite(0)
+arduinoBottom.motorWritePosition(0)
 
 while not arduinoBottom.motorIsAtTarget():
 	time.sleep(0.1)
 
-arduinoTop.motorWrite(4500)
+arduinoTop.motorWritePosition(4500)
 
 while not arduinoTop.motorIsAtTarget():
 	time.sleep(0.1)
 
-arduinoTop.motorWrite(-4500)
+arduinoTop.motorWritePosition(-4500)
 
 while not arduinoTop.motorIsAtTarget():
 	time.sleep(0.1)
 
-arduinoTop.motorWrite(0)
+arduinoTop.motorWritePosition(0)
 
 while not arduinoTop.motorIsAtTarget():
 	time.sleep(0.1)

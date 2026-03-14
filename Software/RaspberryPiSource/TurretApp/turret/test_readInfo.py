@@ -16,5 +16,5 @@ while True:
 	#value = arduino.analogRead(14)
 	#print('Analog Read = %s' % value)
 
-	#value = arduino.motorRead()
+	#value = arduino.motorReadPosition()
 	#print('Motor Position = %s' % value)

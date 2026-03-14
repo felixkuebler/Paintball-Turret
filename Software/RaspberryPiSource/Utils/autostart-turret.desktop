@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=autostart-turret
+Comment=this will start the docker turret container on bootup
+Type=Application
+Exec={{EXEC_DIR}}
+Terminal=true
