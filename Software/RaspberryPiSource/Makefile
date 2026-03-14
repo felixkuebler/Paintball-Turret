@@ -75,14 +75,14 @@ install:
 	sed -i 's+{{EXEC_DIR}}+$(MAKE_DIR)/$(EXEC_FILE)+g' $(AUTO_DIR)/$(AUTO_FILE)
 
 	# add autostart command to rc.local
-	 sed -i 's+$(MAKE_DIR)/$(EXEC_FILE) &++g' /etc/rc.local
-	 sed -i 's+exit 0+$(MAKE_DIR)/$(EXEC_FILE) \&\n\nexit 0+g' /etc/rc.local
+	sed -i 's+$(MAKE_DIR)/$(EXEC_FILE) &++g' /etc/rc.local
+	sed -i 's+exit 0+$(MAKE_DIR)/$(EXEC_FILE) \&\n\nexit 0+g' /etc/rc.local
 
 	# copy start script to root and make executable
 	cp $(MAKE_DIR)/$(UTILS_DIR)/$(EXEC_FILE) $(MAKE_DIR)
 	chmod +x $(MAKE_DIR)/$(EXEC_FILE)
 
-	#sudo hostname -b $(NAME)
+	sudo hostname -b $(NAME)
 
 info:
 	docker ps
