@@ -65,6 +65,10 @@ setup-requirements:
 	sudo docker run hello-world
 
 install:
+	# add user to docker groop to run docker as root
+	sudo groupadd docker
+	sudo usermod -aG docker $USER
+
 	# copy autostart .desktop to home directory
 	mkdir $(AUTO_DIR)
 	cp $(MAKE_DIR)/$(UTILS_DIR)/$(AUTO_FILE) $(AUTO_DIR)/$(AUTO_FILE)
