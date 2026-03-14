@@ -8,17 +8,10 @@
 #include "SerialCommands.hpp"
 #include "MotorConfig.hpp"
 
+#include "TriggerDriver.hpp"
+#include "TriggerConfig.hpp"
+
 #include "Endstop.hpp"
-
-
-namespace TiggerConfig {
-
-  namespace Primary {
-    namespace Pins {
-      static constexpr uint8_t Enable = 3;
-    }
-  }
-}
 
 SoftwareSerial serialPitch(MotorConfig::Pitch::Pins::Rx, MotorConfig::Pitch::Pins::Tx);
 Servo42CDriver motorPitch(serialPitch);
@@ -28,6 +21,8 @@ Servo42CDriver motorYaw(serialYaw);
 
 Endstop endstopPitch(MotorConfig::Pitch::Pins::Endstop);
 Endstop endstopYaw(MotorConfig::Yaw::Pins::Endstop, true);
+
+TriggerDriver triggerPrimary(TiggerConfig::Primary::Pins::Enable, TiggerConfig::Primary::TriggerType, TiggerConfig::Primary::PulseTimeOn, TiggerConfig::Primary::PulseTimeOff);
 
 bool streamEnabled = false;
 uint8_t streamSource = SerialCommands::Motor::Pitch::ReadPosition;
@@ -41,8 +36,6 @@ void setup() {
 
   serialYaw.begin(115200);
   serialPitch.begin(115200);
-
-  pinMode(TiggerConfig::Primary::Pins::Enable, OUTPUT);
   
   motorPitch.setZero(500);
   motorYaw.setZero(500);
@@ -71,10 +64,11 @@ void loop() {
       // serialBuffer = [uint8_t, uint8_t] 
       // serialBuffer = [SerialCommands::Trigger::Primary, Value]
       if (serialBuffer[1]>0) {
-        digitalWrite(TiggerConfig::Primary::Pins::Enable, HIGH);
+        triggerPrimary.setTriggerType(serialBuffer[1]);
+        triggerPrimary.setTrigger(true);
       }
       else {
-        digitalWrite(TiggerConfig::Primary::Pins::Enable, LOW);
+        triggerPrimary.setTrigger(false);
       }
     }
     else if(serialBuffer[0] == SerialCommands::Trigger::Secondary) {
@@ -295,6 +289,8 @@ void loop() {
   if (endstopPitch.isStateChange() && endstopPitch.isTriggered()) {
     motorPitch.stop(); 
   }
+
+  triggerPrimary.run();
 }
 
 void calibratePitch() {
