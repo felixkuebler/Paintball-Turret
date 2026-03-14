@@ -1,4 +1,4 @@
-const color = "#FF0000";
+const color = "#FFFFFF";
 const fontName = "Arial";
 
 const lineWidth = 2;
@@ -6,16 +6,16 @@ const lineWidth = 2;
 const maxDegX = 180;
 const maxDegY = 90;
 
-var fontSize = window.screen.height/100*5;
+var fontSize = window.screen.height/100*4;
 var font = fontSize + "px " + fontName;
 
-var dashLength = window.screen.height/100*5;
+var dashLength = window.screen.height/100*4;
 
 var dashPeddingX= window.screen.height/100*2;
 var dashPeddingY= window.screen.width/100*1;
 
-var numberPeddingX = window.screen.height/100*5;
-var numberPeddingY = window.screen.width/100*2.5;
+var numberPeddingX = window.screen.height/100*4;
+var numberPeddingY = window.screen.width/100*2;
 
 
 function drawInfo(context, info){
@@ -40,8 +40,9 @@ function drawCrosshair(context){
     var horizontalLineLength = width/7;
     var verticalLineLength = height/7;
 
-    var horizontalCrosshairLinelength = horizontalLineLength/5*3;
-    var verticalCrosshairLineLength = verticalLineLength/5*3;
+    var verticalCrosshairLineLength = verticalLineLength/6*3;
+    //var horizontalCrosshairLinelength = horizontalLineLength/5*3;
+    var horizontalCrosshairLinelength = verticalCrosshairLineLength;
 
     context.fillStyle = color;
     context.globalAlpha = 1;
@@ -59,12 +60,12 @@ function drawCrosshair(context){
     context.fillRect(width/5*4-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
 
     //inner frame horizontal lines
-    context.fillRect(width/5*2, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
-    context.fillRect(width-width/5*2-horizontalCrosshairLinelength, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
+    context.fillRect(width/2-horizontalCrosshairLinelength-horizontalCrosshairLinelength/4, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
+    context.fillRect(width/2+horizontalCrosshairLinelength/4, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
 
     //inner frame vertical lines
-    context.fillRect(width/2-lineWidth/2, height/5*2, lineWidth, verticalCrosshairLineLength);
-    context.fillRect(width/2-lineWidth/2, height-height/5*2-verticalCrosshairLineLength, lineWidth, verticalCrosshairLineLength);
+    context.fillRect(width/2-lineWidth/2, height/2-verticalCrosshairLineLength-verticalCrosshairLineLength/4, lineWidth, verticalCrosshairLineLength);
+    context.fillRect(width/2-lineWidth/2, height/2+verticalCrosshairLineLength/4, lineWidth, verticalCrosshairLineLength);
 
     context.stroke();
 }

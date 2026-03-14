@@ -8,37 +8,43 @@
         <title>Turret Control</title>
     </head>
     <body>
-
+        
         <div id="fullScreenDisplay" style="display: none;">
             
-            <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
+            <img id="fullScreenImage" src="{{ url_for('videoFeed') }}">
             <canvas id="fullScreenCanvas"></canvas>
 
         </div>
         
-        <div style="width:80%; height:100%; margin:0 auto;">    
+        <div id="popup" class="hoverPopupBackground">
+            <div class="popup">
+                <img  src="/img/gamepadOverview.png" style="width:100%; margin:0 auto;">
+            </div>
+        </div>
+            
+        <div style="width:90%; height:100%; margin:0 auto;">
+            
             <h1>Turret Web-UI</h1>
             <h2>Control & Feedback</h2>
             <br>
             
-            <div class="container-parent" style="width:100%; height:60%;">
+            <div style="width:100%; height:65%;">
                 
-                <div class="container-child" style="width:55%; height:100%;" >   
+                <div style="height:100%; aspect-ratio:16/9; position:relative; margin:auto">   
 
-                    <div style="width:100%; height:95%;" >   
-                        <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
+                    <div style="width:100%; height:100%; position:absolute;">   
+                        <img src="{{ url_for('videoFeed') }}" style="object-fit: contain; height:100%;">
                     </div>
                     
-       
-                    <div style="width:100%; height:5%;">
+                    <div style="width:100%; height:5%; position:absolute; bottom:0; background: rgba(0, 0, 0, .5); padding:0.5% 0 0.5% 0;">
                         
-                        <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; display: inline-block;">
+                        <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; display:inline-block;">
                             <option value="rgb" selected="selected">RGB</option>
                             <option value="thermalAbs">Thermal (Absolut)</option>
                             <option value="thermalNorm">Thermal (Normalized)</option>
                             <option value="hybrid">Hybrid</option>
                         </select>
-                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left: 5%; vertical-align: middle;" />        
+                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left:3%; vertical-align:middle;" />        
                         <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; display: inline-block;">
                             <option value="grey" selected="selected">Grey</option>
                             <option value="autumn">Autumn</option>
@@ -54,40 +60,26 @@
                             <option value="pink">Pink</option>
                             <option value="hot">Hot</option>
                             <option value="parula">Parula</option>
-                            <option value="magma">Magma</option>
-                            <option value="inferno">Inferno</option>
-                            <option value="plasma">Plasma</option>
-                            <option value="viridis">Viridis</option>
-                            <option value="cividis">Cividis</option>
-                            <option value="twilight">Twilight</option>
-                            <option value="twilightShifted">Twilight Shifted</option>
-                            <option value="turbo">Turbo</option>
-                            <option value="deepGreen">Deep Green</option>
                         </select>
-                        <br>
-                    </div>
-                </div>
-                    
-                <div class="container-child" style="width:40%; height:100%; margin-left:1%;">   
-
-                    <div style="height:40%; margin:0 auto;">   
-                        <div id="armButton" class="button">Arm</div>
                         
-                        <p class="description">
-                            Arm the turret and enter fullscreen mode.<br> 
-                            WARNING! The Safety will be disengaged.<br><br>
-                        </p>
+                        <div id="gamepadConnectedInfoButton" style="height:100%; margin-left:10%; display: inline-block;">
+                            <img  src="/img/gamepadNotConnectedLight.png" style="height:100%; vertical-align:middle;">
+                        </div>
+                        <div id="gamepadInfoButton" style="height:100%; margin-left:10%; display: none;">
+                            <img  src="/img/gamepadInfoLight.png" style="height:100%; vertical-align:middle;">
+                        </div>
+                    
+                        <div id="fullscreenButton" style="height:100%; margin-left:2%; display: inline-block;">
+                            <img  src="/img/fullscreenLight.png" style="height:100%; vertical-align:middle;">
+                        </div>
                     </div>
                     
-                    <div style="height:50%; margin:0 auto;">   
-                        <canvas id="positionCanvasX" style="height:50%; "></canvas>
-                        <canvas id="positionCanvasY" style="height:50%; "></canvas>
-                    </div>
+                    
+                    
                 </div>
-                
             </div>
 
-            <div class="container-parent" style="width:100%; height:38%; margin-top:2%;">
+            <div style="width:100%; height:auto; margin-top:2%;">
                 
                 <div style="margin-left: 10%; margin-right:10%; width:80%;">
                     Pitch
@@ -128,31 +120,7 @@
         </div>
         */
         
-        // <img id="fullScreenImage" src="../static/img/testImage.gif">
-        // <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
-        // <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
-        // <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
-
-        const imageBottomX = new Image();
-        imageBottomX.src = "/img/turretStaticX.png";
-
-        const imageTopX = new Image();
-        imageTopX.src = "/img/turretDynamicX.png";
-
-        const imageBottomY = new Image();
-        imageBottomY.src = "/img/turretDynamicY.png";
-
-        const imageTopY = new Image();
-        imageTopY.src = "/img/turretStaticY.png";
-
-        const imageTopYCamera = new Image();
-        imageTopYCamera.src = "/img/turretDynamicYCamera.png";
-
-
-
         // html objects        
-        const armButton = document.getElementById("armButton");
-
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
         
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
@@ -164,6 +132,15 @@
         const fullScreenDisplay = document.getElementById("fullScreenDisplay");
         const fullScreenImage = document.getElementById("fullScreenImage");
         const fullScreenCanvas = document.getElementById("fullScreenCanvas");
+        
+        const fullscreenButton = document.getElementById("fullscreenButton");
+
+        const gamepadConnectedInfoButton = document.getElementById("gamepadConnectedInfoButton");
+        const gamepadInfoButton = document.getElementById("gamepadInfoButton");
+
+        const popup = document.getElementById("popup");
+        const popupCloseButton = document.getElementById("popupCloseButton");
+
 
         const positionCanvasX = document.getElementById("positionCanvasX");
         const positionCanvasY = document.getElementById("positionCanvasY");
@@ -175,6 +152,11 @@
         var lastPitchSpeed = 0;
         var lastLbButtonPressed = 0;
         var lastRbButtonPressed = 0;
+        var lastUpButtonPressed = 0;
+        var lastDownButtonPressed = 0;
+        var lastRightButtonPressed = 0;
+        var lastLeftButtonPressed = 0;
+        var lastStartButtonPressed = 0;
 
         var triggered = false;
 
@@ -184,7 +166,6 @@
 
         // status if a gamepad is connected
         var gamepadConnected = false;
-
 
         /*
         * Animates the fullscreen display
@@ -209,34 +190,12 @@
                     triggered = false;
                 }
             }
-            else
-            {
+            else {
                 hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
-                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, yawPosFeedback, pitchPosFeedback);
             }
         };
         window.setInterval("refreshAnimations()", 50); 
 
-        /*
-        * Enable fullscreen mode of browser
-        */
-        function requestFullScreen(){
-            if(fullScreenDisplay.webkitRequestFullScreen) {
-                fullScreenDisplay.webkitRequestFullScreen();
-            } else {
-                fullScreenDisplay.mozRequestFullScreen();
-            }
-        }
-
-        /*
-        * Arm button callback (mouse)
-        */
-        function armButtonMouseUpCallback(){
-            requestFullScreen();
-        }
-        armButton.addEventListener("mouseup",armButtonMouseUpCallback);
-
-        
         /* 
         * Camera feed selector callback
         */
@@ -289,9 +248,50 @@
         */
         function gamepadConnectCallback(event){
             gamepadConnected = event.gamepad.connected;
+            
+            if (gamepadConnected) {
+                gamepadConnectedInfoButton.style.display = "none";
+                gamepadInfoButton.style.display = "inline-block";
+            }
+            else {
+                gamepadConnectedInfoButton.style.display = "inline-block";
+                gamepadInfoButton.style.display = "none";
+            }
         }
         window.addEventListener("gamepadconnected", gamepadConnectCallback);
         window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
+
+        /*
+        * Popup open callback
+        */
+        function openPopupCallback(event){
+            popup.style.display = "block";
+        }
+        gamepadInfoButton.addEventListener("mouseup",openPopupCallback);
+        gamepadInfoButton.addEventListener("touchend",openPopupCallback);
+
+        /*
+        * Popup close callback
+        */
+        function closePopupCallback(event){
+            popup.style.display = "none";
+        }
+        popup.addEventListener("mouseup",closePopupCallback);
+        popup.addEventListener("touchend",closePopupCallback);
+
+        /*
+        * Fullscreen enable button callback
+        */
+        function pressFullscreenButtonCallback(event){
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            else {
+                fullScreenDisplay.requestFullscreen();
+            }
+        }
+        fullscreenButton.addEventListener("mouseup",pressFullscreenButtonCallback);
+        fullscreenButton.addEventListener("touchend",pressFullscreenButtonCallback);
 
         /*
         * Control loop
@@ -301,11 +301,22 @@
 
                 var gamepad = navigator.getGamepads()[0];
                 
-                var yawSpeed = gamepad.axes[2] * 100;
+                var axisIdYaw = 2;
+                var axisIdPitch = 3;
+
+                var buttonIdLb = 6;
+                var buttonIdRb = 7;
+                var buttonIdStart = 9;
+                var buttonIdUp= 12;
+                var buttonIdDown= 13;
+                var buttonIdLeft= 14;
+                var buttonIdRight= 15;
+
+                var yawSpeed = gamepad.axes[axisIdYaw] * 100;
                 yawSpeed = Math.abs(yawSpeed) < 5 ? 5 : yawSpeed; // broken stick
                 yawSpeed = parseInt(Math.sign(yawSpeed)*map(Math.abs(yawSpeed), 5, 100, 0, 100 ));
 
-                var pitchSpeed = gamepad.axes[3] * 100;
+                var pitchSpeed = gamepad.axes[axisIdPitch] * 100;
                 pitchSpeed = Math.abs(pitchSpeed) < 5 ? 5 : pitchSpeed; // broken stick
                 pitchSpeed = parseInt(Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
 
@@ -326,7 +337,8 @@
                     httpPostAsync("{{ url_for('control') }}", postString);
                 }
                 
-                var lbButtonPressed = (gamepad.axes[4] > 0.5);
+                // zoom
+                var lbButtonPressed = gamepad.buttons[buttonIdLb].value > 0;
                 if (lbButtonPressed != lastLbButtonPressed) {
                     lastLbButtonPressed = lbButtonPressed;
                     console.log("zoom: %s", lbButtonPressed);
@@ -334,13 +346,69 @@
                     httpPostAsync("{{ url_for('option') }}", postString);
                 }
                 
-                var rbButtonPressed = (gamepad.axes[5] > 0.5);
+                // trigger
+                var rbButtonPressed = gamepad.buttons[buttonIdRb].value > 0;
                 if (rbButtonPressed != lastRbButtonPressed) {
                     lastRbButtonPressed = rbButtonPressed;
                     console.log("trigger: %s", rbButtonPressed);
                     var postString = "{\"trigger\":" + rbButtonPressed + "}";
                     httpPostAsync("{{ url_for('control') }}", postString);
                 }
+                
+                // camera selection
+                var upButtonPressed = gamepad.buttons[buttonIdUp].value
+                if (upButtonPressed != lastUpButtonPressed && upButtonPressed) {
+                    var idx = document.getElementById("cameraFeedSelector").selectedIndex + 1;
+                    if (idx >= document.getElementById("cameraFeedSelector").length) idx = 0;
+                    document.getElementById("cameraFeedSelector").selectedIndex = idx;
+                    document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
+                }
+                lastUpButtonPressed = upButtonPressed;
+                
+                var downButtonPressed = gamepad.buttons[buttonIdDown].value
+                if (downButtonPressed != lastDownButtonPressed && downButtonPressed) {
+                    var idx = document.getElementById("cameraFeedSelector").selectedIndex - 1;
+                    if (idx < 0) idx = document.getElementById("cameraFeedSelector").length-1;
+                    document.getElementById("cameraFeedSelector").selectedIndex = idx;
+                    document.getElementById("cameraFeedSelector").dispatchEvent(new Event('change'));
+                }
+                lastDownButtonPressed = downButtonPressed;
+                
+                // color map selection
+                var rightButtonPressed = gamepad.buttons[buttonIdRight].value
+                if (rightButtonPressed != lastRightButtonPressed && rightButtonPressed) {
+                    var idx = document.getElementById("thermalCameraColorMapSelector").selectedIndex + 1;
+                    if (idx >= document.getElementById("thermalCameraColorMapSelector").length) idx = 0;
+                    document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
+                    document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
+                }
+                lastRightButtonPressed = rightButtonPressed;
+                
+                var leftButtonPressed = gamepad.buttons[buttonIdLeft].value
+                if (leftButtonPressed != lastLeftButtonPressed && leftButtonPressed) {
+                    var idx = document.getElementById("thermalCameraColorMapSelector").selectedIndex - 1;
+                    if (idx < 0) idx = document.getElementById("thermalCameraColorMapSelector").length-1;
+                    document.getElementById("thermalCameraColorMapSelector").selectedIndex = idx;
+                    document.getElementById("thermalCameraColorMapSelector").dispatchEvent(new Event('change'));
+                }
+                lastLeftButtonPressed = leftButtonPressed;
+                
+                var startButtonPressed = gamepad.buttons[buttonIdStart].value
+                if (startButtonPressed != lastStartButtonPressed && startButtonPressed) {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    else {
+                        fullScreenDisplay.requestFullscreen();
+                    }
+                }
+                lastStartButtonPressed = startButtonPressed;
+                                
+                /*
+                for (i = 0; i<gamepad.buttons.length; i++) {
+                    if (gamepad.buttons[i].value) console.log("Button:" + i);
+                }
+                */
             }
         };
         window.setInterval(controlTimeoutCallback, 50); 

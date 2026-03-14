@@ -29,7 +29,7 @@ class RgbCamera():
         
             frame = frame[int(height/4):int(height*3/4), int(width/4):int(width*3/4)]
             
-        frame = cv2.resize(frame, (640, 480))
+        frame = cv2.resize(frame, (854, 480))
         
         return ret, frame
         
