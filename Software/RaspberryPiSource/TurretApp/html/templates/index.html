@@ -269,7 +269,7 @@
         */
         function yawPositionInputChangeCallback(event){
             var postString = "{\"yawPos\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
+            httpPostAsync("{{ url_for('control') }}", postString);
         }
         yawPositionInput.addEventListener("mouseup",yawPositionInputChangeCallback);
         yawPositionInput.addEventListener("touchend",yawPositionInputChangeCallback);
@@ -279,7 +279,7 @@
         */
         function pitchPositionInputChangeCallback(event){
             var postString = "{\"pitchPos\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
+            httpPostAsync("{{ url_for('control') }}", postString);
         }
         pitchPositionInput.addEventListener("mouseup",pitchPositionInputChangeCallback);
         pitchPositionInput.addEventListener("touchend",pitchPositionInputChangeCallback);
@@ -313,17 +313,17 @@
                     lastYawSpeed = yawSpeed;
                     lastPitchSpeed = pitchSpeed;
                     var postString = "{\"yawSpeed\":" + yawSpeed + ",\"pitchSpeed\":" + -pitchSpeed + "}";
-                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                    httpPostAsync("{{ url_for('control') }}", postString);
                 }
                 else if (yawSpeed != lastYawSpeed){
                     lastYawSpeed = yawSpeed;
                     var postString = "{\"yawSpeed\":" + yawSpeed + "}";
-                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                    httpPostAsync("{{ url_for('control') }}", postString);
                 }
                 else if (pitchSpeed != lastPitchSpeed){
                     lastPitchSpeed = pitchSpeed;
                     var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
-                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                    httpPostAsync("{{ url_for('control') }}", postString);
                 }
                 
                 var lbButtonPressed = (gamepad.axes[4] > 0.5);

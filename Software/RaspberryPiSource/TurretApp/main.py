@@ -48,8 +48,8 @@ def video_feed():
     return Response(getFrame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
-@app.route('/controlle', methods=['POST'])
-def controlle():
+@app.route('/control', methods=['POST'])
+def control():
     # Mouse movement handling routine
     data = json.loads(request.data)
 
@@ -59,17 +59,21 @@ def controlle():
     if 'pitchPos' in data:
         serial.motorPitchWritePositionAbsolute(-int(data['pitchPos']))
 
-    if 'yawSpeed' in data:
-        serial.motorYawWriteSpeed(-int(data['yawSpeed']))
-
-    if 'pitchSpeed' in data:
-        serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
+    if ('pitchSpeed' in data) and ('yawSpeed' in data):
+        serial.motorWriteSpeed(-int(data['pitchSpeed']), -int(data['yawSpeed']))
+        
+    else:
+        
+        if 'pitchSpeed' in data:
+            serial.motorPitchWriteSpeed(-int(data['pitchSpeed']))
+            
+        if 'yawSpeed' in data:
+            serial.motorYawWriteSpeed(-int(data['yawSpeed']))
 
     if 'trigger' in data:
-        pass
-        #turr.trigger()
+        serial.triggerPrimary(int(data['trigger']))
 
-    return Response("controlle_response", status=200, mimetype='text/html')
+    return Response("control_response", status=200, mimetype='text/html')
 
 
 @app.route('/option', methods=['POST'])
