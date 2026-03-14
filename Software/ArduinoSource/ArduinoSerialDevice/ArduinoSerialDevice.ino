@@ -134,8 +134,8 @@ void loop() {
       // check if an endstop was triggered
       // the rpm is invers to the angle -> angle > 0 & rmp > 0
       if (  !endstopPitch.isTriggered() ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpm > 0) ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpm < 0) ) {
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpm < 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpm > 0) ) {
         motorPitch.moveSpeed(rpm); 
       }
       else {
@@ -224,8 +224,8 @@ void loop() {
       // check if an endstop was triggered
       // the rpm is invers to the angle -> angle > 0 & rmp > 0
       if (  !endstopPitch.isTriggered() ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpmPitch > 0) ||
-            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpmPitch < 0) ) {
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpmPitch < 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpmPitch > 0) ) {
         motorPitch.moveSpeed(rpmPitch); 
       }
       else {
@@ -377,12 +377,17 @@ void calibrateYaw() {
   // map to max range of speed
   int16_t rpm = map(calibrationSpeed, -100, 100, -1 * MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio);
 
-  // start moving int max direction
-  motorYaw.moveSpeed(rpm);
+  // read endstop until it is triggered
+  endstopYaw.read();
+
+  // only start moving if currently not in endstop position
+  // otherwise the stop function is called too fast and is not executed correctly
+  if (!endstopYaw.isTriggered()) {
+    // start moving in max direction
+     motorYaw.moveSpeed(rpm);
+  }
 
   // read endstop until it is triggered
-  // this requires the turret to be in a neutral position at start
-  endstopYaw.read();
   while(!endstopYaw.isTriggered()) {
     endstopYaw.read();
   }
