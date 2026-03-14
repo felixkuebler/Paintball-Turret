@@ -76,6 +76,13 @@ def controlle():
 def option():
     data = json.loads(request.data)
 
+    if 'setCameraZoom' in data:
+        
+        if data['setCameraZoom'] == 'true':
+            cam.setCameraZoom(True)
+        else:
+            cam.setCameraZoom(False)
+            
     if 'setCameraFeed' in data:
 
         if data['setCameraFeed'] == 'rgb':
