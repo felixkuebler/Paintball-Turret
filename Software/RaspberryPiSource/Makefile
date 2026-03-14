@@ -12,7 +12,7 @@ NAME ?= turretServer
 INTERNAL_PORT ?= 5000
 EXTERNAL_PORT ?= 80
 
-all: build run
+all: run
 
 # Build Docker File
 build:
