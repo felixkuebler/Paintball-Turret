@@ -1,7 +1,5 @@
 namespace SerialCommands {
 
-  static constexpr uint8_t SyncWord = '#';
-  
   namespace Trigger {
     static constexpr uint8_t Primary = 1;
     static constexpr uint8_t Secondary = 2;
@@ -28,4 +26,7 @@ namespace SerialCommands {
     static constexpr uint8_t WriteSpeed = 32;
     static constexpr uint8_t ReadPosition = 33;
   }
+
+  static constexpr uint8_t EnableDataStream = 40;
+  static constexpr uint8_t SyncWord = '#';
 }
