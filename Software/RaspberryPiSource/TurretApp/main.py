@@ -53,13 +53,11 @@ def getPosition():
 
 @app.route('/')
 def index():
-    # Video streaming home page.
     return render_template('index.html')
 
 
 @app.route('/videoFeed')
 def videoFeed():
-    # Video streaming route. Put this in the src attribute of an img tag.
     return Response(getFrame(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 

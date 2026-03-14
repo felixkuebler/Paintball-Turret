@@ -3,7 +3,10 @@ import cv2
 class RgbCamera():
 
     def __init__(self, device=0):
-        self.capture=cv2.VideoCapture(device)
+        self.capture = cv2.VideoCapture(device)
+        
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 
     def __del__(self):
@@ -19,28 +22,9 @@ class RgbCamera():
         return self.capture.read()
         
 
-    def read(self, zoomEnabled=False):
+    def read(self):
         ret, frame = self.readRaw()
-        
-        width  = self.capture.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height = self.capture.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        
-        # TODO configurable offsets
-        
-        offsetX = -10
-        offsetY = 40
-            
-        frame = frame[int(offsetY if offsetY > 0 else 0):int(height+offsetY if offsetY <= 0 else height), int(offsetX if offsetX > 0 else 0):int(width+offsetX if offsetX <= 0 else width)]
-        
-        width = width-abs(offsetX)
-        height = height-abs(offsetY)
-        
-        if (zoomEnabled):
-        
-            frame = frame[int(height/4):int(height*3/4), int(width/4):int(width*3/4)]
-            
-        frame = cv2.resize(frame, (854, 480))
-        
+                
         return ret, frame
         
 

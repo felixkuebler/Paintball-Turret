@@ -144,9 +144,7 @@ class ThermalCamera:
 				return False
 				
 			ioctl(self.fd, v4l2.VIDIOC_STREAMON, v4l2.v4l2_buf_type(v4l2.V4L2_BUF_TYPE_VIDEO_CAPTURE))
-			
-			self.rawFrame = None
-			
+						
 			# reset the fault variables
 			self.faultDetected = False
 			self.numConsecutiveFaults = 0
@@ -221,8 +219,6 @@ class ThermalCamera:
 		# convert to 8 bit image
 		rgbFrame = (rgbFrame/256).astype('uint8')
 
-		rgbFrame = cv2.resize(rgbFrame, (854, 480))
-
 		return ret, rgbFrame
 
 
@@ -247,8 +243,6 @@ class ThermalCamera:
 
 		# convert to 8 bit image
 		rgbFrame = (rgbFrame/256).astype('uint8')
-
-		rgbFrame = cv2.resize(rgbFrame, (854, 480))
 
 		return ret, rgbFrame
 
