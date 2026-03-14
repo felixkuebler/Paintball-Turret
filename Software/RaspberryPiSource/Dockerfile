@@ -20,10 +20,12 @@ RUN apt-get install -y python3-pip
 RUN apt-get install -y python3-flask
 RUN apt-get install -y python3-opencv
 RUN apt-get install -y v4l-utils
+RUN apt-get install -y libv4l-dev
 RUN apt-get install -y locales
 
 RUN pip3 install pyserial
 RUN pip3 install numpy
+RUN pip3 install v4l2-python3
 
 COPY ./TurretApp .
 
