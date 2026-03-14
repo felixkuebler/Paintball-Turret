@@ -22,7 +22,6 @@ function drawInfo(context, info){
     context.stroke();
 }
 
-
 function drawCrosshair(context){
 
     var width = context.canvas.width;
@@ -32,7 +31,6 @@ function drawCrosshair(context){
     var verticalLineLength = height/7;
 
     var verticalCrosshairLineLength = verticalLineLength/6*3;
-    //var horizontalCrosshairLinelength = horizontalLineLength/5*3;
     var horizontalCrosshairLinelength = verticalCrosshairLineLength;
 
     context.fillStyle = color;
@@ -41,16 +39,16 @@ function drawCrosshair(context){
     context.globalAlpha = 1;
 
     //outer frame horizontal lines
-    context.fillRect(width/5, height/5-lineWidth/2, horizontalLineLength, lineWidth);
-    context.fillRect(width-width/5-horizontalLineLength, height/5-lineWidth/2, horizontalLineLength, lineWidth);
-    context.fillRect(width/5, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
-    context.fillRect(width-width/5-horizontalLineLength, height/5*4-lineWidth/2, horizontalLineLength, lineWidth);
+    context.fillRect(width/5, height/5, horizontalLineLength, lineWidth);
+    context.fillRect(width-width/5-horizontalLineLength, height/5, horizontalLineLength, lineWidth);
+    context.fillRect(width/5, height/5*4, horizontalLineLength, lineWidth);
+    context.fillRect(width-width/5-horizontalLineLength, height/5*4, horizontalLineLength, lineWidth);
 
     //outer frame vertical lines
-    context.fillRect(width/5-lineWidth/2, height/5, lineWidth, verticalLineLength);
-    context.fillRect(width/5-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
-    context.fillRect(width/5*4-lineWidth/2, height/5, lineWidth, verticalLineLength);
-    context.fillRect(width/5*4-lineWidth/2, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
+    context.fillRect(width/5, height/5, lineWidth, verticalLineLength);
+    context.fillRect(width/5, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
+    context.fillRect(width/5*4-lineWidth, height/5, lineWidth, verticalLineLength);
+    context.fillRect(width/5*4-lineWidth, height-height/5-verticalLineLength, lineWidth, verticalLineLength);
 
     //inner frame horizontal lines
     context.fillRect(width/2-horizontalCrosshairLinelength-horizontalCrosshairLinelength/4, height/2-lineWidth/2, horizontalCrosshairLinelength, lineWidth);
@@ -69,11 +67,32 @@ function drawCrosshair(context){
 
     context.moveTo(startX, starty);
     context.bezierCurveTo(startX, starty, endX/2, starty, endX, endY);
-
-
+    
     context.stroke();
 }
 
+function drawCrosshairInfo(context, cameraFeed, triggerMode){
+    
+    var width = context.canvas.width;
+    var height = context.canvas.height;
+    
+    var horizontalLineLength = width/7;
+
+    var fontSize = height/100*3;
+    var font = fontSize + "px " + fontName;
+    
+    context.globalAlpha = 1;
+    context.font = font;
+    context.textAlign = "left";
+    
+    context.textBaseline = "bottom";
+    context.fillText(cameraFeed, width/5, height/5-lineWidth);
+    
+    context.textBaseline = "top";
+    context.fillText(triggerMode, width-width/5-horizontalLineLength, height/5*4+lineWidth);
+    
+    context.stroke();
+}
 
 function drawPositionFeedbackFullScreen(context, yawAngle, pitchAngle){
 
