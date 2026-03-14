@@ -36,8 +36,7 @@ function hideFullScreenElements(container, image, canvas) {
 function httpGetAsync(url, request, data, callback){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
+        callback(xmlHttp.responseText);
     }
     xmlHttp.open("GET", url + "?" + request, true); // true for asynchronous 
     xmlHttp.send(data);

@@ -3,8 +3,8 @@ const fontName = "Arial";
 
 const lineWidth = 2;
 
-const maxDegX = 180;
-const maxDegY = 90;
+const maxDegYaw = 720;
+const maxDegPitch = 90;
 
 var fontSize = window.screen.height/100*4;
 var font = fontSize + "px " + fontName;
@@ -71,19 +71,22 @@ function drawCrosshair(context){
 }
 
 
-function drawPositionFeedbackFullScreen(context, xPos, yPos){
+function drawPositionFeedbackFullScreen(context, yawAngle, pitchAngle){
 
     var width = context.canvas.width;
     var height = context.canvas.height;
 
-    var widthDeg = width/maxDegX;
+    var widthDeg = 4*width/maxDegYaw;
 
     context.fillStyle = color;
     context.globalAlpha = 1;
 
-    for(i=0; i<=maxDegX; i+=5){
+    // add offset to repeat the number pattern infinite
+    yawAngle -= maxDegYaw/2 * Math.trunc((yawAngle+Math.sign(yawAngle)*maxDegYaw/4)/(maxDegYaw/2));
+    
+    for(i=0; i<=maxDegYaw; i+=5){
 
-        var positionShift = width/2+((i-(xPos+maxDegX/2))*widthDeg);
+        var positionShift = width/2+((i-(yawAngle+maxDegYaw/2))*widthDeg);
 
         // only draw if within range of crosshair
         if (positionShift > width/5 && positionShift < width/5*4){
@@ -94,15 +97,24 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
             alphaValue = (40/alphaValue);
             if (alphaValue>1) alphaValue = 1;
 
-
             context.globalAlpha = alphaValue;
 
-            if ((i-maxDegX/2)%10 == 0){
+            if ((i-maxDegYaw/2)%10 == 0){
                 context.fillRect(positionShift-lineWidth/2, dashPeddingX, lineWidth, dashLength);
 
                 context.font = font;
                 context.textAlign = "center";
-                context.fillText(i-maxDegX/2, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+               
+                if (i > 3*maxDegYaw/4) {
+                    context.fillText(i-maxDegYaw, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+                }
+                else if (i < maxDegYaw/4) {
+                    context.fillText(i, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+                }
+                else {
+                    context.fillText(i-maxDegYaw/2, positionShift, dashPeddingX+dashLength+numberPeddingX); 
+                }
+                                
             } else {
                 context.fillRect(positionShift-lineWidth/2, dashPeddingX, lineWidth, dashLength/3*2);
             }
@@ -118,9 +130,9 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     context.fill(path);
 
 
-    for(i=0; i<=maxDegY; i+=5){
+    for(i=0; i<=maxDegPitch; i+=5){
 
-        var positionShift = height/2+((i-(yPos+maxDegY/2))*widthDeg);
+        var positionShift = height/2+((i-(pitchAngle+maxDegPitch/2))*widthDeg);
 
         // only draw if within range of crosshair
         if (positionShift > height/5 && positionShift < height/5*4){
@@ -133,12 +145,12 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
 
             context.globalAlpha = alphaValue;
 
-            if ((i-maxDegY/2)%10 == 0){
+            if ((i-maxDegPitch/2)%10 == 0){
                 context.fillRect(width-dashPeddingY-dashLength, positionShift-lineWidth/2, dashLength, lineWidth);
 
                 context.font = font;
                 context.textAlign = "center";
-                context.fillText(maxDegY/2-i, width-dashPeddingY-dashLength-numberPeddingY, positionShift+fontSize/3); 
+                context.fillText(maxDegPitch/2-i, width-dashPeddingY-dashLength-numberPeddingY, positionShift+fontSize/3); 
             } else {
                 context.fillRect(width-dashPeddingY-dashLength+dashLength/3, positionShift-lineWidth/2, dashLength/3*2, lineWidth);
             }

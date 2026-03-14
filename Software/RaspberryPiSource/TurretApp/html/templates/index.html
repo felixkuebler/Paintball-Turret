@@ -224,7 +224,7 @@
         thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
-        * Position range input callback (x)
+        * Yaw Position range input callback
         */
         function yawPositionInputChangeCallback(event){
             var postString = "{\"yawPos\":" + event.target.value + "}";
@@ -234,7 +234,7 @@
         yawPositionInput.addEventListener("touchend",yawPositionInputChangeCallback);
 
         /* 
-        * Position range input callback (y)
+        * Pitch Position range input callback
         */
         function pitchPositionInputChangeCallback(event){
             var postString = "{\"pitchPos\":" + event.target.value + "}";
@@ -414,19 +414,22 @@
         window.setInterval(controlTimeoutCallback, 50); 
 
         /*
-        * Timed Position feedback poll
-        * - get request
+        * Position feedback stream
+        * - get request to activate stream
         * - response callback
         */
-        function refreshPosition(){
-            httpGetAsync("{{ url_for('feedback') }}", "position=1", null, positionCallback)
+        function positionCallback(response){
+            if (response) {
+                var lines = response.split('\n');
+                lastLine = lines.length - 2
+            
+                var responseObj = JSON.parse(lines[lastLine]);
+                pitchPosFeedback = -1*parseFloat(responseObj.pitchPos);
+                yawPosFeedback = -1*parseFloat(responseObj.yawPos);
+                //console.log("Feedback Pitch: %s | Yaw: %s", pitchPosFeedback, yawPosFeedback)
+            }
         };
-        function positionCallback(response){        
-            var responseObj = JSON.parse(response);
-            yawPosFeedback = parseFloat(responseObj.yawPos);
-            pitchPosFeedback = parseFloat(responseObj.pitchPos);
-        };
-        window.setInterval("refreshPosition()", 200); 
+        httpGetAsync("{{ url_for('positionFeed') }}", "", "", positionCallback);
 
 
     </script>
