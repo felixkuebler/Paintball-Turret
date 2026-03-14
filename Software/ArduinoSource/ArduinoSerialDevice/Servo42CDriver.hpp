@@ -31,6 +31,7 @@ private:
   uint8_t stepsPerRevolution = 200;
 
   double encoderZeroOffset = 0;
+  double cachedAngle = 0;
 
 public:
 
@@ -44,6 +45,16 @@ public:
     microStep(16),
     stepsPerRevolution(200) {}
 
+  /**
+   * Getter function for the cached angle
+   * This angle member variable is updated when a readAngle call was issued.
+   * 
+   * @return the value of the last cached angle
+   */
+  double Servo42CDriver::getCachedAngle() {
+    return cachedAngle;
+  }
+  
   /**
    * Sets the local encoder offset vartibale to the current encoder position.
    * This is used for the moveAngleAbsolute function that is relative to this offset.
@@ -78,6 +89,9 @@ public:
     // apply offset
     angle = encoderAngle-this->encoderZeroOffset;
 
+    // update cached angle
+    cachedAngle = angle;
+    
     return responseResult;
   }
 
@@ -295,7 +309,7 @@ protected:
 
     uint32_t speed = (int32_t)abs(rpm)*this->microStep*this->stepsPerRevolution/30000;
     speed &= 0b01111111;
-    speed = rpm<0 ? (speed | 0b10000000) : speed;
+    speed = rpm>0 ? (speed | 0b10000000) : speed;
 
     uint8_t cmdLen = 2;
     uint8_t cmd[cmdLen] = {this->UartCommands::MoveSpeed, (uint8_t)speed};

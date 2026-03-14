@@ -8,6 +8,8 @@
 #include "SerialCommands.hpp"
 #include "MotorConfig.hpp"
 
+#include "Endstop.hpp"
+
 
 namespace TiggerConfig {
 
@@ -18,11 +20,14 @@ namespace TiggerConfig {
   }
 }
 
-SoftwareSerial serialPitch(11, 12);
+SoftwareSerial serialPitch(MotorConfig::Pitch::Pins::Rx, MotorConfig::Pitch::Pins::Tx);
 Servo42CDriver motorPitch(serialPitch);
 
-SoftwareSerial serialYaw(6, 7);
+SoftwareSerial serialYaw(MotorConfig::Yaw::Pins::Rx, MotorConfig::Yaw::Pins::Tx);
 Servo42CDriver motorYaw(serialYaw);
+
+Endstop endstopPitch(MotorConfig::Pitch::Pins::Endstop);
+Endstop endstopYaw(MotorConfig::Yaw::Pins::Endstop, true);
 
 bool streamEnabled = false;
 uint8_t streamSource = SerialCommands::Motor::Pitch::ReadPosition;
@@ -126,7 +131,16 @@ void loop() {
       // map to max range of speed
       int16_t rpm = map(speed, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
 
-      motorPitch.moveSpeed(rpm); 
+      // check if an endstop was triggered
+      // the rpm is invers to the angle -> angle > 0 & rmp > 0
+      if (  !endstopPitch.isTriggered() ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpm > 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpm < 0) ) {
+        motorPitch.moveSpeed(rpm); 
+      }
+      else {
+        motorPitch.stop(); 
+      }
     }
     else if(serialBuffer[0] == SerialCommands::Motor::Yaw::WriteSpeed) {
       // Set motor yaw speed
@@ -186,6 +200,14 @@ void loop() {
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
+    else if(serialBuffer[0] == SerialCommands::Motor::Pitch::Calibrate){
+      // Trigger pitch calibration
+      calibratePitch();
+    }
+    else if(serialBuffer[0] == SerialCommands::Motor::Yaw::Calibrate){
+      // Trigger yaw calibration
+      calibrateYaw();
+    }
     else if(serialBuffer[0] == SerialCommands::Motor::WriteSpeed) {
       // Set motor speed for both axis
       // serialBuffer = [uint8_t, int16_t, int16_t] 
@@ -199,8 +221,17 @@ void loop() {
       // map to max range of speed
       int16_t rpmPitch = map(speedPitch, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
 
-      motorPitch.moveSpeed(rpmPitch); 
-
+      // check if an endstop was triggered
+      // the rpm is invers to the angle -> angle > 0 & rmp > 0
+      if (  !endstopPitch.isTriggered() ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() > 0 && rpmPitch > 0) ||
+            (endstopPitch.isTriggered() && motorPitch.getCachedAngle() < 0 && rpmPitch < 0) ) {
+        motorPitch.moveSpeed(rpmPitch); 
+      }
+      else {
+        motorPitch.stop(); 
+      }
+      
       speedYaw = speedYaw > 100 ? speedYaw = 100 : speedYaw;
       speedYaw = speedYaw < -100 ? speedYaw = -100 : speedYaw;
       
@@ -258,5 +289,115 @@ void loop() {
       // send message
       Serial.write((char*)outputBuffer, sizeof(outputBuffer));
     }
+  }
+
+  endstopPitch.read();
+  if (endstopPitch.isStateChange() && endstopPitch.isTriggered()) {
+    motorPitch.stop(); 
+  }
+}
+
+void calibratePitch() {
+
+  const int16_t calibrationSpeed = 50;
+  double angleMin = 0;
+  double angleMax = 0;
+
+  bool readSuccess = true;
+  
+  // map to max range of speed
+  int16_t rpm = map(calibrationSpeed, -100, 100, -1 * MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::MaxRpm * MotorConfig::Pitch::GearRatio);
+
+  // start moving int max direction
+  motorPitch.moveSpeed(rpm);
+
+  // read endstop until it is triggered
+  // this requires the turret to be in a neutral position at start
+  endstopPitch.read();
+  while(!endstopPitch.isTriggered()) {
+    endstopPitch.read();
+  }
+
+  // stop the motion as soon as max endstop was triggered
+  motorPitch.stop();
+
+  // delay is required before the read command
+  // otherwise the read will fail because the motor controller is still buisy with stopping
+  delay(500);
+
+  // read the max endstop position
+  readSuccess &= motorPitch.readAngle(angleMax, 500);
+  angleMax /=  MotorConfig::Pitch::GearRatio;
+
+  // start moving into min direction
+  motorPitch.moveSpeed(-rpm);
+
+  // read endstop until it is not triggered anymore
+  endstopPitch.read();
+  while(endstopPitch.isTriggered()) {
+    endstopPitch.read();
+  }
+  // read endstop until its triggered
+  while(!endstopPitch.isTriggered()) {
+    endstopPitch.read();
+  }
+
+  // stop the motion as soon as minmax endstop was triggered
+  motorPitch.stop();
+
+  // delay is required before the read command
+  // otherwise the read will fail because the motor controller is still buisy with stopping
+  delay(500);
+
+  // read min endstop position
+  readSuccess &= motorPitch.readAngle(angleMin, 500);
+  angleMin /=  MotorConfig::Pitch::GearRatio;
+
+  // calculate center from both endstop positions
+  double center = (angleMax-angleMin)/2;
+
+  // only set new zero position if the calculation of the position wasnt currupted by faulty readouts
+  if (readSuccess) {
+    // moce the pitch axis to the center
+    // this requires the pitch axis to behave symmetrically
+    motorPitch.moveAngleRelative(center * MotorConfig::Pitch::GearRatio, MotorConfig::Pitch::Rpm * MotorConfig::Pitch::GearRatio, 500); 
+    
+    // set zero position to this location
+    motorPitch.setZero(500);
+  }
+  
+}
+
+void calibrateYaw() {
+  
+  const int16_t calibrationSpeed = 50;
+
+  bool readSuccess = true;
+  
+  // map to max range of speed
+  int16_t rpm = map(calibrationSpeed, -100, 100, -1 * MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio, MotorConfig::Yaw::MaxRpm * MotorConfig::Yaw::GearRatio);
+
+  // start moving int max direction
+  motorYaw.moveSpeed(rpm);
+
+  // read endstop until it is triggered
+  // this requires the turret to be in a neutral position at start
+  endstopYaw.read();
+  while(!endstopYaw.isTriggered()) {
+    endstopYaw.read();
+  }
+
+  // stop the motion as soon as endstop was triggered
+  motorYaw.stop();
+
+  // delay is required before the read command
+  // otherwise the read will fail because the motor controller is still buisy with stopping
+  delay(500);
+
+    // only set new zero position if the calculation of the position wasnt currupted by faulty readouts
+  if (readSuccess) {
+
+    // set zero position to this location
+    motorYaw.setZero(500);
   }
 }
