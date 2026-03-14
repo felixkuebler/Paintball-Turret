@@ -18,34 +18,6 @@ var numberPeddingX = window.screen.height/100*5;
 var numberPeddingY = window.screen.width/100*2.5;
 
 
-function accomodateMobileRotation() {
-    if (window.screen.height < window.screen.width){
-
-        fontSize = window.screen.height/100*5;
-        font = fontSize + "px " + fontName;
-
-        dashLength = window.screen.height/100*5;
-
-        dashPeddingX= window.screen.height/100*2;
-        dashPeddingY= window.screen.width/100*1;
-
-        numberPeddingX = window.screen.height/100*5;
-        numberPeddingY = window.screen.width/100*2.5;
-    } else {
-        fontSize = window.screen.width/100*5;
-        font = fontSize + "px " + fontName;
-
-        dashLength = window.screen.width/100*5;
-
-        dashPeddingX= window.screen.width/100*2;
-        dashPeddingY= window.screen.height/100*1;
-
-        numberPeddingX = window.screen.width/100*5;
-        numberPeddingY = window.screen.height/100*2.5;
-    }
-}
-
-
 function drawInfo(context, info){
 
     var width = context.canvas.width;
@@ -181,61 +153,4 @@ function drawPositionFeedbackFullScreen(context, xPos, yPos){
     context.fill(path);
 
     context.stroke();
-}
-
-
-function drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPos, yPos)
-{
-    var contextX = positionCanvasX.getContext('2d');
-
-    // get scaled canvas from image size
-    var canvasScale = imageBottomX.naturalHeight/imageBottomX.naturalWidth;
-    positionCanvasX.height = positionCanvasX.width*canvasScale;
-
-    contextX.drawImage(imageBottomX, 0, 0, positionCanvasX.width, positionCanvasX.height);
-    drawRotatedImage(contextX, imageTopX, 36, 0, positionCanvasX.width, positionCanvasX.height, xPos);
-
-
-    var contextY = positionCanvasY.getContext('2d');
-
-    // get scaled canvas from image size
-    var canvasScale = imageTopY.naturalHeight/imageTopY.naturalWidth;
-    var imageHeight = positionCanvasY.width*canvasScale;
-    positionCanvasY.height = positionCanvasY.width*canvasScale/2*3;
-
-    drawRotatedImage(contextY, imageBottomY, 25, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos);
-    contextY.drawImage(imageTopY, 0, imageHeight/2, positionCanvasY.width, imageHeight); 
-    drawRotatedImage(contextY, imageTopYCamera, 35, imageHeight/2 -80, positionCanvasY.width, imageHeight, yPos);
-}
-
-
-function drawTriggerToggle(context){
-    var width = context.canvas.width;
-    var height = context.canvas.height;
-
-    context.strokeStyle = color;
-
-    context.moveTo(width/2-15, height/2-10);
-    context.lineTo(width/2-35, height/2-20);
-
-    context.moveTo(width/2+15, height/2-10);
-    context.lineTo(width/2+35, height/2-20);
-
-    context.moveTo(width/2-15, height/2+10);
-    context.lineTo(width/2-35, height/2+20);
-
-    context.moveTo(width/2+15, height/2+10);
-    context.lineTo(width/2+35, height/2+20);
-
-    context.stroke();
-}
-
-
-function drawRotatedImage(context, image, x, y, w, h, degrees){
-    context.save();
-    context.translate(x+w/2, y+h/2);
-    context.rotate(degrees*Math.PI/180.0);
-    context.translate(-x-w/2, -y-h/2);
-    context.drawImage(image, x, y, w, h);
-    context.restore();
 }

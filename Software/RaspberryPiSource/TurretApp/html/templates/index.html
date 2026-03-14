@@ -10,62 +10,36 @@
     <body>
 
         <div id="fullScreenDisplay" style="display: none;">
+            
             <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
             <canvas id="fullScreenCanvas"></canvas>
 
-            <div id="joystickBase" style="position: absolute;">
-                <img src="/img/joystickBase.png" style="width:100%;"/>
-            </div>
-            <div id="joystickKnob" style="position: absolute;">
-                <img src="/img/joystickRed.png" style="width:100%;"/>        
-            </div>
-
         </div>
+        
+        <div style="width:80%; height:100%; margin:0 auto;">    
+            <h1>Turret Web-UI</h1>
+            <h2>Control & Feedback</h2>
+            <br>
+            
+            <div class="container-parent" style="width:100%; height:60%;">
+                
+                <div class="container-child" style="width:55%; height:100%;" >   
 
-        <div class="container-parent">
-
-            <div class="container-parent container-child" style="width:59%; height:100%; position: fixed;">
-                <h2>Image & Position Feedback</h2>
-                <div class="container-child" style="width:70%; height:100%;" >   
-                    <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
-                </div>
-                <div class="container-child" style="width:28%; height:100%; margin-left:2%;">   
-                    <canvas id="positionCanvasX" style="width:100%; "></canvas>
-                    <canvas id="positionCanvasY" style="width:100%; "></canvas>
-                </div>
-            </div>
-
-            <div class="container-child" style="width:39%; height:100%; margin-left:61%;">
-                <h2>Control</h2>
-                <div>
-
-                    <h3>Activate</h3>
-                    <hr>
-                    <div id="armButton" class="button">Arm</div>
-                    <p class="description">
-                        Arm the turret and enter fullscreen mode.<br> 
-                        WARNING! The Safety will be disengaged.<br><br>
-                        On PC: Use arrow keys for motion control and space bar to trigger. <br>
-                        (trigger control is only enabled in fullscreen mode)<br><br>
-                        On Mobile: Use screen corners for motion control and screen center to trigger.<br>
-                        (top-left = right, bottom-left = left, top-right = up, bottom-right = down)<br>
-                        (all controls are only enabled in fullscreen mode)</p>
-
-                    <h3>Camera Feed</h3>
-                    <hr>
-                    <div style="margin-left: 5%; margin-right:5%; width:90%">
-                        <h4>Camera Input</h4>
-                        <select name="cameraFeedSelector" id="cameraFeedSelector">
+                    <div style="width:100%; height:95%;" >   
+                        <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
+                    </div>
+                    
+       
+                    <div style="width:100%; height:5%;">
+                        
+                        <select name="cameraFeedSelector" id="cameraFeedSelector" style="height:100%; display: inline-block;">
                             <option value="rgb" selected="selected">RGB</option>
                             <option value="thermalAbs">Thermal (Absolut)</option>
                             <option value="thermalNorm">Thermal (Normalized)</option>
                             <option value="hybrid">Hybrid</option>
                         </select>
-                        <br>
-
-                        <h4>Thermal Camera Color Map</h4>
-                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="vertical-align: middle;" />        
-                        <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector">
+                        <img id="thermalCameraColorMapDisplay" src="/img/colorscaleGrey.jpg" style="height:100%; margin-left: 5%; vertical-align: middle;" />        
+                        <select name="thermalCameraColorMapSelector" id="thermalCameraColorMapSelector" style = "height:100%; display: inline-block;">
                             <option value="grey" selected="selected">Grey</option>
                             <option value="autumn">Autumn</option>
                             <option value="bone">Bone</option>
@@ -91,199 +65,79 @@
                             <option value="deepGreen">Deep Green</option>
                         </select>
                         <br>
-
-                       
-
-
-                        <p class="description">
-                            Select the type of camera feed and the color map for thermal imaging.
-                        </p>
                     </div>
-
-                    <h3>Motion (Speed)</h3>
-                    <hr>
-                    <div style="margin-left: 5%; margin-right:5%; width:90%">
-                        X%
-                        <input type="range" id="xSpeedInput" min="-100" max="100">
-                        <div id="tickmarks">
-                            <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                            <p>0</p>
-                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
-                        </div>
-                        <br>
-                        Y%
-                        <input type="range" id="ySpeedInput" min="-100" max="100">
-                        <div id="tickmarks">
-                            <p>-100</p><p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                            <p>0</p>
-                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p><p>100</p>
-                        </div>
-                        <br>
-                        <p class="description">
-                            Manually set speed of X or Y axis. (-100% to 100%)
-                        </p>
-                    </div>
-
-                    <h3>Motion (Position)</h3>
-                    <hr>
-                    <div style="margin-left: 5%; margin-right:5%; width:90%">
-                        X°
-                        <input type="range" id="xPositionInput" min="-90" max="90">
-                        <div id="tickmarks">
-                            <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                            <p>0</p>
-                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
-                        </div>
-                        <br>
-                        Y°
-                        <input type="range" id="yPositionInput" min="-50" max="50">
-                        <div id="tickmarks">
-                            <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
-                            <p>0</p>
-                            <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
-                        </div>
-                        <br>
-                        <p class="description">
-                            Manually set position of X or Y axis.</br>
-                            For X axis -90° to 90°. For Y axis -45° to 45°.
-                        </p>
-                    </div>
-
-
-                    <h3>Calibrate</h3>
-                    <hr>
-                    <div id="resetButtonX" class="button">Reset X</div> 
-                    <div id="resetButtonY" class="button">Reset Y</div> 
-                    <p class="description">
-                        Reset X or Y axis position to 0.<br>
-                        This is used for rehomeing the device.
-                    </p>
                 </div>
+                    
+                <div class="container-child" style="width:40%; height:100%; margin-left:1%;">   
+
+                    <div style="height:40%; margin:0 auto;">   
+                        <div id="armButton" class="button">Arm</div>
+                        
+                        <p class="description">
+                            Arm the turret and enter fullscreen mode.<br> 
+                            WARNING! The Safety will be disengaged.<br><br>
+                        </p>
+                    </div>
+                    
+                    <div style="height:50%; margin:0 auto;">   
+                        <canvas id="positionCanvasX" style="height:50%; "></canvas>
+                        <canvas id="positionCanvasY" style="height:50%; "></canvas>
+                    </div>
+                </div>
+                
             </div>
+
+            <div class="container-parent" style="width:100%; height:38%; margin-top:2%;">
+                
+                <div style="margin-left: 10%; margin-right:10%; width:80%;">
+                    Pitch
+                    <input type="range" id="pitchPositionInput" min="-50" max="50">
+                    <div id="tickmarks">
+                        <p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                        <p>0</p>
+                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p>
+                    </div>
+                    <br>
+                    Yaw
+                    <input type="range" id="yawPositionInput" min="-180" max="180">
+                    <div id="tickmarks">
+                        <p>-180</p><p>-170</p><p>-160</p><p>-150</p><p>-140</p><p>-130</p><p>-120</p><p>-110</p><p>-100</p>
+                        <p>-90</p><p>-80</p><p>-70</p><p>-60</p><p>-50</p><p>-40</p><p>-30</p><p>-20</p><p>-10</p>
+                        <p>0</p>
+                        <p>10</p><p>20</p><p>30</p><p>40</p><p>50</p><p>60</p><p>70</p><p>80</p><p>90</p>
+                        <p>100</p><p>110</p><p>120</p><p>130</p><p>140</p><p>150</p><p>160</p><p>170</p><p>180</p>
+                    </div>
+                </div>
+                
+            </div>  
+
         </div>
     <script >
 
+        /*
+        <div class="container-parent" style="width:100%; height:30%;">
+            <h2>Control</h2>
+            <div>
+                <div id="resetButtonX" class="button">Reset X</div> 
+                <div id="resetButtonY" class="button">Reset Y</div> 
+                <p class="description">
+                    Reset X or Y axis position to 0.<br>
+                    This is used for rehomeing the device.
+                </p>
+            </div>
+        </div>
+        */
+        
         // <img id="fullScreenImage" src="../static/img/testImage.gif">
         // <img id="fullScreenImage" src="{{ url_for('video_feed') }}">
         // <img src="../static/img/testImage.gif" style="width:100%; height: auto;">
         // <img src="{{ url_for('video_feed') }}" style="width:100%; height: auto;">
-
-        class JoystickController
-        {
-            // stickID: ID of HTML element (representing joystick) that will be dragged
-            // maxDistance: maximum amount joystick can move in any direction
-            // deadzone: joystick must move at least this amount from origin to register value change
-            constructor( stickID, maxDistance, deadzone )
-            {
-                this.id = stickID;
-                let stick = document.getElementById(stickID);
-
-                // location from which drag begins, used to calculate offsets
-                this.dragStart = null;
-
-                // track touch identifier in case multiple joysticks present
-                this.touchId = null;
-                
-                this.active = false;
-                this.value = { x: 0, y: 0 }; 
-
-                let self = this;
-
-                function handleDown(event)
-                {
-                    self.active = true;
-
-                    // all drag movements are instantaneous
-                    stick.style.transition = '0s';
-
-                    // touch event fired before mouse event; prevent redundant mouse event from firing
-                    event.preventDefault();
-
-                    if (event.changedTouches)
-                        self.dragStart = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY };
-                    else
-                        self.dragStart = { x: event.clientX, y: event.clientY };
-
-                    // if this is a touch event, keep track of which one
-                    if (event.changedTouches)
-                        self.touchId = event.changedTouches[0].identifier;
-                }
-                
-                function handleMove(event) 
-                {
-                    if ( !self.active ) return;
-
-                    // if this is a touch event, make sure it is the right one
-                    // also handle multiple simultaneous touchmove events
-                    let touchmoveId = null;
-                    if (event.changedTouches)
-                    {
-                        for (let i = 0; i < event.changedTouches.length; i++)
-                        {
-                            if (self.touchId == event.changedTouches[i].identifier)
-                            {
-                                touchmoveId = i;
-                                event.clientX = event.changedTouches[i].clientX;
-                                event.clientY = event.changedTouches[i].clientY;
-                            }
-                        }
-
-                        if (touchmoveId == null) return;
-                    }
-
-                    const xDiff = event.clientX - self.dragStart.x;
-                    const yDiff = event.clientY - self.dragStart.y;
-                    const angle = Math.atan2(yDiff, xDiff);
-                    const distance = Math.min(maxDistance, Math.hypot(xDiff, yDiff));
-                    const xPosition = distance * Math.cos(angle);
-                    const yPosition = distance * Math.sin(angle);
-
-                    // move stick image to new position
-                    stick.style.transform = `translate3d(${xPosition}px, ${yPosition}px, 0px)`;
-
-                    // deadzone adjustment
-                    const distance2 = (distance < deadzone) ? 0 : maxDistance / (maxDistance - deadzone) * (distance - deadzone);
-                    const xPosition2 = distance2 * Math.cos(angle);
-                    const yPosition2 = distance2 * Math.sin(angle);
-                    const xPercent = parseFloat((xPosition2 / maxDistance).toFixed(4));
-                    const yPercent = parseFloat((yPosition2 / maxDistance).toFixed(4));
-                    
-                    self.value = { x: xPercent, y: yPercent };
-                }
-
-                function handleUp(event) 
-                {
-                    if ( !self.active ) return;
-
-                    // if this is a touch event, make sure it is the right one
-                    if (event.changedTouches && self.touchId != event.changedTouches[0].identifier) return;
-
-                    // transition the joystick position back to center
-                    stick.style.transition = '.2s';
-                    stick.style.transform = `translate3d(0px, 0px, 0px)`;
-
-                    // reset everything
-                    self.value = { x: 0, y: 0 };
-                    self.touchId = null;
-                    self.active = false;
-                }
-
-                stick.addEventListener('mousedown', handleDown);
-                stick.addEventListener('touchstart', handleDown);
-                document.addEventListener('mousemove', handleMove, {passive: false});
-                document.addEventListener('touchmove', handleMove, {passive: false});
-                document.addEventListener('mouseup', handleUp);
-                document.addEventListener('touchend', handleUp);
-            }
-        }
-
 
         const imageBottomX = new Image();
         imageBottomX.src = "/img/turretStaticX.png";
 
         const imageTopX = new Image();
         imageTopX.src = "/img/turretDynamicX.png";
-
 
         const imageBottomY = new Image();
         imageBottomY.src = "/img/turretDynamicY.png";
@@ -299,19 +153,13 @@
         // html objects        
         const armButton = document.getElementById("armButton");
 
-        const resetButtonX = document.getElementById("resetButtonX");
-        const resetButtonY = document.getElementById("resetButtonY");
-
         const cameraFeedSelector = document.getElementById("cameraFeedSelector");
         
         const thermalCameraColorMapSelector = document.getElementById("thermalCameraColorMapSelector");
         const thermalCameraColorMapDisplay = document.getElementById("thermalCameraColorMapDisplay");
 
-        const xSpeedInput = document.getElementById("xSpeedInput");
-        const ySpeedInput = document.getElementById("ySpeedInput");
-
-        const xPositionInput = document.getElementById("xPositionInput");
-        const yPositionInput = document.getElementById("yPositionInput");
+        const yawPositionInput = document.getElementById("yawPositionInput");
+        const pitchPositionInput = document.getElementById("pitchPositionInput");
 
         const fullScreenDisplay = document.getElementById("fullScreenDisplay");
         const fullScreenImage = document.getElementById("fullScreenImage");
@@ -320,43 +168,22 @@
         const positionCanvasX = document.getElementById("positionCanvasX");
         const positionCanvasY = document.getElementById("positionCanvasY");
 
-        const joystickBase = document.getElementById("joystickBase");
-        const joystickKnob = document.getElementById("joystickKnob");
-        const joystick = new JoystickController("joystickKnob", 32, 8);
-
-
-        var deviceType = 0; // 0=PC, 1=mobile
         var fullScreenMode = false;
 
-
-        const mouseSpeedFactorX = 20;
-        const mouseSpeedFactorY = 20;
-
-        var xPosFeedback = 0;
-        var yPosFeedback = 0;
-
-        // iinput variables
-        var xSpeed = 0;
-        var ySpeed = 0;
-        var xLastSpeed = 0;
-        var yLastSpeed = 0;
+        // input variables
+        var lastYawSpeed = 0;
+        var lastPitchSpeed = 0;
+        var lastLbButtonPressed = 0;
+        var lastRbButtonPressed = 0;
 
         var triggered = false;
 
         // readback variables
-        var xPosFeedback = 0;
-        var yPosFeedback = 0;
+        var yawPosFeedback = 0;
+        var pitchPosFeedback = 0;
 
-        // keabouard and mouse input
-        var mouseIsMovingX = false;
-        var mouseIsMovingY = false;
-
-
-        // up - down - left - right - space
-        var keyMap = {38: false, 40: false, 37: false, 39: false, 32: false};
-
-        // topRight - bottomRight - topLeft - bottomLeft - center
-        var mouchMap = {1: false, 2: false, 3: false, 4: false, 5: false};
+        // status if a gamepad is connected
+        var gamepadConnected = false;
 
 
         /*
@@ -368,15 +195,13 @@
         function refreshAnimations(){
             if (document.fullscreenElement){
                 
-                accomodateMobileRotation();
-                displayFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas, deviceType);
-                displayJoyStick(joystickBase, joystickKnob, deviceType);
+                displayFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
 
                 var ctx = fullScreenCanvas.getContext('2d');
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-                drawPositionFeedbackFullScreen(ctx, xPosFeedback, -yPosFeedback);
+                drawPositionFeedbackFullScreen(ctx, yawPosFeedback, -pitchPosFeedback);
                 drawCrosshair(ctx);
 
                 if (triggered) {
@@ -387,7 +212,7 @@
             else
             {
                 hideFullScreenElements(fullScreenDisplay, fullScreenImage, fullScreenCanvas);
-                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, xPosFeedback, yPosFeedback);
+                drawPositionFeebackOverview(positionCanvasX, positionCanvasY, yawPosFeedback, pitchPosFeedback);
             }
         };
         window.setInterval("refreshAnimations()", 50); 
@@ -406,37 +231,12 @@
         /*
         * Arm button callback (mouse)
         */
-        function armButtonMouseUoCallback(){
-            deviceType = 0;
+        function armButtonMouseUpCallback(){
             requestFullScreen();
         }
-        armButton.addEventListener("mouseup",armButtonMouseUoCallback);
+        armButton.addEventListener("mouseup",armButtonMouseUpCallback);
 
-        /*
-        * Arm button callback (touch)
-        */
-        function armButtonTouchEndCallback(){
-            deviceType = 1;
-            requestFullScreen();
-        }
-        armButton.addEventListener("touchend",armButtonTouchEndCallback);
-
-        /* 
-        * Reset button callback (x)
-        */
-        function resetButtonXClickCallback(){
-            httpPostAsync("{{ url_for('option') }}", "{\"resetPosX\":\"1\"}");
-        }
-        resetButtonX.addEventListener("click",resetButtonXClickCallback);
-
-        /* 
-        * Reset button callback (y)
-        */
-        function resetButtonYClickCallback(){
-            httpPostAsync("{{ url_for('option') }}", "{\"resetPosY\":\"1\"}");
-        }
-        resetButtonY.addEventListener("click",resetButtonYClickCallback);
-
+        
         /* 
         * Camera feed selector callback
         */
@@ -465,155 +265,83 @@
         thermalCameraColorMapSelector.addEventListener("change",displayColorMapImage);
 
         /* 
-        * Speed range input callback (x)
-        */
-        function xSpeedInputChangeCallback(event){
-            var postString = "{\"xSpeed\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-        }
-        xSpeedInput.addEventListener("mouseup",xSpeedInputChangeCallback);
-        xSpeedInput.addEventListener("touchend",xSpeedInputChangeCallback);
-       
-        /* 
-        * Speed range input callback (y)
-        */
-        function ySpeedInputChangeCallback(event){
-            var postString = "{\"ySpeed\":" + event.target.value + "}";
-            httpPostAsync("{{ url_for('controlle') }}", postString);
-        }
-        ySpeedInput.addEventListener("mouseup",ySpeedInputChangeCallback);
-        ySpeedInput.addEventListener("touchend",ySpeedInputChangeCallback);
-
-        /* 
         * Position range input callback (x)
         */
-        function xPositionInputChangeCallback(event){
-            var postString = "{\"xPos\":" + event.target.value + "}";
+        function yawPositionInputChangeCallback(event){
+            var postString = "{\"yawPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        xPositionInput.addEventListener("mouseup",xPositionInputChangeCallback);
-        xPositionInput.addEventListener("touchend",xPositionInputChangeCallback);
+        yawPositionInput.addEventListener("mouseup",yawPositionInputChangeCallback);
+        yawPositionInput.addEventListener("touchend",yawPositionInputChangeCallback);
 
         /* 
         * Position range input callback (y)
         */
-        function yPositionInputChangeCallback(event){
-            var postString = "{\"yPos\":" + event.target.value + "}";
+        function pitchPositionInputChangeCallback(event){
+            var postString = "{\"pitchPos\":" + event.target.value + "}";
             httpPostAsync("{{ url_for('controlle') }}", postString);
         }
-        yPositionInput.addEventListener("mouseup",yPositionInputChangeCallback);
-        yPositionInput.addEventListener("touchend",yPositionInputChangeCallback);
-
-        /* 
-        * Display touch callback
-        */
-        function displayPressCallback(event){
-            if (document.fullscreenElement) {
-                var x = event.changedTouches[0].pageX;
-                var y = event.changedTouches[0].pageY;
-
-                var w = window.screen.width;
-                var h = window.screen.height;
-
-                if (x > w/5 && x<w/5*4){
-                    httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
-                    triggered = true;
-                    mouchMap[5] = false;
-                }
-            }
-
-        }
-        fullScreenDisplay.addEventListener('touchstart',displayPressCallback);
+        pitchPositionInput.addEventListener("mouseup",pitchPositionInputChangeCallback);
+        pitchPositionInput.addEventListener("touchend",pitchPositionInputChangeCallback);
 
         /*
-        * Keyboard keypress callback
+        * Gamepad connect callback
         */
-        function keyboardPressCallback(event){
-            if (event.keyCode in keyMap) {
-                keyMap[event.keyCode] = true;
-            }
-
-            // trigger only on button down one
-            if (document.fullscreenElement && keyMap[32]) {
-                httpPostAsync("{{ url_for('controlle') }}", "{\"trigger\":\"1\"}");
-                triggered = true;
-            }
+        function gamepadConnectCallback(event){
+            gamepadConnected = event.gamepad.connected;
         }
-        window.addEventListener('keydown',keyboardPressCallback);
-
-        /*
-        * Keyboard keyrelease callback
-        */
-        function keyboardReleaseCallback(event){
-            if (event.keyCode in keyMap) {
-                keyMap[event.keyCode] = false;
-            }
-        }
-        window.addEventListener('keyup',keyboardReleaseCallback);
+        window.addEventListener("gamepadconnected", gamepadConnectCallback);
+        window.addEventListener("gamepaddisconnected", gamepadConnectCallback);
 
         /*
         * Control loop
         */
         function controlTimeoutCallback(){
+            if (gamepadConnected) {
 
-            xSpeed = 0;
-            ySpeed = 0;
+                var gamepad = navigator.getGamepads()[0];
+                
+                var yawSpeed = gamepad.axes[2] * 100;
+                yawSpeed = Math.abs(yawSpeed) < 5 ? 5 : yawSpeed; // broken stick
+                yawSpeed = parseInt(Math.sign(yawSpeed)*map(Math.abs(yawSpeed), 5, 100, 0, 100 ));
 
-            if (document.fullscreenElement && deviceType==1) {
-                if (joystick.value.x < 0) {
-                    var tmpXSpeed = joystick.value.x * 100;
-                    tmpXSpeed = map(tmpXSpeed, -100, 0, -50, -30);
-                    if (tmpXSpeed <= -32) xSpeed = Math.round(tmpXSpeed);
-                }
-                if (joystick.value.x > 0) {
-                    var tmpXSpeed = joystick.value.x * 100;
-                    tmpXSpeed = map(tmpXSpeed, 0, 100, 30, 50);
-                    if (tmpXSpeed >= 32) xSpeed = Math.round(tmpXSpeed);
-                }
-                if (joystick.value.y < 0) {
-                    var tmpYSpeed = joystick.value.y * 100;
-                    tmpYSpeed = map(tmpYSpeed, -100, 0, -55, -33);
-                    if (tmpYSpeed <= -35) ySpeed = Math.round(tmpYSpeed);
-                }
-                if (joystick.value.y > 0) {
-                    var tmpYSpeed = joystick.value.y * 100;
-                    tmpYSpeed = map(tmpYSpeed, 0, 100, 43, 65);
-                    if (tmpYSpeed >= 45) ySpeed = Math.round(tmpYSpeed);
-                }
-            }
+                var pitchSpeed = gamepad.axes[3] * 100;
+                pitchSpeed = Math.abs(pitchSpeed) < 5 ? 5 : pitchSpeed; // broken stick
+                pitchSpeed = parseInt(Math.sign(pitchSpeed)*map(Math.abs(pitchSpeed), 5, 100, 0, 100 ));
 
-            // left, not right arrow
-            if (keyMap[37] && !keyMap[39]) {
-                xSpeed = -40;
-            }
-            // right, not right arrow
-            if (keyMap[39] && !keyMap[37]) {
-                xSpeed = 40;
-            }
-            // up, not down arrow
-            if (keyMap[38] && !keyMap[40]) {
-                ySpeed = -45  ;
-            }
-            // down, not up arrow
-            if (keyMap[40] && !keyMap[38]) {            
-                ySpeed = 45;
-            }
-
-            if (xSpeed != xLastSpeed){
-                xLastSpeed = xSpeed;
-                var postString = "{\"xSpeed\":" + xSpeed + "}";
-                console.log("xSpeed=" + xSpeed);
-                httpPostAsync("{{ url_for('controlle') }}", postString);
-            }
-            if (ySpeed != yLastSpeed){
-                yLastSpeed = ySpeed;
-                var postString = "{\"ySpeed\":" + -ySpeed + "}";
-                console.log("ySpeed=" + ySpeed);
-                httpPostAsync("{{ url_for('controlle') }}", postString);
+                if (yawSpeed != lastYawSpeed && pitchSpeed != lastPitchSpeed) {
+                    lastYawSpeed = yawSpeed;
+                    lastPitchSpeed = pitchSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + ",\"pitchSpeed\":" + -pitchSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                else if (yawSpeed != lastYawSpeed){
+                    lastYawSpeed = yawSpeed;
+                    var postString = "{\"yawSpeed\":" + yawSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                else if (pitchSpeed != lastPitchSpeed){
+                    lastPitchSpeed = pitchSpeed;
+                    var postString = "{\"pitchSpeed\":" + -pitchSpeed + "}";
+                    httpPostAsync("{{ url_for('controlle') }}", postString);
+                }
+                
+                var lbButtonPressed = (gamepad.axes[4] > 0.5);
+                if (lbButtonPressed != lastLbButtonPressed) {
+                    lastLbButtonPressed = lbButtonPressed;
+                    console.log("zoom: %s", lbButtonPressed);
+                }
+                
+                var rbButtonPressed = (gamepad.axes[5] > 0.5);
+                if (rbButtonPressed != lastRbButtonPressed) {
+                    lastRbButtonPressed = rbButtonPressed;
+                    console.log("trigger: %s", rbButtonPressed);
+                    var postString = "{\"trigger\":" + rbButtonPressed + "}";
+                    httpPostAsync("{{ url_for('control') }}", postString);
+                }
             }
         };
         window.setInterval(controlTimeoutCallback, 50); 
-
 
         /*
         * Timed Position feedback poll
@@ -625,10 +353,10 @@
         };
         function positionCallback(response){        
             var responseObj = JSON.parse(response);
-            xPosFeedback = parseFloat(responseObj.xPos);
-            yPosFeedback = parseFloat(responseObj.yPos);
+            yawPosFeedback = parseFloat(responseObj.yawPos);
+            pitchPosFeedback = parseFloat(responseObj.pitchPos);
         };
-       window.setInterval("refreshPosition()", 200); 
+        window.setInterval("refreshPosition()", 200); 
 
 
     </script>
